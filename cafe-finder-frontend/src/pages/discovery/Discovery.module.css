@@ -78,11 +78,17 @@
 /*                          */
 /*   Top Rated Card Start   */
 /*                          */
+
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+}
+
 .topRatedContainer {
-  margin-top:20px;
+  margin-top:10px;
   display: flex;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 10px;
+  gap: 40px;
 
   overflow-x: auto;   /* enables horizontal scroll */
   overflow-y: hidden;
@@ -188,7 +194,7 @@
   display: flex;              /* LEFT / RIGHT LAYOUT */
   flex-direction: row;
   align-items: stretch;
-  width: 800px;
+  width: 820px;
   height:160px;
   border-radius: 30px;
   border: 1px solid #000;
@@ -251,7 +257,7 @@
 .suggestionAttributeChip{
   border: 1px solid #000;
   border-radius:20px;
-  font-size:15px;
+  font-size:10px;
   padding:5px;
 }
 /*                          */
@@ -263,15 +269,24 @@
 
 @media (max-width: 600px) {
 
+  .header {
+  display: flex;
+  justify-content: center;  
+}
   /* Page padding fix */
   .searchWrapper {
-    padding-left: 16px;
-    padding-right: 16px;
+    width: 100%;
+    padding: 0 16px;          
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;      
   }
 
   /* Search bar becomes full width */
   .searchBar {
-    width: 100%;
+    width: 80%;              
+    max-width: 500px;         
   }
 
   /* Suggestions row stays scrollable */
@@ -279,14 +294,12 @@
     max-width: 100%;
   }
 
-  /* 🔥 Card switches to vertical layout */
-  .suggestionRatedCard {
-    flex-direction: column;
-    height: auto;
-    max-width: 100%;
-  }
+  .searchSuggestions::-webkit-scrollbar {
+  display: none;
+}
 
-  .suggestionItem {
+
+  .suggestionItem{
   padding: 8px 28px;  /* 🔥 increase left/right */
   border: 1px solid #000;
   border-radius: 999px;
@@ -296,32 +309,74 @@
   font-size:15px;
 
 }
+.topRatedContainer {
+  display: flex;
+  gap: 30px;
 
-.topRatedCard{
-   margin-left: 0px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+
+  padding-left: calc((100% - 320px) / 2);
+  padding-right: calc((100% - 320px) / 2);
+}
+.topRatedCard {
+  width: 344px;
+  height:344px;
+  border-radius: 30px;
+  overflow: hidden; 
+  border: 1px solid #ddd;
+  background: white;
+  border-color:#000;
+  border-width: 2px;
+  margin-left: 0px;
+  scroll-snap-align: center;
 }
 
 
+.topRatedAttributeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topRatedAttributeChip{
+  border: 1px solid #000;
+  border-radius:20px;
+  font-size:10px;
+  padding:5px;
+}
 
 .suggestionRatedCard{
   margin-left: 0px;
 }
   /* Image goes on top */
-  .suggestionRatedCardImageWrapper {
-    width: 100%;
-    height: 150px;
-  }
+.suggestionRatedCardImageWrapper {
+  width: 40%;                 /* left side */
+  height: auto;
+  overflow: hidden;
+}
 
-  /* Content fills below */
-  .suggestionRatedCardContent {
-    width: 100%;
-  }
+.suggestionRatedCardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.suggestionRatedCardContent {
+  width: 60%; /* Right side */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+}
 
   /* Optional: smaller text for mobile */
   .suggestionRatedCardLeft h2 {
     font-size: 20px;
   }
-
+  .suggestionRatedCardLeft p {
+    font-size: 15px;
+  }
   .suggestionRatedCardRight p {
     font-size: 18px;
   }
