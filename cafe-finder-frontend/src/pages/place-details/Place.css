@@ -1,0 +1,103 @@
+.place-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  padding: 40px 0;
+}
+
+
+/* Layout */
+
+.place-header {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+/* Logos */
+.place-logo {
+  height: 80px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.place-vite:hover {
+  transform: translateY(-5px) rotate(-3deg);
+}
+
+.place-react:hover {
+  transform: translateY(-5px) rotate(3deg);
+}
+
+/* Title */
+.place-title {
+  font-size: 2.5rem;
+  margin: 20px 0;
+  color: #0f172a;
+}
+
+/* Link */
+.place-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: white;
+  background: #0ea5e9;
+  padding: 10px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.place-link:hover {
+  background: #0284c7;
+  transform: scale(1.05);
+}
+
+/* Card */
+.place-card {
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  width: 320px;
+  margin: 0 auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  border: 1px solid #e2e8f0;
+}
+
+/* Button */
+.place-button {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  border: none;
+  padding: 10px 16px;
+  color: white;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.place-button:hover {
+  transform: scale(1.05);
+}
+
+/* Text */
+.place-text {
+  margin-top: 12px;
+  color: #475569;
+}
+
+/* Footer */
+.place-footer {
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+/* Code */
+.place-text code {
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
