@@ -1,0 +1,8 @@
+to run the current file app.jsx, do npm run dev while in inside the folder
+
+1) To set up a new react project
+- npx create-vite@6.5.0
+- npm install
+- npm run dev
+2)
+3)
