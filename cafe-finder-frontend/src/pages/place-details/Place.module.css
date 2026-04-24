@@ -1,0 +1,16 @@
+.placePage {
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.header {
+  padding: 20px;
+  background: #6e7a85;
+}
+
+.searchBar {
+  width: 280px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid #cbd5f5;
+}

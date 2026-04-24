@@ -1,0 +1,106 @@
+.discoveryPage {
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.header {
+  padding: 20px;
+  background: #ffffff;
+ /* border-bottom: 2px solid #000;*/
+}
+
+/*                          */
+/*  Search Bar Header Start */
+/*                          */
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  padding-left: 140px;
+}
+
+
+/* Search Bar */
+.searchBar {
+  width: 600px;
+  height:30px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 2px solid #000000;
+  font-size:17px;
+  cursor:pointer
+}
+
+.searchBar:focus {
+  outline: none;
+  border: 2px solid #000000; /* your custom color */
+  box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.25);
+}
+
+/* Search Attributes */
+.searchSuggestions {
+  margin-left:10px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;   /* allows wrapping if too many */
+  margin-top: 15px;
+}
+.suggestionItem {
+  padding: 8px 12px;
+  border: 1px solid #000;
+  border-radius: 999px;
+  cursor: pointer;
+  background: white;
+  transition: 0.2s ease;
+  font-size:15px;
+}
+.suggestionItem:hover {
+  background: #f1f5f9;
+}
+/*                          */
+/*   Search Bar Header End  */
+/*                          */
+
+
+/*                          */
+/*   Top Rated Card Start   */
+/*                          */
+
+.topRatedContainer {
+  margin-top:20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+}
+
+.topRatedCard {
+  width: 420px;
+  height:350px;
+  border-radius: 30px;
+  overflow: hidden; /* IMPORTANT */
+  border: 1px solid #ddd;
+  background: white;
+  margin-left:20px;
+  border-color:#000;
+  border-width: 2px;
+}
+
+.cardImageWrapper {
+  height: 200px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardContent {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
