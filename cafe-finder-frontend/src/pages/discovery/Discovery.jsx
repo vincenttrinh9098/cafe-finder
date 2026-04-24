@@ -15,14 +15,15 @@ export function Discovery() {
   ];
 
   const store1 = {
-    name: "Matcha",
+    name: "Matcha House",
     image: storeTestImg,
     rating: 9.9,
     distance: "0.3mi",
     attributes: [
       "Low noise",
       "Low foot traffic",
-      "Moderate Seating Capacity"
+      "Moderate seating capacity",
+      "Parking lot"
     ]
   };
 
@@ -77,10 +78,19 @@ export function Discovery() {
             {/* Bottom half: info */}
             <div className={styles.cardContent}>
 
-              <h2>{store.name}</h2>
-              <p>⭐ {store.rating}</p>
-              <p>📍 {store.distance}</p>
+              {/* Top row */}
+              <div className={styles.cardTop}>
+                <div className={styles.cardLeft}>
+                  <h2>{store.name}</h2>
+                  <p>📍 {store.distance}</p>
+                </div>
 
+                <div className={styles.cardRight}>
+                  <p>⭐ {store.rating}</p>
+                </div>
+              </div>
+
+              {/* Attributes row */}
               <div className={styles.attributeRow}>
                 {store.attributes.map((attr) => (
                   <span key={attr} className={styles.attributeChip}>
@@ -88,6 +98,7 @@ export function Discovery() {
                   </span>
                 ))}
               </div>
+
             </div>
 
 
