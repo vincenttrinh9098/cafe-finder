@@ -1,9 +1,6 @@
 .discoveryPage {
-  background-color: #fdfafa;
+  background-color: #ffffff;
   min-height: 100vh;
-
-  width: 100%;          /* ensure full width */
-  overflow-x: hidden;   /* prevent sideways scroll */
 }
 
 .header {
@@ -56,7 +53,7 @@
 }
 
 .suggestionItem {
-  padding: 8px 30px;
+  padding: 8px 12px;
   border: 1px solid #000;
   border-radius: 999px;
   cursor: pointer;
@@ -148,8 +145,7 @@
 
 .topRatedCardRight p {
   margin: 0;
-  font-size: 25px;
-  font-weight:bold;
+  font-size: 20px;
 }
 
 .topRatedAttributeRow {
@@ -178,30 +174,34 @@
   margin-top: 20px;
   display: flex;
   flex-direction: column;  /* STACK VERTICALLY */
-  gap: 20px;
+  gap: 10px;
   padding: 20px;
   align-items: flex-start; 
   overflow-x: hidden; 
 }
 
+
+
 .suggestionRatedCard {
-  display: flex;              /* LEFT / RIGHT LAYOUT */
-  flex-direction: row;
-  align-items: stretch;
-  width: 800px;
-  height:160px;
+  width: 420px;
+  height:350px;
   border-radius: 30px;
-  border: 1px solid #000;
-  overflow: hidden;
+  overflow: hidden; 
+  border: 1px solid #ddd;
+  background: white;
   margin-left:20px;
-  width: 100%;
-  max-width: 700px;           /* optional control */
+  border-color:#000;
+  border-width: 2px;
+
+  flex: 0 0 auto;   
+  scroll-snap-align: start; 
+
 }
 
 
 .suggestionRatedCardImageWrapper {
-  width: 35%;                 /* left side */
-  height: auto;
+  height: 200px;
+  width: 100%;
   overflow: hidden;
 }
 
@@ -212,14 +212,11 @@
 }
 
 .suggestionRatedCardContent {
-  width: 65%; /* Right side */
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 12px;
+  padding: 10px;
 }
-
-
 .suggestionRatedCardTop {
   display: flex;
   justify-content: space-between;
@@ -238,8 +235,7 @@
 
 .suggestionRatedCardRight p {
   margin: 0;
-  font-size: 25px;
-  font-weight:bold;
+  font-size: 20px;
 }
 
 .suggestionRatedAttributeRow {
@@ -259,70 +255,3 @@
 /*                          */
 
 
-
-
-@media (max-width: 600px) {
-
-  /* Page padding fix */
-  .searchWrapper {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
-  /* Search bar becomes full width */
-  .searchBar {
-    width: 100%;
-  }
-
-  /* Suggestions row stays scrollable */
-  .searchSuggestions {
-    max-width: 100%;
-  }
-
-  /* 🔥 Card switches to vertical layout */
-  .suggestionRatedCard {
-    flex-direction: column;
-    height: auto;
-    max-width: 100%;
-  }
-
-  .suggestionItem {
-  padding: 8px 28px;  /* 🔥 increase left/right */
-  border: 1px solid #000;
-  border-radius: 999px;
-  cursor: pointer;
-  background: white;
-  transition: 0.2s ease;
-  font-size:15px;
-
-}
-
-.topRatedCard{
-   margin-left: 0px;
-}
-
-
-
-.suggestionRatedCard{
-  margin-left: 0px;
-}
-  /* Image goes on top */
-  .suggestionRatedCardImageWrapper {
-    width: 100%;
-    height: 150px;
-  }
-
-  /* Content fills below */
-  .suggestionRatedCardContent {
-    width: 100%;
-  }
-
-  /* Optional: smaller text for mobile */
-  .suggestionRatedCardLeft h2 {
-    font-size: 20px;
-  }
-
-  .suggestionRatedCardRight p {
-    font-size: 18px;
-  }
-}
