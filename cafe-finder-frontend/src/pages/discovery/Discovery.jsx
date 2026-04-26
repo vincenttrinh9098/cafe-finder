@@ -39,6 +39,7 @@ export function Discovery() {
     ]
   };
 
+
   const stores = [store1, store2, store1, store2, store1];
 
   const handleSelect = (item) => {
