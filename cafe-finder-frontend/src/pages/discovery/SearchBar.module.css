@@ -1,0 +1,108 @@
+/*                          */
+/*  Search Bar Header Start */
+/*                          */
+.header {
+  padding: 20px;
+  background: #ffffff;
+
+  display: flex;
+  justify-content: center;   
+}
+.searchWrapper {
+  width: 100%;
+  max-width: 600px;          
+  display: flex;
+  flex-direction: column;
+}
+
+/* Search Bar */
+.searchBar {
+  width: 100%;
+  height: 40px;             
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 2px solid #000000;
+  font-size: 16px;
+}
+.searchBar:focus {
+  outline: none;
+  border: 2px solid #000000; /* your custom color */
+  box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.25);
+}
+
+/* Search Attributes */
+.searchSuggestions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+
+  overflow-x: auto;
+  max-width: 100%;          /* match wrapper now */
+  padding-bottom: 5px;      /* avoids scrollbar overlap */
+}
+
+.suggestionItem {
+  padding: 8px 20px;
+  border: 1px solid #000;
+  border-radius: 999px;
+  cursor: pointer;
+  background: white;
+  transition: 0.2s ease;
+  font-size: 12px;
+  white-space: nowrap;   /* prevents weird wrapping */
+}
+
+.suggestionItem:hover {
+  background: #f1f5f9;
+}
+
+/*                          */
+/*   Search Bar Header End  */
+/*                          */
+
+
+
+@media (max-width: 600px) {
+  .header {
+  display: flex;
+  justify-content: center;  
+}
+ 
+ /* Page padding fix */
+  .searchWrapper {
+    width: 100%;
+    padding: 0 16px;          
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;      
+  }
+
+  /* Search bar becomes full width */
+  .searchBar {
+    width: 80%;              
+    max-width: 500px;         
+  }
+
+  /* Suggestions row stays scrollable */
+  .searchSuggestions {
+    max-width: 100%;
+  }
+
+  .searchSuggestions::-webkit-scrollbar {
+  display: none;
+  }
+
+
+  .suggestionItem{
+  padding: 8px 20px;  /* 🔥 increase left/right */
+  border: 1px solid #000;
+  border-radius: 999px;
+  cursor: pointer;
+  background: white;
+  transition: 0.2s ease;
+  font-size:12px;
+
+  }
+
+}
