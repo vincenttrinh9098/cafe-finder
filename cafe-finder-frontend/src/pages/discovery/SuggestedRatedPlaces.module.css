@@ -1,0 +1,137 @@
+
+/*                          */
+/*  Suggestion Card Start   */
+/*                          */
+.suggestionRatedContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;  /* STACK VERTICALLY */
+  gap: 20px;
+  padding: 20px;
+  align-items: flex-start; 
+  overflow-x: hidden; 
+}
+
+.suggestionRatedCard {
+  display: flex;              /* LEFT / RIGHT LAYOUT */
+  flex-direction: row;
+  align-items: stretch;
+  width: 820px;
+  height:160px;
+  border-radius: 30px;
+  border: 1px solid #000;
+  overflow: hidden;
+  width: 100%;
+  max-width: 800px;           /* optional control */
+}
+
+.suggestionRatedCardImageWrapper {
+  width: 35%;                 /* left side */
+  height: auto;
+  overflow: hidden;
+}
+
+.suggestionRatedCardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.suggestionRatedCardContent {
+  width: 65%; /* Right side */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+}
+
+.suggestionRatedCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.suggestionRatedCardLeft h2 {
+  margin: 0;
+  font-size: 23px;
+}
+.suggestionRatedCardRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.suggestionRatedCardRight p {
+  margin: 0;
+  font-size: 20px;
+  font-weight:bold;
+}
+
+.suggestionRatedAttributeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.suggestionAttributeChip{
+  border: 1px solid #000;
+  border-radius:20px;
+  font-size:10px;
+  padding:5px;
+}
+/*                          */
+/*   Suggestion Card End    */
+/*                          */
+
+/* phones */
+@media (max-width: 600px) {
+  
+.suggestionRatedCard{
+  margin-left: 0px;
+}
+  /* Image goes on top */
+.suggestionRatedCardImageWrapper {
+  width: 40%;                 /* left side */
+  height: auto;
+  overflow: hidden;
+}
+
+.suggestionRatedCardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.suggestionRatedCardContent {
+  width: 60%; /* Right side */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+}
+
+  /* Optional: smaller text for mobile */
+  .suggestionRatedCardLeft h2 {
+    font-size: 20px;
+  }
+  .suggestionRatedCardLeft p {
+    font-size: 15px;
+  }
+  .suggestionRatedCardRight p {
+    font-size: 18px;
+  }
+
+}
+
+
+
+/* tablets */
+@media (max-width: 768px) {
+  
+}
+
+
+/* desktop */
+@media (min-width: 1024px) {
+  
+}
