@@ -2,6 +2,12 @@
 /*                          */
 /*  Suggestion Card Start   */
 /*                          */
+
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+}
+
 .suggestionRatedContainer {
   margin-top: 20px;
   display: flex;

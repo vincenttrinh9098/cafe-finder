@@ -5,6 +5,7 @@ import storeTestImg from './store-test.png';
 
 export function TopRatedPlaces(){
   const store1 = {
+    id:1,
     name: "Matcha House",
     image: storeTestImg,
     rating: 9.9,
@@ -18,6 +19,7 @@ export function TopRatedPlaces(){
   };
 
   const store2 = {
+    id:2,
     name: "Greem Tea",
     image: storeTestImg,
     rating: 9.9,
@@ -31,7 +33,7 @@ export function TopRatedPlaces(){
   };
 
 
-  const stores = [store1, store2, store1, store2, store1];
+  const stores = [store1, store2]// store1, store2, store1];
 
 
     //{/* Discovery page top rated container */}
@@ -40,7 +42,7 @@ export function TopRatedPlaces(){
         
         {stores.map((store) => (
             <Link
-              key={store.name}
+              key={store.id}
               //to={`/place/${store.name}`}   // dynamic route
               to={'/place'}
               className={styles.cardLink}   // remove default link styles
