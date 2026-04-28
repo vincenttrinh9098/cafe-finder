@@ -5,14 +5,13 @@ import { searchPlaces } from '../../api/placesApi.js';
 export function SearchBar({ onResults }) {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const [showModal, setShowModal] = useState(false);
   const suggestions = ["Coffee", "Tea", "Bakery", "Matcha", "Library"];
 
   const handleSelect = (item) => {
     setSearch(item);
     handleSearch(item);
   };
-
   const handleSearch = async (query) => {
     const searchQuery = query || search;
 
@@ -29,19 +28,27 @@ export function SearchBar({ onResults }) {
     }
   };
 
+
+
+
   return (
     <div className={styles.header}>
       <div className={styles.searchWrapper}>
-        <input
-          className={styles.searchBar}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          placeholder="Search cafes, tea spots, bakeries..."
-        />
-        <button onClick={handleSearch} disabled={loading}>
-          {loading ? "Searching..." : ""}
-        </button>
+          <div className={styles.inputContainer}>
+
+            <i className={`fa-solid fa-bars ${styles.icon}`}></i>
+            <input
+              className={styles.searchBar}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              placeholder="Search cafes, tea spots, bakeries..."
+            />
+              <button onClick={handleSearch} disabled={loading}>
+                {loading ? "Searching..." : ""}
+              </button>
+            </div>
+      
         <div className={styles.searchSuggestions}>
           {suggestions.map((item) => (
             <div
