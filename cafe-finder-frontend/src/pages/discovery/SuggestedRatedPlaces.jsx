@@ -5,6 +5,7 @@ import storeTestImg from './store-test.png';
 export function SuggestedRatedPlaces(){
 
   const store1 = {
+    id:1,
     name: "Matcha House",
     image: storeTestImg,
     rating: 9.9,
@@ -18,6 +19,7 @@ export function SuggestedRatedPlaces(){
   };
 
   const store2 = {
+    id:2,
     name: "Greem Tea",
     image: storeTestImg,
     rating: 9.9,
@@ -31,12 +33,19 @@ export function SuggestedRatedPlaces(){
   };
 
 
-  const stores = [store1, store2, store1, store2, store1];
+  const stores = [store1, store2]//,store1, store2, store1];
 
     return(
 
       <div className={styles.suggestionRatedContainer}>
         {stores.map((store) => (
+
+            <Link
+              key={store.id}
+              //to={`/place/${store.name}`}   // dynamic route
+              to={'/place'}
+              className={styles.cardLink}   // remove default link styles
+            >
           <div className={styles.suggestionRatedCard}>
 
             {/* LEFT: image */}
@@ -73,6 +82,7 @@ export function SuggestedRatedPlaces(){
             </div>
 
           </div>
+        </Link>
         ))}
       </div>
 

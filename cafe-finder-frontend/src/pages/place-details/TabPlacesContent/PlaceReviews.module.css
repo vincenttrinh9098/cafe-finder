@@ -1,0 +1,121 @@
+
+/*                          */
+/* Dynamic Reviews Section start */
+/*                          */
+
+.postReviewsContainer {
+  margin-top: 10px;
+  padding: 30px;
+  overflow-x: hidden; 
+}
+
+.postReviewsCard {
+  display: flex;
+  flex-direction: column;   
+  width: 100%;
+  max-width: 700px;
+  height: 160px;
+  border-radius: 30px;
+  border: 1px solid #000;
+  overflow: hidden;
+  padding: 12px;
+}
+
+
+.postReviewHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start; 
+}
+
+.postReviewHeader p {
+  font-size:15px;
+  font-weight:100;
+  text-decoration: underline;
+}
+
+.postReviewHeader img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+.leaveReviewText {
+  display: flex;
+  justify-content: center;
+  margin-top:10px;
+}
+
+.leaveReviewText p {
+  margin: 0;
+  font-size: 18px;
+  font-weight:bold;
+  line-height: 1.4;
+  color: #333;
+  text-align: center;
+  max-width: 80%;
+}
+
+
+
+
+.dynamicReviews {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 2px solid#6D5757;
+}
+
+.reviewsHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+
+.reviewsHeader img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+
+.reviewsHeader h3{
+  text-decoration: underline;
+}
+
+.reviewsHeader p {
+  margin-left: auto;
+  font-weight: 500;
+  font-weight: bold;
+}
+
+.reviewText p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+}
+.reviewPhotos {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.reviewPhotos img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+/*                          */
+/* Dynamic Reviews Section End */
+/*                          */
