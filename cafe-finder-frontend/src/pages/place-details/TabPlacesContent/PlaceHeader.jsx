@@ -1,13 +1,13 @@
 import styles from './PlaceHeader.module.css'
-import storeDetailTestImg from './store-details-test.png';
+//import storeplaceTestImg from './store-places-test.png';
 import { useNavigate } from "react-router-dom";
 
-export function PlaceHeader() {
+export function PlaceHeader( {place}) {
     const navigate = useNavigate();
-
-    const store1 = {
+/*
+    const store = {
         name: "Green Tea",
-        image: storeDetailTestImg,
+        image: storeplaceTestImg,
         phoneNumber: "(123) 456-7890",
         rating: 9.9,
         distance: "0.3mi",
@@ -28,13 +28,20 @@ export function PlaceHeader() {
             "Moderate seating capacity",
             "Parking lot"
         ]
-    };
+    };*/
+
+      if (!place) return <div>Loading...</div>;  // ← this must be BEFORE any store.property access
+
+      console.log(place);
+
 
     return (
         <>
+
+            <div key={place.name}>
             <div className={styles.imageSection}>
                 <img
-                    src={store1.image}
+                    src={`http://localhost:3000/api/places/photo?ref=${place.photo_reference}`}
                     alt="Store"
                     className={styles.image}
                 />
@@ -45,18 +52,19 @@ export function PlaceHeader() {
 
             <div className={styles.contentSection}>
                 <div className={styles.topRowContentSection}>
-                    <h2>{store1.name}</h2>
-                    <p>{store1.rating} ⭐</p>
+                    <h2>{place.name}</h2>
+                    <p>{place.rating} ⭐</p>
                 </div>
 
-                <div className={styles.bottomRowAttributeRow}>
-                    {store1.attributes.map((attr) => (
+                {/*<div className={styles.bottomRowAttributeRow}>
+                    {place.attributes.map((attr) => (
                         <span key={attr} className={styles.bottomRowAttributeChip}>
                             {attr}
                         </span>
                     ))}
-                </div>
+                </div>*/}
             </div>
+        </div>
         </>
 
     );

@@ -3,6 +3,9 @@ import styles from './SearchedPlaces.module.css'
 import storeTestImg from './store-test.png';
 
 export function SearchedPlaces({ places }){
+
+  console.log("places:", places);
+
     return(
 
       <div className={styles.searchedRatedContainer}>
@@ -13,18 +16,27 @@ export function SearchedPlaces({ places }){
           
               //to={`/place/${store.name}`}   // dynamic route
               to={'/place'}
+              state={{ place }} 
               className={styles.cardLink}   // remove default link styles
             >
           <div className={styles.searchedRatedCard}>
 
             {/* LEFT: image */}
-            <div className={styles.searchedRatedCardImageWrapper}>
-              <img
-                src={storeTestImg}
-                alt={place.name}
-                className={styles.searchedRatedCardImage}
-              />
-            </div>
+              <div className={styles.searchedRatedCardImageWrapper}>
+                {place.photo_reference ? (
+                  <img
+                    src={`http://localhost:3000/api/places/photo?ref=${place.photo_reference}`}
+                    alt={place.name}
+                    className={styles.searchedRatedCardImage}
+                  />
+                ) : (
+                  <img
+                  src={storeTestImg}
+                  alt={"null"}
+                  className={styles.searchedRatedCardImage}
+                  />
+                )}
+              </div>
 
             {/* RIGHT: content */}
             <div className={styles.searchedRatedCardContent}>
