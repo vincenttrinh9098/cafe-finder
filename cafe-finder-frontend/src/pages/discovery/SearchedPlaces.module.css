@@ -6,6 +6,9 @@
 .cardLink {
   text-decoration: none;
   color: inherit;
+  width: 100%;        
+  max-width: 800px;   
+  display: block;     
 }
 
 .searchedRatedContainer {
@@ -33,7 +36,8 @@
 
 .searchedRatedCardImageWrapper {
   width: 35%;                 /* left side */
-  height: auto;
+  height: 100%;        
+  flex-shrink: 0; 
   overflow: hidden;
 }
 
@@ -54,8 +58,14 @@
 .searchedRatedCardTop {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center; /* ← change from flex-start to center */
 }
+
+.searchedRatedCardLeft {
+  display: flex;
+  align-items: center;
+}
+
 .searchedRatedCardLeft h2 {
   margin: 0;
   font-size: 23px;
@@ -64,9 +74,10 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 2px;
+  gap: 1px;
+  white-space: nowrap; /* ← prevents wrapping */
+  flex-shrink: 0;      /* ← prevents it from being squeezed */
 }
-
 .searchedRatedCardRight p {
   margin: 0;
   font-size: 20px;
@@ -98,7 +109,8 @@
   /* Image goes on top */
 .searchedRatedCardImageWrapper {
   width: 40%;                 /* left side */
-  height: auto;
+  height: 100%;        
+  flex-shrink: 0;
   overflow: hidden;
 }
 
@@ -118,7 +130,8 @@
 
   /* Optional: smaller text for mobile */
   .searchedRatedCardLeft h2 {
-    font-size: 20px;
+    margin: 0;  /* ← remove default h2 margin */
+    font-size: 18px;
   }
   .searchedRatedCardLeft p {
     font-size: 15px;
