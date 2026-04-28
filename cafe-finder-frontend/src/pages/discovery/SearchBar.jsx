@@ -10,14 +10,18 @@ export function SearchBar({ onResults }) {
 
   const handleSelect = (item) => {
     setSearch(item);
+    handleSearch(item);
   };
 
-  const handleSearch = async () => {
-    if (!search.trim()) return;
+  const handleSearch = async (query) => {
+    const searchQuery = query || search;
+
+    if (!searchQuery.trim()) return;
+
     setLoading(true);
     try {
-      const places = await searchPlaces(search);
-      onResults(places); // pass results up to Discovery
+      const places = await searchPlaces(searchQuery);
+      onResults(places);
     } catch (err) {
       console.error(err);
     } finally {
