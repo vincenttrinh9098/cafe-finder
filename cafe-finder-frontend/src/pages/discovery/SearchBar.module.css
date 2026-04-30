@@ -21,11 +21,22 @@
   width: 100%;
 }
 
+
+/*Icon bar*/
 .icon {
   position: absolute;
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 .searchWrapper button{
@@ -46,7 +57,17 @@ display: none;
   box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.25);
 }
 
-/* Search Attributes */
+/*                          */
+/*  Search Bar Header End */
+/*                          */
+
+
+
+
+
+/*                                  */
+/*  Search Suggestions Header Start */
+/*                                  */
 .searchSuggestions {
   display: flex;
   gap: 12px;
@@ -71,10 +92,9 @@ display: none;
 .suggestionItem:hover {
   background: #f1f5f9;
 }
-
-/*                          */
-/*   Search Bar Header End  */
-/*                          */
+/*                                  */
+/*   Search Suggestions Header End  */
+/*                                  */
 
 
 

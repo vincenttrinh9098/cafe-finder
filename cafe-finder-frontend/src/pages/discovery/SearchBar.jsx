@@ -2,10 +2,13 @@ import { useState } from 'react';
 import styles from './SearchBar.module.css';
 import { searchPlaces } from '../../api/placesApi.js';
 
-export function SearchBar({ onResults }) {
+import {FilterPopUp} from './search-bar/FilterPopUp.jsx';
+
+export function SearchBar({ setResults, setSort, sort  }) {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
   const suggestions = ["Coffee", "Tea", "Bakery", "Matcha", "Library"];
 
   const handleSelect = (item) => {
@@ -20,23 +23,28 @@ export function SearchBar({ onResults }) {
     setLoading(true);
     try {
       const places = await searchPlaces(searchQuery);
-      onResults(places);
+      setResults(places);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
-
-
-
-
   return (
     <div className={styles.header}>
       <div className={styles.searchWrapper}>
           <div className={styles.inputContainer}>
 
-            <i className={`fa-solid fa-bars ${styles.icon}`}></i>
+            <i className={`fa-solid fa-bars ${styles.icon}`}
+            onClick={() => setShowModal(true)}
+            />
+          {showModal && (
+            <FilterPopUp
+              sort={sort}
+              setSort={setSort}
+              onClose={() => setShowModal(false)}
+            />
+          )}
             <input
               className={styles.searchBar}
               value={search}

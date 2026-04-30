@@ -51,7 +51,9 @@ export function SearchedPlaces({ places }){
                     <h2>{place.name}</h2>
                   )}
 
-                  {/* <p>📍 {place.distance}</p>*/}
+                   {place.distance != null && (
+                      <p>📍 {place.distance?.toFixed(1)} mi</p>
+                    )}
                 </div>
 
                 <div className={styles.searchedRatedCardRight}>
