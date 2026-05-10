@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import { useLocation } from 'react-router-dom';
 import styles from './Place.module.css';
-import { PlaceHeader } from './TabPlacesContent/PlaceHeader.jsx';
+import { PlaceHeader } from './PlaceHeader.jsx';
 import { TabBar } from './TabBar.jsx';
 import { TabContent } from './TabContent.jsx';
 
@@ -11,14 +11,35 @@ export function Place() {
   const place = state?.place;
   console.log("place:", place);
 
+const [placeDetails, setPlaceDetails] = useState(null);
+const [loadingDetails, setLoadingDetails] = useState(true);
+
+useEffect(() => {
+    if (!place?.google_place_id) return;
+
+    const fetchDetails = async () => {
+        try {
+            const res = await fetch(`http://localhost:3000/api/places/details?place_id=${place.google_place_id}`);
+            const data = await res.json();
+            setPlaceDetails(data); 
+        } catch (err) {
+            console.error("Failed to fetch place details:", err);
+        } finally {
+            setLoadingDetails(false);
+        }
+    };
+
+    fetchDetails();
+}, [place?.google_place_id]);
+
   return (
     <div className={styles.placePage}>
       <PlaceHeader place = {place}/>
 
-      <TabBar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <TabBar activeTab={activeTab} setActiveTab={setActiveTab}/>
 
       <div className={styles.dynamicSection}>
-        <TabContent activeTab={activeTab} />
+      <TabContent activeTab={activeTab} place={place} placeDetails={placeDetails} loadingDetails={loadingDetails} />
       </div>
     </div>
   );

@@ -39,4 +39,19 @@ router.get("/photo", async (req, res) => {
   res.send(Buffer.from(buffer));
 });
 
+router.get("/details", async (req, res) => {
+  const { place_id } = req.query;
+  if (!place_id) return res.status(400).json({ error: "Missing place_id" });
+
+  try {
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=name,formatted_phone_number,website,opening_hours&key=${process.env.GOOGLE_API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log("details result:", data.result); 
+    res.json(data.result); // sends back { opening_hours: { open_now, weekday_text, periods } }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

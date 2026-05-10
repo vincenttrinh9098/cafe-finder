@@ -2,10 +2,10 @@ import { PlaceInfo } from './TabPlacesContent/PlaceInfo.jsx';
 import { PlaceReviews } from './TabPlacesContent/PlaceReviews.jsx';
 import { PlaceMap } from './TabPlacesContent/PlaceMap.jsx';
 
-export function TabContent({ activeTab }) {
+export function TabContent({ activeTab, place, placeDetails, loadingDetails }) {
   switch (activeTab) {
     case "info":
-      return <PlaceInfo />;
+      return <PlaceInfo place={place} placeDetails={placeDetails} loadingDetails={loadingDetails} />;
     case "reviews":
       return <PlaceReviews />;
     case "map":
