@@ -3,6 +3,7 @@ import {Discovery} from './pages/discovery/Discovery';
 import {Place} from './pages/place-details/Place';
 import {Login} from './pages/login/Login';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import {Profile} from './pages/profile/Profile';
 
 function App() {
 
@@ -12,7 +13,7 @@ function App() {
       <Route index element ={<Discovery/>} />
       <Route path="place" element={<Place/>} />
       <Route path="login" element={<Login />} />
-      <Route></Route>
+      <Route path="profile" element={<Profile />} />
     </Routes>
 
   )

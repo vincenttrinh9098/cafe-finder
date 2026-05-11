@@ -1,9 +1,12 @@
 const BASE_URL = "http://localhost:3000/api";
 
-export async function searchPlaces(query) {
-  const res = await fetch(`${BASE_URL}/places?query=${encodeURIComponent(query)}`);
+export async function searchPlaces(query, pagetoken = null) {
+  const params = new URLSearchParams({ query });
+  if (pagetoken) params.set("pagetoken", pagetoken);
+  
+  const res = await fetch(`${BASE_URL}/places?${params.toString()}`);
   const data = await res.json();
-  return data.places;
+  return { places: data.places, nextPageToken: data.next_page_token };
 }
 
 export async function getRatings(google_place_id) {

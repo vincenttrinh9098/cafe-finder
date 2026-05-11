@@ -1,49 +1,49 @@
 import styles from './PlaceInfo.module.css'
-import storeDetailTestImg from './store-details-test.png';
+//import storeDetailTestImg from './store-details-test.png';
 
-export function PlaceInfo(){
-
-  const store1 = {
-    name: "Green Tea",
-    image: storeDetailTestImg,
-    phoneNumber: "(123) 456-7890",
-    rating: 9.9,
-    distance: "0.3mi",
-    address: "123 Green Tea St",
-    email: "test123@gmail.com",
-    hours: {
-      Monday: "8:00 AM - 6:00 PM",
-      Tuesday: "8:00 AM - 6:00 PM",
-      Wednesday: "8:00 AM - 6:00 PM",
-      Thursday: "8:00 AM - 8:00 PM",
-      Friday: "8:00 AM - 8:00 PM",
-      Saturday: "9:00 AM - 9:00 PM",
-      Sunday: "9:00 AM - 5:00 PM",
-    },
-    attributes: [
-      "Low noise",
-      "Low foot traffic",
-      "Moderate seating capacity",
-      "Parking lot"
-    ]
-  };
-
+export function PlaceInfo({placeDetails, loadingDetails }){
+    console.log("placeDetails:", placeDetails);
+    console.log("loadingDetails:", loadingDetails);
     return(
-<div className = {styles.dynamicInfoSection}>
+            <div className = {styles.dynamicInfoSection}>
 
-            <div className = {styles.dynamicInfo}>
+            <div className={styles.dynamicInfo}>
               <h2>Opening Hours</h2>
-              {Object.entries(store1.hours).map(([day, time]) => (
-                <p key={day}>
-                  {day}: {time}
-                </p>
-              ))}
+              {loadingDetails ? (
+                <p>Loading hours...</p>
+              ) : placeDetails?.opening_hours?.weekday_text ? (
+                placeDetails.opening_hours.weekday_text.map((day) => {
+                  const [dayName, hours] = day.split(/:\s(.+)/);
+                  return (
+                    <div className={styles.infoRow} key={day}>
+                      <span className={styles.highlight}>{dayName}:</span>
+                      <span className={styles.infomation}>{hours}</span>
+                    </div>
+                  );
+                })
+              ) : (
+                <p>Hours not available</p>
+              )}
             </div>
 
-            <div className = {styles.dynamicInfo}>
-              <h2>Contact Infomation </h2>
-              <p>Phone: {store1.phoneNumber}</p>
-              <p>Email: {store1.email}</p>
+            <div className={styles.dynamicInfo}>
+              <h2>Contact Information</h2>
+              <div className={styles.infoRow}>
+                <span className={styles.highlight}>Phone:</span>
+                <span className={styles.information}>{placeDetails?.formatted_phone_number ?? "Not available"}</span>
+              </div>
+              <div className={styles.infoRow}>
+                <span className={styles.highlight}>Website:</span>
+                {placeDetails?.website ? (
+                  <a href={placeDetails.website} target="_blank" rel="noreferrer" className = {styles.infomation}>
+                    {placeDetails.website}
+                  </a>
+                ) 
+                :(
+                  <span className={styles.information}>Not available</span>
+                )}
+
+              </div>
             </div>
 
             <div className = {styles.dynamicInfo}>
@@ -61,8 +61,6 @@ export function PlaceInfo(){
             </div>
             
           </div>
-
-        
     );
 
 
