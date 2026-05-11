@@ -30,6 +30,7 @@
 /* HOURS COLUMN */
 .infomation {
   text-align: left;
+  overflow: hidden;
 }
 /*                          */
 /* Dynamic Info Section End */

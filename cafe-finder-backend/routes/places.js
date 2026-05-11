@@ -2,11 +2,16 @@ import express from "express";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  const query = req.query.query;
+  const { query, pagetoken } = req.query;
   if (!query) return res.status(400).json({ error: "Missing query" });
+
   try {
-    const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${process.env.GOOGLE_API_KEY}`;
-    const response = await fetch(url);
+    const url = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json");
+    url.searchParams.set("query", query + " cafe OR tea house OR boba OR bakery");
+    url.searchParams.set("key", process.env.GOOGLE_API_KEY);
+    if (pagetoken) url.searchParams.set("pagetoken", pagetoken);
+
+    const response = await fetch(url.toString());
     const data = await response.json();
 
     const places = data.results.map(p => ({
@@ -17,15 +22,16 @@ router.get("/", async (req, res) => {
       open_now: p.opening_hours?.open_now,
       lat: p.geometry.location.lat,
       lng: p.geometry.location.lng,
-      photo_reference: p.photos?.[0]?.photo_reference || null, // ← add this
+      photo_reference: p.photos?.[0]?.photo_reference || null,
     }));
-    console.log("Ratings result:", {places});
 
-    res.json({ places });
+    res.json({ places, next_page_token: data.next_page_token ?? null });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
+
 
 router.get("/photo", async (req, res) => {
   const { ref } = req.query;

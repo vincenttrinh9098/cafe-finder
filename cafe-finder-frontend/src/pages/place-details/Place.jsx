@@ -11,10 +11,14 @@ export function Place() {
   const place = state?.place;
   console.log("place:", place);
 
-const [placeDetails, setPlaceDetails] = useState(null);
-const [loadingDetails, setLoadingDetails] = useState(true);
+  const [placeDetails, setPlaceDetails] = useState(null);
+  const [loadingDetails, setLoadingDetails] = useState(true);
 
-useEffect(() => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     if (!place?.google_place_id) return;
 
     const fetchDetails = async () => {
