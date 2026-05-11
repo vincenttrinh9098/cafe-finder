@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import styles from './SearchedPlaces.module.css'
 import storeTestImg from './store-test.png';
 
-export function SearchedPlaces({ places }){
+export function SearchedPlaces({ places,query,searchResults}){
 
   console.log("places:", places);
 
@@ -13,11 +13,10 @@ export function SearchedPlaces({ places }){
 
             <Link
               key={place.google_place_id}
-          
-              //to={`/place/${store.name}`}   // dynamic route
               to={'/place'}
-              state={{ place }} 
-              className={styles.cardLink}   // remove default link styles
+              state={{ place, searchQuery: query, searchResults: searchResults }}
+              className={styles.cardLink}  
+              onClick={() => sessionStorage.setItem("discoveryScroll", window.scrollY)}
             >
           <div className={styles.searchedRatedCard}>
 

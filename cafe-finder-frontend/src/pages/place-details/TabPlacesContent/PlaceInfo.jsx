@@ -35,7 +35,7 @@ export function PlaceInfo({placeDetails, loadingDetails }){
               <div className={styles.infoRow}>
                 <span className={styles.highlight}>Website:</span>
                 {placeDetails?.website ? (
-                  <a href={placeDetails.website} target="_blank" rel="noreferrer">
+                  <a href={placeDetails.website} target="_blank" rel="noreferrer" className = {styles.infomation}>
                     {placeDetails.website}
                   </a>
                 ) 
