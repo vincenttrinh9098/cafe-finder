@@ -7,7 +7,7 @@ export function TabContent({ activeTab, place, placeDetails, loadingDetails }) {
     case "info":
       return <PlaceInfo place={place} placeDetails={placeDetails} loadingDetails={loadingDetails} />;
     case "reviews":
-      return <PlaceReviews />;
+      return <PlaceReviews place = {place}/>;
     case "map":
       return <PlaceMap />;
     case "attribute":

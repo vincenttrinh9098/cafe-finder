@@ -132,14 +132,23 @@
 .modal{
   background-color: white;
   width: 90vw;
-  height: 70vh;
+  max-height: 70vh;
   padding: 10px;
   border: 1px solid black;
   border-radius: 40px;
   overflow: hidden; 
-
   display:flex;
   flex-direction: column;
+}
+
+.modalContent {
+  padding: 10px;
+  overflow-y: auto;   
+  flex: 1;
+}
+
+.modalContent::-webkit-scrollbar {
+  display: none;
 }
 
 .modalHeader{
@@ -166,6 +175,7 @@
   margin: 0 auto;
   display: flex;
   justify-content: center;
+  margin-top:20px;
 }
 
 .modalCommentsInner{
@@ -223,6 +233,36 @@
   font-weight:bold;
 }
 
+.categoryReview{
+  padding: 0px 10px;
+  margin-top:0px;
+  border-bottom: 1px solid #000000;
+
+}
+.categoryHeader{
+  margin-bottom:8px;
+}
+
+.categoryPills {
+  display:flex;
+  flex-direction:row;
+  flex-wrap:wrap;
+  gap:10px;
+
+}
+
+.pillOption {
+  margin-top:0px;
+  padding: 5px 20px;
+  font-size:12px;
+  border-radius: 20px;
+  background-color: #FFFF;
+  border: 1px solid #000000;
+}
+
+.pillOptionActive{
+  background-color:#D8EADB;
+}
 
 
 /*                          */
