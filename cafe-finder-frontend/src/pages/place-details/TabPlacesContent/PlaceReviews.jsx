@@ -1,7 +1,8 @@
 import styles from './PlaceReviews.module.css';
-import {useState} from 'react';
-export function PlaceReviews() {
+import { submitRating } from '../../../api/placesApi.js';
+import {useState,useEffect} from 'react';
 
+export function PlaceReviews({place}) {
 
     const person = {
         id: 99,
@@ -63,7 +64,70 @@ export function PlaceReviews() {
         }
     ];
 
+
+
     const [showModal, setShowModal] = useState(false);
+    const noiseOptions = ['very quiet', 'quiet', 'moderate', 'loud', 'very loud'];
+    const footTrafficOptions = ['empty', 'test1', 'moderate', 'test', 'heavy traffic'];
+    const seatingCapacityOptions = ["Plenty of seats", "Some seats", "Limited seats", "Usually full"];
+    const outletOptions = [  "Plenty of outlets","Some outlets available","Limited outlets","No visible outlets"]
+    const parkingOptions = [  "Plenty of parking", "Moderate parking", "Limited parking","Very hard to park"]
+    const [noiseOption, setNoiseOption] = useState("");
+    const [footTrafficOption, setFootTrafficOption] = useState("");
+    const [seatingCapacityOption, setSeatingCapacityOption] = useState("");
+    const [outletOption, setOutletOptions] = useState ("");
+    const [parkingOption, setParkingOption] = useState ("");
+    const [comment, setComment] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+    const handleSubmit = async () => {
+        if (!noiseOption || !footTrafficOption || !seatingCapacityOption || !outletOption) {
+            alert("Please fill out all categories before submitting.");
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            console.log(place.name);
+            console.log(place.address);
+            console.log( place.google_place_id);
+            console.log(noiseOptions.indexOf(noiseOption));
+            await submitRating({
+                google_place_id: place.google_place_id,
+                name: place.name,
+                address: place.address,
+                noise: noiseOption,
+                foot_traffic: footTrafficOption,
+                outlet: outletOption,
+                seating: seatingCapacityOption,
+                parking: parkingOption,
+                comments: comment,
+            });
+            // reset form
+            setNoiseOption("");
+            setFootTrafficOption("");
+            setSeatingCapacityOption("");
+            setOutletOptions("");
+            setComment("");
+            setShowModal(false);
+        } catch (err) {
+            console.error("Failed to submit review:", err);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    useEffect(() => {
+    if (showModal) {
+        document.body.style.overflow = "hidden";
+    } else {
+        document.body.style.overflow = "auto";
+    }
+
+    return () => {
+        document.body.style.overflow = "auto";
+    };
+    }, [showModal]);
+
 
     return (
         <div className={styles.dynamicReviewsSection}>
@@ -99,21 +163,106 @@ export function PlaceReviews() {
                         </div>
 
 
-                         {/*Modal Free Response Text */}
-
-                         {/*Modal Submit button */}
-
-                        <div className={styles.modalCommentsOuter}>
-                        <textarea
-                            className={styles.modalCommentsInner}
-                            name="content"
-                            placeholder="Tell us about your experience...."
-                        />
+                    <div className={styles.modalContent}>
+                        {/*Modal Category Review Section */}
+                        <div className = {styles.categoryReview}>
+                            <h3 className = {styles.categoryHeader}q>Noise level</h3>
+                            <div className = {styles.categoryPills}>
+                                {noiseOptions.map((option) =>(
+                                    <button type ="button" key={option} onClick={() => setNoiseOption(option)} className={`
+                                        ${styles.pillOption}
+                                        ${noiseOption === option ? styles.pillOptionActive : ""}
+                                        `}
+                                    >
+                                        {option}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
+                        <div className = {styles.categoryReview}>
+                            <h3 className = {styles.categoryHeader}>Foot Traffic</h3>
+                            <div className = {styles.categoryPills}>
+                                {footTrafficOptions.map((option) =>(
+                                    <button type ="button" key={option} onClick={() => setFootTrafficOption(option)} className={`
+                                        ${styles.pillOption}
+                                        ${footTrafficOption === option ? styles.pillOptionActive : ""}
+                                        `}
+                                    >
+                                        {option}
+                                    </button>
+                                    
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className = {styles.categoryReview}>
+                            <h3 className = {styles.categoryHeader}>Seating Capacity</h3>
+                            <div className = {styles.categoryPills}>
+                                {seatingCapacityOptions.map((option) =>(
+                                    <button type ="button" key={option} onClick={() => setSeatingCapacityOption(option)} className={`
+                                        ${styles.pillOption}
+                                        ${seatingCapacityOption === option ? styles.pillOptionActive : ""}
+                                        `}
+                                    >
+                                        {option}
+                                    </button>
+                                    
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className = {styles.categoryReview}>
+                            <h3 className = {styles.categoryHeader}>Outlets Availability</h3>
+                            <div className = {styles.categoryPills}>
+                                {outletOptions.map((option) =>(
+                                    <button type ="button" key={option} onClick={() => setOutletOptions(option)} className={`
+                                        ${styles.pillOption}
+                                        ${outletOption === option ? styles.pillOptionActive : ""}
+                                        `}
+                                    >
+                                        {option}
+                                    </button>
+                                    
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className = {styles.categoryReview}>
+                            <h3 className = {styles.categoryHeader}>Parking Availability</h3>
+                            <div className = {styles.categoryPills}>
+                                {parkingOptions.map((option) =>(
+                                    <button type ="button" key={option} onClick={() => setParkingOption(option)} className={`
+                                        ${styles.pillOption}
+                                        ${parkingOption === option ? styles.pillOptionActive : ""}
+                                        `}
+                                    >
+                                        {option}
+                                    </button>
+                                    
+                                ))}
+                            </div>
+                        </div>
+
+
+                        {/*Modal Free Response Text */}
+                        <div className={styles.modalCommentsOuter}>
+                            <textarea
+                                className={styles.modalCommentsInner}
+                                name="content"
+                                placeholder="Tell us about your experience...."
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                            />
+                        </div>
+
+
+                    </div>
+
+                        {/*Modal Submit button */}
                         <div className = {styles.modalBottom}>
-                            <button className = {styles.submitButton}>
-                                Post Review
+                            <button className={styles.submitButton} onClick={handleSubmit} disabled={submitting}>
+                                {submitting ? "Posting..." : "Post Review"}
                             </button>
                         </div>
 

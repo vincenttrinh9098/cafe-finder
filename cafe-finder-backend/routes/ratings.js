@@ -41,7 +41,7 @@ router.get("/:google_place_id", async (req, res) => {
 
 // POST /api/ratings                  ← submit a rating
 router.post("/", async (req, res) => {
-  const { google_place_id, name, address, foot_traffic, parking, outlets, noise, vibe } = req.body;
+  const { google_place_id, name, address, foot_traffic, parking, outlet, noise, seating, comments } = req.body;
 
   try {
     const { data: place, error: placeError } = await supabase
@@ -54,8 +54,8 @@ router.post("/", async (req, res) => {
 
     const { error: ratingError } = await supabase
       .from("ratings")
-      .insert({ place_id: place.id, foot_traffic, parking, outlets, noise});
-
+      .insert({ place_id: place.id, address, name, foot_traffic, parking, outlet, noise,seating,comments });
+      
     if (ratingError) return res.status(500).json({ error: ratingError.message });
 
     res.json({ success: true });
