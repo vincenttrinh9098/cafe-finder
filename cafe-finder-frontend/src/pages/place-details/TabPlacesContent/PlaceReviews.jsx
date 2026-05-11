@@ -1,5 +1,5 @@
 import styles from './PlaceReviews.module.css';
-
+import {useState} from 'react';
 export function PlaceReviews() {
 
 
@@ -63,6 +63,7 @@ export function PlaceReviews() {
         }
     ];
 
+    const [showModal, setShowModal] = useState(false);
 
     return (
         <div className={styles.dynamicReviewsSection}>
@@ -76,14 +77,49 @@ export function PlaceReviews() {
                             <img src={person.profileImage} alt={person.name} />
                             <p>{person.name}</p>
                         </div>
-
-                        <div className={styles.leaveReviewText}>
+                        <div className={styles.leaveReviewText} onClick={() => setShowModal(true)}>
                             <p>Tap to leave a review....</p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            {showModal && (
+                <div className={styles.overlay}>
+                    <div className={styles.modal}>
+
+
+                        {/*Modal Header */}
+                        <div className = {styles.modalHeader}>
+                            <span onClick={() => setShowModal(false)}>
+                                Back
+                            </span>                       
+                            <span>Write a Review</span>
+                        </div>
+
+
+                         {/*Modal Free Response Text */}
+
+                         {/*Modal Submit button */}
+
+                        <div className={styles.modalCommentsOuter}>
+                        <textarea
+                            className={styles.modalCommentsInner}
+                            name="content"
+                            placeholder="Tell us about your experience...."
+                        />
+                        </div>
+
+                        <div className = {styles.modalBottom}>
+                            <button className = {styles.submitButton}>
+                                Post Review
+                            </button>
                         </div>
 
                     </div>
                 </div>
-            </div>
+            )}
 
 
             <div className={styles.reviews}>

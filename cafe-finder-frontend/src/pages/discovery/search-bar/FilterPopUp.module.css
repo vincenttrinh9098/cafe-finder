@@ -1,0 +1,59 @@
+/*                              */
+/*    Filter Section Start      */
+/*                              */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+
+.modal {
+  width: 100%;
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  animation: slideUp 0.3s ease-out;
+}
+
+.innerModal {
+  padding: 10px;
+}
+.filterSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.filterTitle {
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.filterRow {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* label styling */
+.filterRow label {
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* radio styling */
+.filterRow input {
+  transform: scale(1.2); 
+  cursor: pointer;
+}
+
+/*                              */
+/*     Filter Section End       */
+/*                              */

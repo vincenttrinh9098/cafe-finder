@@ -1,11 +1,36 @@
 /*                          */
 /* Dynamic Info Section start */
 /*                          */
-.dynamicInfo{
-  border-bottom: 2px solid #6D5757; /* highlight */
+.dynamicInfo {
+  border-bottom: 2px solid #6D5757;
   width: 100%;
-  padding:10px;
-  padding-left:15px;
+  padding: 10px 10px 10px 15px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dynamicInfo h2 {
+  margin-bottom: 0.5rem;
+}
+
+/* EACH ROW */
+.infoRow {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  align-items: center;
+}
+
+/* DAY COLUMN */
+.highlight {
+  font-weight: 600;
+}
+
+/* HOURS COLUMN */
+.infomation {
+  text-align: left;
+  overflow: hidden;
 }
 /*                          */
 /* Dynamic Info Section End */
