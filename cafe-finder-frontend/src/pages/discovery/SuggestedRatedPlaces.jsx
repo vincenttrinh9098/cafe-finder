@@ -39,7 +39,6 @@ useEffect(() => {
       setLoading(false);
     }
   };
-
   fetchNearby();
   }, [userLocation]);
 
@@ -105,6 +104,7 @@ useEffect(() => {
                     <span className={styles.suggestionAttributeChip}>No reviews yet</span>
                   )}
                 </div>
+
               </div>
 
             </div>
