@@ -140,7 +140,7 @@ export function Discovery() {
         </>
         ) : (
           <>
-            <TopRatedPlaces />
+            <TopRatedPlaces userLocation={userLocation}/>
             <SuggestedRatedPlaces userLocation={userLocation} />
           </>
         )}

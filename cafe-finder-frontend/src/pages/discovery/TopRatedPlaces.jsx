@@ -1,36 +1,44 @@
 import { Link } from 'react-router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect} from 'react';
 import styles from './TopRatedPlaces.module.css';
 import storeTestImg from './store-test.png';
-import { getTopRatedPlaces,getPlaceAttributes} from '../../api/placesApi.js';
+import { getTopRatedPlaces, getPlaceAttributes } from '../../api/placesApi.js';
+import { getDistance } from '../../utils/distance.js';
 
-export function TopRatedPlaces() {
+export function TopRatedPlaces({userLocation}) {
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const fetchTopRated = async () => {
-    try {
-      const places = await getTopRatedPlaces();
-      const top = places.slice(0, 15);
 
-      const withAttributes = await Promise.all(
-        top.map(async (place) => {
-          const attributes = await getPlaceAttributes(place.google_place_id);
-          return { ...place, attributes };
-        })
-      );
+  useEffect(() => {
+    const fetchTopRated = async () => {
+      try {
+        const places = await getTopRatedPlaces();
+        const top = places.slice(0, 5).map(place => ({
+          ...place,
+          distance: userLocation 
+            ? getDistance(userLocation.lat, userLocation.lng, place.lat, place.lng)
+            : null
+        }));
 
-      setStores(withAttributes);
-    } catch (err) {
-      console.error("Failed to fetch top rated:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+        const withAttributes = await Promise.all(
+          top.map(async (place) => {
+            const attributes = await getPlaceAttributes(place.google_place_id);
+            return { ...place, attributes };
+          })
+        );
 
-  fetchTopRated();
-  }, []); 
+        setStores(withAttributes);
+      } catch (err) {
+        console.error("Failed to fetch top rated:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTopRated();
+  }, [userLocation]);
+
 
 
   if (loading) return <p>Loading top rated...</p>;
@@ -86,7 +94,7 @@ useEffect(() => {
                     <span className={styles.topRatedAttributeChip}>No reviews yet</span>
                   )}
                 </div>
-                
+
               </div>
             </div>
           </Link>

@@ -5,7 +5,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
 
     const filtered = reviews.filter(r => r.comments || (r.photos && r.photos.length > 0));
 
-    if (filtered.length === 0) return <p>No reviews yet. Be the first!</p>;
+    if (filtered.length === 0) return <p></p>;
 
     return (
         <div className={styles.reviews}>

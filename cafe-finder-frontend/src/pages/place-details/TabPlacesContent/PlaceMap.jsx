@@ -26,7 +26,9 @@ export function PlaceMap({ place }) {
         </div>
 
         <div className={styles.mapDistance}>
-          <p>{place.distance.toFixed(1)} mi</p>
+            {place.distance != null && (
+              <p>📍 {place.distance.toFixed(1)} mi</p>
+            )}
         </div>
 
         <div className={styles.mapAddress}>
