@@ -60,9 +60,9 @@ export function SearchedPlaces({ places, query, searchResults }) {
             <div className={styles.searchedRatedCardContent}>
               <div className={styles.searchedRatedCardTop}>
                 <div className={styles.searchedRatedCardLeft}>
-                  <h2>{place.name.length > 20 ? place.name.slice(0, 20) + ".." : place.name}</h2>
+                  <h2>{place.name.length > 13 ? place.name.slice(0, 13) + ".." : place.name}</h2>
                   {place.distance != null && (
-                    <p>📍 {place.distance?.toFixed(1)} mi</p>
+                    <p className = {styles.distance}>{place.distance?.toFixed(1)} mi</p>
                   )}
                 </div>
                 <div className={styles.searchedRatedCardRight}>
