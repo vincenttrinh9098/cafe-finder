@@ -1,47 +1,85 @@
+suggestedRatedPlaces: code to load more places on demand on scroll:
+
 import { Link } from 'react-router';
 import styles from './SuggestedRatedPlaces.module.css'
 import storeTestImg from './store-test.png';
 import { getNearbyPlaces, getPlaceAttributes } from '../../api/placesApi.js';
-import { useState, useEffect,useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { getDistance } from '../../utils/distance.js';
 
 export function SuggestedRatedPlaces({ userLocation }) {
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [nextPageToken, setNextPageToken] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-const hasFetched = useRef(false);
+  // update initial fetch
+  useEffect(() => {
+    if (!userLocation) return;
 
-useEffect(() => {
-  if (!userLocation || hasFetched.current) return;
-  hasFetched.current = true;
+    const fetchNearby = async () => {
+      try {
+        const { places, nextPageToken: token } = await getNearbyPlaces(userLocation.lat, userLocation.lng);
+        const withAttributes = await Promise.all(
+          places.map(async (place) => {
+            const attributes = await getPlaceAttributes(place.google_place_id);
+            return { 
+              ...place, 
+              distance: getDistance(userLocation.lat, userLocation.lng, place.lat, place.lng),
+              attributes 
+            };
+          })
+        );
+        setStores(withAttributes);
+        setNextPageToken(token);
+      } catch (err) {
+        console.error("Failed to fetch nearby:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const fetchNearby = async () => {
+    fetchNearby();
+  }, [userLocation]);
+
+  
+  /*
+  // load more
+  const loadMore = async () => {
+    if (!nextPageToken || loadingMore || !userLocation) return;
+    setLoadingMore(true);
     try {
-      const { places } = await getNearbyPlaces(userLocation.lat, userLocation.lng);
-      
-      // limit to 20 places before fetching attributes
-      const limited = places.slice(0, 20);
-      
+      const { places, nextPageToken: newToken } = await getNearbyPlaces(userLocation.lat, userLocation.lng, nextPageToken);
       const withAttributes = await Promise.all(
-        limited.map(async (place) => {
+        places.map(async (place) => {
           const attributes = await getPlaceAttributes(place.google_place_id);
-          return { 
-            ...place, 
+          return {
+            ...place,
             distance: getDistance(userLocation.lat, userLocation.lng, place.lat, place.lng),
-            attributes 
+            attributes
           };
         })
       );
-      setStores(withAttributes);
+      setStores(prev => [...prev, ...withAttributes]);
+      setNextPageToken(newToken);
     } catch (err) {
-      console.error("Failed to fetch nearby:", err);
+      console.error("Failed to load more:", err);
     } finally {
-      setLoading(false);
+      setLoadingMore(false);
     }
   };
 
-  fetchNearby();
-  }, [userLocation]);
+  // scroll detection
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
+      if (nearBottom) loadMore();
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [nextPageToken, loadingMore]);
+  */
 
 
   if (loading) return <p>Loading nearby places...</p>;
@@ -84,7 +122,7 @@ useEffect(() => {
               <div className={styles.suggestionRatedCardContent}>
                 <div className={styles.suggestionRatedCardTop}>
                   <div className={styles.suggestionRatedCardLeft}>
-                    <h2>{store.name.length > 13 ? store.name.slice(0, 13) + ".." : store.name}</h2>
+                    <h2>{store.name.length > 15 ? store.name.slice(0, 15) + ".." : store.name}</h2>
                     {store.distance != null && (
                       <p>📍 {store.distance.toFixed(1)} mi</p>
                     )}

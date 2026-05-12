@@ -1,91 +1,97 @@
 import { Link } from 'react-router';
-import styles from './TopRatedPlaces.module.css'
+import { useState, useEffect } from 'react';
+import styles from './TopRatedPlaces.module.css';
 import storeTestImg from './store-test.png';
+import { getTopRatedPlaces,getPlaceAttributes} from '../../api/placesApi.js';
 
+export function TopRatedPlaces() {
+  const [stores, setStores] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-export function TopRatedPlaces(){
-  const store1 = {
-    id:1,
-    name: "Matcha House",
-    image: storeTestImg,
-    rating: 9.9,
-    distance: "0.3mi",
-    attributes: [
-      "Low noise",
-      "Low foot traffic",
-      "Moderate seating capacity",
-      "Parking lot"
-    ]
+useEffect(() => {
+  const fetchTopRated = async () => {
+    try {
+      const places = await getTopRatedPlaces();
+      const top = places.slice(0, 15);
+
+      const withAttributes = await Promise.all(
+        top.map(async (place) => {
+          const attributes = await getPlaceAttributes(place.google_place_id);
+          return { ...place, attributes };
+        })
+      );
+
+      setStores(withAttributes);
+    } catch (err) {
+      console.error("Failed to fetch top rated:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const store2 = {
-    id:2,
-    name: "Greem Tea",
-    image: storeTestImg,
-    rating: 9.9,
-    distance: "0.3mi",
-    attributes: [
-      "Low noise",
-      "Low foot traffic",
-      "Moderate seating capacity",
-      "Parking lot"
-    ]
-  };
+  fetchTopRated();
+  }, []); 
 
 
-  const stores = [store1, store2]// store1, store2, store1];
+  if (loading) return <p>Loading top rated...</p>;
 
 
-    //{/* Discovery page top rated container */}
-    return(
+  return (
+    <div className={styles.topRatedSection}>
+      <div className={styles.topRatedHeader}>
+        <h2>Top Rated</h2>
+      </div>
+
       <div className={styles.topRatedContainer}>
-        
         {stores.map((store) => (
-            <Link
-              key={store.id}
-              //to={`/place/${store.name}`}   // dynamic route
-              to={'/place'}
-              className={styles.cardLink}   // remove default link styles
-            >
+          <Link
+            key={store.google_place_id}
+            to="/place"
+            state={{ place: store }}
+            className={styles.cardLink}
+          >
             <div className={styles.topRatedCard}>
-            {/* Top half: image */}
-            <div className={styles.topRatedCardImageWrapper}>
-              <img
-                src={store.image}
-                alt={store.name}
-                className={styles.topRatedCardImage}
-              />
-            </div>
-
-            {/* Bottom half: info */}
-            <div className={styles.topRatedCardContent}>
-
-              {/* Top row */}
-              <div className={styles.topRatedCardTop}>
-                <div className={styles.topRatedCardLeft}>
-                  <h2>{store.name}</h2>
-                  <p>📍 {store.distance}</p>
-                </div>
-
-                <div className={styles.topRatedCardRight}>
-                  <p>⭐ {store.rating}</p>
-                </div>
+              <div className={styles.topRatedCardImageWrapper}>
+                {store.photo_reference ? (
+                  <img
+                    src={`http://localhost:3000/api/places/photo?ref=${store.photo_reference}`}
+                    alt={store.name}
+                    className={styles.topRatedCardImage}
+                  />
+                ) : (
+                  <img src={storeTestImg} alt={store.name} className={styles.topRatedCardImage} />
+                )}
               </div>
 
-              {/* Attributes row */}
-              <div className={styles.topRatedAttributeRow}>
-                {store.attributes.map((attr) => (
-                  <span key={attr} className={styles.topRatedAttributeChip}>
-                    {attr}
-                  </span>
-                ))}
-              </div>
+              <div className={styles.topRatedCardContent}>
 
+                <div className={styles.topRatedCardTop}>
+                  <div className={styles.topRatedCardLeft}>
+                    <h2>{store.name.length > 15 ? store.name.slice(0, 15) + ".." : store.name}</h2>
+                  </div>
+
+                  <div className={styles.topRatedCardRight}>
+                    <p>⭐ {store.rating}</p>
+                  </div>
+                </div>
+
+                <div className={styles.topRatedAttributeRow}>
+                  {store.attributes?.length > 0 ? (
+                    store.attributes.map((attr) => (
+                      <span key={attr} className={styles.topRatedAttributeChip}>
+                        {attr}
+                      </span>
+                    ))
+                  ) : (
+                    <span className={styles.topRatedAttributeChip}>No reviews yet</span>
+                  )}
+                </div>
+                
+              </div>
             </div>
-          </div>
           </Link>
         ))}
       </div>
-
-    );
+    </div>
+  );
 }

@@ -31,6 +31,47 @@ router.get("/reviews/:google_place_id", async (req, res) => {
   }
 });
 
+router.get("/attributes/:google_place_id", async (req, res) => {
+  const { google_place_id } = req.params;
+
+  try {
+    const { data: place } = await supabase
+      .from("places")
+      .select("id")
+      .eq("google_place_id", google_place_id)
+      .single();
+
+    if (!place) return res.json({ attributes: [] });
+
+    const { data: ratings } = await supabase
+      .from("ratings")
+      .select("noise, foot_traffic, seating, outlet, parking")
+      .eq("place_id", place.id);
+
+    if (!ratings || ratings.length === 0) return res.json({ attributes: [] });
+
+    // get most common value for each category
+    const mostCommon = (key) => {
+      const counts = {};
+      ratings.forEach(r => {
+        if (r[key]) counts[r[key]] = (counts[r[key]] || 0) + 1;
+      });
+      return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+    };
+
+    const attributes = [
+      mostCommon("noise"),
+      mostCommon("foot_traffic"),
+      mostCommon("seating"),
+      mostCommon("outlet"),
+      mostCommon("parking"),
+    ].filter(Boolean); // remove nulls
+
+    res.json({ attributes });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 //Submit a photos review
 const upload = multer({ storage: multer.memoryStorage() });
