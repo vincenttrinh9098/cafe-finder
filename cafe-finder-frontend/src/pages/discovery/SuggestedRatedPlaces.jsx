@@ -20,7 +20,7 @@ useEffect(() => {
       const { places } = await getNearbyPlaces(userLocation.lat, userLocation.lng);
       
       // limit to 20 places before fetching attributes
-      const limited = places.slice(0, 20);
+      const limited = places.slice(0, 10);
       
       const withAttributes = await Promise.all(
         limited.map(async (place) => {
