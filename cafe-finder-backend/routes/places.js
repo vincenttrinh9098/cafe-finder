@@ -148,4 +148,28 @@ router.get("/top-rated", async (req, res) => {
   }
 });
 
+router.get("/eta", async (req, res) => {
+  const { origin_lat, origin_lng, dest_lat, dest_lng } = req.query;
+  if (!origin_lat || !origin_lng || !dest_lat || !dest_lng) 
+    return res.status(400).json({ error: "Missing coordinates" });
+
+  try {
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin_lat},${origin_lng}&destinations=${dest_lat},${dest_lng}&mode=driving&key=${process.env.GOOGLE_API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const element = data.rows?.[0]?.elements?.[0];
+    if (!element || element.status !== "OK") {
+      return res.json({ duration: null, distance: null });
+    }
+
+    res.json({
+      duration: element.duration.text,   // e.g. "12 mins"
+      distance: element.distance.text,   // e.g. "3.2 mi"
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

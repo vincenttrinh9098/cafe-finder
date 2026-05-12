@@ -10,11 +10,11 @@ export function SubmitReview({ place, onReviewSubmitted }) {
     const [photos, setPhotos] = useState([]);
     const MAX_PHOTOS = 5;
 
-    const noiseOptions = ['very quiet', 'quiet', 'moderate', 'loud', 'very loud'];
-    const footTrafficOptions = ['empty', 'test1', 'moderate', 'test', 'heavy traffic'];
-    const seatingCapacityOptions = ["Plenty of seats", "Some seats", "Limited seats", "Usually full"];
-    const outletOptions = ["Plenty of outlets", "Some outlets available", "Limited outlets", "No visible outlets"];
-    const parkingOptions = ["Plenty of parking", "Moderate parking", "Limited parking", "Very hard to park"];
+    const noiseOptions = ["Very quiet", "Quiet", "Moderate noise", "Loud", "Very loud"];
+    const footTrafficOptions = ["Empty","Light foot traffic","Moderate foot traffic","Busy","Heavy foot traffic"];
+    const seatingCapacityOptions = ["Plenty of seats","Some seats","Limited seats","Usually full"];
+    const outletOptions = ["Plenty of outlets","Some outlets available","Limited outlets","No visible outlets"];
+    const parkingOptions = ["Plenty of parking","Moderate parking","Limited parking","Very hard to park"];
 
     const [noiseOption, setNoiseOption] = useState("");
     const [footTrafficOption, setFootTrafficOption] = useState("");
@@ -68,7 +68,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                 photos: photoUrls,
             });
             resetForm();
-            onReviewSubmitted(); // ← tells parent to refresh reviews
+            onReviewSubmitted(); 
         } catch (err) {
             console.error("Failed to submit review:", err);
         } finally {

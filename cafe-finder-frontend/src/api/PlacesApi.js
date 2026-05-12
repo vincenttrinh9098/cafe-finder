@@ -60,3 +60,9 @@ export async function uploadReviewPhoto(file) {
   const data = await res.json();
   return data.url;
 }
+
+export async function getEta(originLat, originLng, destLat, destLng) {
+  const params = new URLSearchParams({ origin_lat: originLat, origin_lng: originLng, dest_lat: destLat, dest_lng: destLng });
+  const res = await fetch(`${BASE_URL}/places/eta?${params.toString()}`);
+  return res.json();
+}
