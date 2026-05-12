@@ -60,4 +60,92 @@ router.get("/details", async (req, res) => {
   }
 });
 
+router.get("/nearby", async (req, res) => {
+  const { lat, lng } = req.query;
+  if (!lat || !lng) return res.status(400).json({ error: "Missing lat/lng" });
+
+  try {
+    const queries = ["cafe", "bakery", "boba", "tea house", "matcha"];
+
+    const fetchQuery = (query) =>
+      fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&location=${lat},${lng}&radius=5000&key=${process.env.GOOGLE_API_KEY}`)
+        .then(r => r.json())
+        .then(d => d.results ?? []);
+
+    const results = await Promise.all(queries.map(fetchQuery));
+
+    const seen = new Set();
+    const merged = results.flat().filter(p => {
+      if (seen.has(p.place_id)) return false;
+      seen.add(p.place_id);
+      return true;
+    });
+
+    const places = merged.map(p => ({
+      google_place_id: p.place_id,
+      name: p.name,
+      address: p.formatted_address,
+      rating: p.rating,
+      open_now: p.opening_hours?.open_now,
+      lat: p.geometry.location.lat,
+      lng: p.geometry.location.lng,
+      photo_reference: p.photos?.[0]?.photo_reference || null,
+    }));
+
+    res.json({ places });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+ 
+
+
+router.get("/top-rated", async (req, res) => {
+  try {
+    const types = ["cafe", "bakery"];
+    const keywords = ["boba", "tea house", "matcha cafe"];
+
+    const fetchType = (type) =>
+      fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${type}&key=${process.env.GOOGLE_API_KEY}`)
+        .then(r => r.json())
+        .then(d => d.results ?? []);
+
+    const fetchKeyword = (keyword) =>
+      fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(keyword)}&type=cafe&key=${process.env.GOOGLE_API_KEY}`)
+        .then(r => r.json())
+        .then(d => d.results ?? []);
+
+    const [typeResults, keywordResults] = await Promise.all([
+      Promise.all(types.map(fetchType)),
+      Promise.all(keywords.map(fetchKeyword)),
+    ]);
+
+    const seen = new Set();
+    const merged = [...typeResults.flat(), ...keywordResults.flat()].filter(p => {
+      if (seen.has(p.place_id)) return false;
+      seen.add(p.place_id);
+      return true;
+    });
+
+    const places = merged
+      .filter(p => p.rating)
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 20)
+      .map(p => ({
+        google_place_id: p.place_id,
+        name: p.name,
+        address: p.formatted_address,
+        rating: p.rating,
+        open_now: p.opening_hours?.open_now,
+        lat: p.geometry.location.lat,
+        lng: p.geometry.location.lng,
+        photo_reference: p.photos?.[0]?.photo_reference || null,
+      }));
+
+    res.json({ places });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

@@ -4,15 +4,21 @@ import { searchPlaces } from '../../api/placesApi.js';
 
 import {FilterPopUp} from './search-bar/FilterPopUp.jsx';
 
-export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToken })  {
+export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToken, activeSuggestion, setActiveSuggestion,onHome}) {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const suggestions = ["All", "Coffee", "Tea", "Bakery", "Matcha", "Library"];
 
-  const suggestions = ["Coffee", "Tea", "Bakery", "Matcha", "Library"];
 
   const handleSelect = (item) => {
+    if (item === "All") {
+    onHome();
+    setActiveSuggestion("All");
+    return;
+  }
     setSearch(item);
+    setActiveSuggestion(item);
     handleSearch(item);
     
   };
@@ -23,16 +29,16 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
     setQuery(searchQuery);
     setLoading(true);
     try {
-      const { places, nextPageToken: newToken } = await searchPlaces(searchQuery); // ← destructure
+      const { places, nextPageToken: newToken } = await searchPlaces(searchQuery); 
       setResults(places);
-      setNextPageToken(newToken); // ← use the new token from the response
+      setNextPageToken(newToken); 
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
-
+  console.log("render activeSuggestion:", activeSuggestion);
   return (
     <div className={styles.header}>
       <div className={styles.searchWrapper}>
@@ -51,7 +57,7 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
             <input
               className={styles.searchBar}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {setSearch(e.target.value); setActiveSuggestion("");}}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               placeholder="Search cafes, tea spots, bakeries..."
             />
@@ -64,7 +70,7 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
           {suggestions.map((item) => (
             <div
               key={item}
-              className={styles.suggestionItem}
+              className={`${styles.suggestionItem} ${activeSuggestion === item ? styles.suggestionItemActive : ""}`}
               onClick={() => handleSelect(item)}
             >
               {item}

@@ -10,7 +10,6 @@ import { searchPlaces } from '../../api/placesApi.js';
 
 export function Discovery() {
   const { state } = useLocation();
-
   const [results, setResults] = useState(() => {
     if (state?.searchResults) return state.searchResults;
     try {
@@ -76,13 +75,10 @@ export function Discovery() {
       sessionStorage.removeItem("discoveryScroll");
     }
   }, [sortedResults]); 
-  
-const [nextPageToken, setNextPageToken] = useState(null);
-const [loadingMore, setLoadingMore] = useState(false);
+    
+  const [nextPageToken, setNextPageToken] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-// update handleSearch in SearchBar to return the token
-// and in Discovery, update setResults to also save the token:
-// you'll need to lift this into Discovery directly
 
   const loadMore = async () => {
     if (!nextPageToken || loadingMore) return;
@@ -109,20 +105,45 @@ const [loadingMore, setLoadingMore] = useState(false);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [nextPageToken, loadingMore]); // ← re-register when these change
 
+
+  const [activeSuggestion, setActiveSuggestion] = useState(
+    sessionStorage.getItem("activeSuggestion") ?? "All"
+  );
+
+  useEffect(() => {
+    sessionStorage.setItem("activeSuggestion", activeSuggestion);
+  }, [activeSuggestion]);
+
+  const handleHome = () => {
+    sessionStorage.clear();
+    setResults([]);
+    setQuery("");
+    setActiveSuggestion("");
+    setNextPageToken(null);
+  };
+
   return (
     <div className={styles.discoveryPage}>
-      <SearchBar setResults={setResults} setSort={setSort} sort={sort} setQuery={setQuery} setNextPageToken={setNextPageToken} />
-      {sortedResults.length > 0 ? (
+          <SearchBar 
+            setResults={setResults} 
+            setSort={setSort} 
+            sort={sort} 
+            setQuery={setQuery} 
+            setNextPageToken={setNextPageToken}
+            activeSuggestion={activeSuggestion}
+            setActiveSuggestion={setActiveSuggestion}
+            onHome = {handleHome}
+          />      {sortedResults.length > 0 ? (
         <>
           <SearchedPlaces places={sortedResults} query={query} searchResults={results} />
           {loadingMore && <p style={{ textAlign: "center", padding: "1rem" }}>Loading more...</p>}
         </>
-      ) : (
-        <>
-          <TopRatedPlaces />
-          <SuggestedRatedPlaces />
-        </>
-      )}
+        ) : (
+          <>
+            <TopRatedPlaces />
+            <SuggestedRatedPlaces userLocation={userLocation} />
+          </>
+        )}
     </div>
   );
 }

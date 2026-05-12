@@ -11,17 +11,24 @@
 .topRatedContainer {
   display: flex;
   gap: 20px;
-
   overflow-x: auto;
-  padding: 20px;
+  padding: 12px 20px 20px 20px;
 
   scroll-snap-type: x mandatory;
 
 }
+
+
 .topRatedContainer::-webkit-scrollbar {
   display: none;
 }
+.topRatedHeader{
+  padding: 10px 20px 0px 20px;
+}
 
+.topRatedHeader h2{
+  margin: 0;
+}
 .topRatedCard {
   flex: 0 0 auto;              /* keeps horizontal scroll behavior */
   width: 380px;                /* slightly smaller = better fit */
