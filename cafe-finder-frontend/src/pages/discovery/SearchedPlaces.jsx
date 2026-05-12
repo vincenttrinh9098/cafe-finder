@@ -31,6 +31,7 @@ export function SearchedPlaces({ places, query, searchResults }) {
   }, [places]); // ← re-run when places changes
 
   const displayPlaces = stores.length > 0 ? stores : places;
+  if (loading) return <p>Loading searched places...</p>;
 
   return (
     <div className={styles.searchedRatedContainer}>
