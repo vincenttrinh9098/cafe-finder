@@ -1,13 +1,10 @@
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-import { useState, useEffect } from 'react';
 import styles from './PlaceMap.module.css';
-import { getEta } from '../../../api/placesApi.js';
 
 const containerStyle = { width: "100%", height: "220px" };
 const LIBRARIES = []; // ← must be outside component
 
-export function PlaceMap({ place, userLocation }) {
-  //const [eta, setEta] = useState(null);
+export function PlaceMap({ place }) {
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -15,19 +12,6 @@ export function PlaceMap({ place, userLocation }) {
   });
 
   const center = { lat: place?.lat, lng: place?.lng };
-
-  useEffect(() => {
-    if (!userLocation || !place?.lat || !place?.lng) return;
-    const fetchEta = async () => {
-      try {
-        //const data = await getEta(userLocation.lat, userLocation.lng, place.lat, place.lng);
-        //setEta(data);
-      } catch (err) {
-        console.error("Failed to fetch ETA:", err);
-      }
-    };
-    fetchEta();
-  }, [userLocation, place]);
 
   if (!place?.lat || !place?.lng) return <p>Location not available</p>;
   if (!isLoaded) return <p>Loading map...</p>;
