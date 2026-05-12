@@ -64,6 +64,9 @@
   padding: 12px;
 }
 
+.distance{
+  font-weight:500;
+}
 .suggestionRatedCardTop {
   display: flex;
   justify-content: space-between;

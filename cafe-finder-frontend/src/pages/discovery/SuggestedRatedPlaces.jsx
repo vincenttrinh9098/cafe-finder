@@ -84,8 +84,9 @@ useEffect(() => {
                 <div className={styles.suggestionRatedCardTop}>
                   <div className={styles.suggestionRatedCardLeft}>
                     <h2>{store.name.length > 13 ? store.name.slice(0, 13) + ".." : store.name}</h2>
+                    
                     {store.distance != null && (
-                      <p>📍 {store.distance.toFixed(1)} mi</p>
+                      <p className = {styles.distance}>{store.distance.toFixed(1)} mi</p>
                     )}
                   </div>
                   <div className={styles.suggestionRatedCardRight}>
