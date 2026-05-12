@@ -14,6 +14,13 @@ export async function getRatings(google_place_id) {
   return res.json();
 }
 
+export async function getReviews(google_place_id) {
+  const res = await fetch(`${BASE_URL}/ratings/reviews/${google_place_id}`);
+  const data = await res.json();
+  return data.reviews ?? [];
+}
+
+
 export async function submitRating(ratingData) {
   const res = await fetch(`${BASE_URL}/ratings`, {
     method: "POST",
@@ -21,4 +28,16 @@ export async function submitRating(ratingData) {
     body: JSON.stringify(ratingData),
   });
   return res.json();
+}
+
+export async function uploadReviewPhoto(file) {
+  const formData = new FormData();
+  formData.append("photo", file);
+
+  const res = await fetch(`${BASE_URL}/ratings/upload-photo`, {
+    method: "POST",
+    body: formData,
+  });
+  const data = await res.json();
+  return data.url;
 }

@@ -1,8 +1,9 @@
 import styles from './PlaceReviews.module.css';
-import { submitRating } from '../../../api/placesApi.js';
+import { submitRating,uploadReviewPhoto,getReviews} from '../../../api/placesApi.js';
 import {useState,useEffect} from 'react';
 
 export function PlaceReviews({place}) {
+
 
     const person = {
         id: 99,
@@ -10,59 +11,22 @@ export function PlaceReviews({place}) {
         profileImage: "https://randomuser.me/api/portraits/men/32.jpg"
     }
 
-    const reviews = [
-        {
-            id: 1,
-            name: "Alex Chen",
-            profileImage: "https://randomuser.me/api/portraits/men/32.jpg",
-            rating: 8.5,
-            review: "Great spot to study. It’s usually quiet in the mornings and the seating is comfortable. WiFi was solid too.",
-            photos: [
-                "https://images.unsplash.com/photo-1509042239860-f550ce710b93",
-                "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085"
-            ]
-        },
-        {
-            id: 2,
-            name: "Maya Rodriguez",
-            profileImage: "https://randomuser.me/api/portraits/women/44.jpg",
-            rating: 6.2,
-            review: "Nice aesthetic but it gets pretty loud in the afternoon. Coffee was good though.",
-            photos: [
-                "https://images.unsplash.com/photo-1521017432531-fbd92d768814"
-            ]
-        },
-        {
-            id: 3,
-            name: "Jordan Lee",
-            profileImage: "https://randomuser.me/api/portraits/men/65.jpg",
-            rating: 9.1,
-            review: "One of my favorite cafes. Super chill vibe, not too crowded, and plenty of outlets.",
-            photos: []
-        },
-        {
-            id: 4,
-            name: "Sofia Patel",
-            profileImage: "https://randomuser.me/api/portraits/women/68.jpg",
-            rating: 4.8,
-            review: "Way too noisy for me. Hard to focus. Might be better for casual hangouts.",
-            photos: [
-                "https://images.unsplash.com/photo-1554118811-1e0d58224f24"
-            ]
-        },
-        {
-            id: 5,
-            name: "Ethan Walker",
-            profileImage: "https://randomuser.me/api/portraits/men/12.jpg",
-            rating: 7.3,
-            review: "Decent place overall. Not too loud, not too quiet. Kind of a middle ground.",
-            photos: [
-                "https://images.unsplash.com/photo-1511920170033-f8396924c348",
-                "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb",
-                "https://images.unsplash.com/photo-1498804103079-a6351b050096"
-            ]
+    const [reviews, setReviews] = useState([]);
+    const [loadingReviews, setLoadingReviews] = useState(true);
+
+    useEffect(() => {
+    const fetchReviews = async () => {
+        try {
+        const data = await getReviews(place.google_place_id);
+        setReviews(data);
+        } catch (err) {
+        console.error("Failed to fetch reviews:", err);
+        } finally {
+        setLoadingReviews(false);
         }
-    ];
+    };
+    fetchReviews();
+    }, [place.google_place_id]);
 
 
 
@@ -78,19 +42,41 @@ export function PlaceReviews({place}) {
     const [outletOption, setOutletOptions] = useState ("");
     const [parkingOption, setParkingOption] = useState ("");
     const [comment, setComment] = useState("");
+    const [submitted, setSubmitted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const [photos, setPhotos] = useState([]); // { file, preview } objects
+    const MAX_PHOTOS = 5;
+    const handlePhotoSelect = (e) => {
+    const files = Array.from(e.target.files);
+    const remaining = MAX_PHOTOS - photos.length;
+    const toAdd = files.slice(0, remaining).map(file => ({
+        file,
+        preview: URL.createObjectURL(file)
+    }));
+    setPhotos(prev => [...prev, ...toAdd]);
+    };
+
+    const removePhoto = (index) => {
+    setPhotos(prev => prev.filter((_, i) => i !== index));
+    };
+
     const handleSubmit = async () => {
-        if (!noiseOption || !footTrafficOption || !seatingCapacityOption || !outletOption) {
-            alert("Please fill out all categories before submitting.");
+        setSubmitted(true);
+    
+        if(!noiseOption||!footTrafficOption||!outletOption||!seatingCapacityOption||!parkingOption){
+           // setShowModal(false);
             return;
         }
-
         setSubmitting(true);
         try {
-            console.log(place.name);
+            /*console.log(place.name);
             console.log(place.address);
             console.log( place.google_place_id);
-            console.log(noiseOptions.indexOf(noiseOption));
+            console.log(noiseOptions.indexOf(noiseOption));*/
+
+            const photoUrls = await Promise.all(
+            photos.map(p => uploadReviewPhoto(p.file))
+            );
             await submitRating({
                 google_place_id: place.google_place_id,
                 name: place.name,
@@ -101,20 +87,31 @@ export function PlaceReviews({place}) {
                 seating: seatingCapacityOption,
                 parking: parkingOption,
                 comments: comment,
+                photos: photoUrls,
             });
             // reset form
-            setNoiseOption("");
-            setFootTrafficOption("");
-            setSeatingCapacityOption("");
-            setOutletOptions("");
-            setComment("");
-            setShowModal(false);
+            resetForm();
+
+            const updatedReviews = await getReviews(place.google_place_id);
+            setReviews(updatedReviews);
         } catch (err) {
             console.error("Failed to submit review:", err);
         } finally {
             setSubmitting(false);
         }
     };
+
+    const resetForm = async () =>{
+            setNoiseOption("");
+            setFootTrafficOption("");
+            setSeatingCapacityOption("");
+            setOutletOptions("");
+            setParkingOption("");
+            setComment("");
+            setPhotos([]);
+            setSubmitted(false);
+            setShowModal(false);
+    }
 
     useEffect(() => {
     if (showModal) {
@@ -156,7 +153,7 @@ export function PlaceReviews({place}) {
 
                         {/*Modal Header */}
                         <div className = {styles.modalHeader}>
-                            <span onClick={() => setShowModal(false)}>
+                            <span onClick={() => { resetForm(); }}>
                                 Back
                             </span>                       
                             <span>Write a Review</span>
@@ -166,7 +163,10 @@ export function PlaceReviews({place}) {
                     <div className={styles.modalContent}>
                         {/*Modal Category Review Section */}
                         <div className = {styles.categoryReview}>
-                            <h3 className = {styles.categoryHeader}q>Noise level</h3>
+                            <h3 className = {styles.categoryHeader}>Noise level
+                                {submitted && !noiseOption && <span className={styles.requiredError}>* required</span>}
+                            </h3>
+                            
                             <div className = {styles.categoryPills}>
                                 {noiseOptions.map((option) =>(
                                     <button type ="button" key={option} onClick={() => setNoiseOption(option)} className={`
@@ -181,7 +181,9 @@ export function PlaceReviews({place}) {
                         </div>
 
                         <div className = {styles.categoryReview}>
-                            <h3 className = {styles.categoryHeader}>Foot Traffic</h3>
+                            <h3 className = {styles.categoryHeader}>Foot Traffic
+                                {submitted && !noiseOption && <span className={styles.requiredError}>* required</span>}                          
+                            </h3>
                             <div className = {styles.categoryPills}>
                                 {footTrafficOptions.map((option) =>(
                                     <button type ="button" key={option} onClick={() => setFootTrafficOption(option)} className={`
@@ -190,14 +192,15 @@ export function PlaceReviews({place}) {
                                         `}
                                     >
                                         {option}
-                                    </button>
-                                    
+                                    </button>      
                                 ))}
                             </div>
                         </div>
 
                         <div className = {styles.categoryReview}>
-                            <h3 className = {styles.categoryHeader}>Seating Capacity</h3>
+                            <h3 className = {styles.categoryHeader}>Seating Capacity
+                                {submitted && !noiseOption && <span className={styles.requiredError}>* required</span>}  
+                            </h3>
                             <div className = {styles.categoryPills}>
                                 {seatingCapacityOptions.map((option) =>(
                                     <button type ="button" key={option} onClick={() => setSeatingCapacityOption(option)} className={`
@@ -206,14 +209,15 @@ export function PlaceReviews({place}) {
                                         `}
                                     >
                                         {option}
-                                    </button>
-                                    
+                                    </button>                                 
                                 ))}
                             </div>
                         </div>
 
                         <div className = {styles.categoryReview}>
-                            <h3 className = {styles.categoryHeader}>Outlets Availability</h3>
+                            <h3 className = {styles.categoryHeader}>Outlets Availability
+                                {submitted && !noiseOption && <span className={styles.requiredError}>* required</span>}  
+                            </h3>
                             <div className = {styles.categoryPills}>
                                 {outletOptions.map((option) =>(
                                     <button type ="button" key={option} onClick={() => setOutletOptions(option)} className={`
@@ -222,14 +226,15 @@ export function PlaceReviews({place}) {
                                         `}
                                     >
                                         {option}
-                                    </button>
-                                    
+                                    </button>                              
                                 ))}
                             </div>
                         </div>
 
                         <div className = {styles.categoryReview}>
-                            <h3 className = {styles.categoryHeader}>Parking Availability</h3>
+                            <h3 className = {styles.categoryHeader}>Parking Availability
+                                {submitted && !noiseOption && <span className={styles.requiredError}>* required</span>}  
+                            </h3>
                             <div className = {styles.categoryPills}>
                                 {parkingOptions.map((option) =>(
                                     <button type ="button" key={option} onClick={() => setParkingOption(option)} className={`
@@ -238,8 +243,7 @@ export function PlaceReviews({place}) {
                                         `}
                                     >
                                         {option}
-                                    </button>
-                                    
+                                    </button>                         
                                 ))}
                             </div>
                         </div>
@@ -256,6 +260,30 @@ export function PlaceReviews({place}) {
                             />
                         </div>
 
+                        <div className={styles.categoryReview}>
+                            <h3 className={styles.categoryHeader}>Add Photos (up to 5)</h3>
+                            
+                            <div className={styles.photoPreviewRow}>
+                                {photos.map((p, i) => (
+                                <div key={i} className={styles.photoPreviewWrapper}>
+                                    <img src={p.preview} alt="preview" className={styles.photoPreview} />
+                                    <button type="button" onClick={() => removePhoto(i)} className={styles.removePhoto}>✕</button>
+                                </div>
+                                ))}
+                                {photos.length < MAX_PHOTOS && (
+                                <label className={styles.photoUploadLabel}>
+                                    +
+                                    <input
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    style={{ display: "none" }}
+                                    onChange={handlePhotoSelect}
+                                    />
+                                </label>
+                                )}
+                            </div>
+                        </div>
 
                     </div>
 
@@ -270,30 +298,54 @@ export function PlaceReviews({place}) {
                 </div>
             )}
 
-
             <div className={styles.reviews}>
-                {reviews.map((r) => (
-                    <div key={r.id} className={styles.dynamicReviews}>
+            {loadingReviews ? (
+                <p>Loading reviews...</p>
+            ) : reviews.length === 0 ? (
+                <p>No reviews yet. Be the first!</p>
+            ) : (
+                reviews.map((r) => (
+                <div key={r.id} className={styles.reviewCard}>
+
+                    <div className={styles.reviewGrid}>
+
+                    {/* LEFT: avatar */}
+                    <img
+                        className={styles.avatar}
+                        src="https://randomuser.me/api/portraits/lego/1.jpg"
+                        alt="user"
+                    />
+
+                    {/* RIGHT: all content */}
+                    <div className={styles.reviewContent}>
 
                         <div className={styles.reviewsHeader}>
-                            <img src={r.profileImage} alt={r.name} />
-                            <h3>{r.name}</h3>
-                            <p>Rating: {r.rating}</p>
+                        <div>
+                            <h4>Anonymous</h4>
+                        </div>
                         </div>
 
+                        {r.comments && (
                         <div className={styles.reviewText}>
-                            <p>{r.review}</p>
+                            <p>{r.comments}</p>
                         </div>
+                        )}
 
+                        {r.photos && r.photos.length > 0 && (
                         <div className={styles.reviewPhotos}>
-                            {r.photos.map((photo, i) => (
-                                <img key={i} src={photo} alt="review" />
+                            {r.photos.map((url, i) => (
+                            <img key={i} src={url} alt="review" />
                             ))}
                         </div>
-                    </div>
-                ))}
-            </div>
+                        )}
 
+                    </div>
+                    </div>
+
+                </div>
+                ))
+            )}
+            </div>
 
         </div>
     );

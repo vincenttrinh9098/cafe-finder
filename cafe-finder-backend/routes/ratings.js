@@ -1,9 +1,11 @@
 import express from "express";
 import supabase from "../supabase.js";
+import multer from "multer";
+
 const router = express.Router();
 
 // GET /api/ratings/:google_place_id  ← fetch ratings
-router.get("/:google_place_id", async (req, res) => {
+router.get("/reviews/:google_place_id", async (req, res) => {
   const { google_place_id } = req.params;
 
   try {
@@ -13,35 +15,57 @@ router.get("/:google_place_id", async (req, res) => {
       .eq("google_place_id", google_place_id)
       .single();
 
-    if (!place) return res.json({ ratings: null });
+    if (!place) return res.json({ reviews: [] });
 
-    const { data: ratings } = await supabase
+    const { data: reviews, error } = await supabase
       .from("ratings")
       .select("*")
-      .eq("place_id", place.id);
+      .eq("place_id", place.id)
+      .order("created_at", { ascending: false });
 
-    const avg = (key) => Math.round(ratings.reduce((sum, r) => sum + r[key], 0) / ratings.length);
+    if (error) return res.status(500).json({ error: error.message });
 
-    const result = {
-      count: ratings.length,
-      outlets: avg("outlets"),
-      noise: avg("noise"),
-      foot_traffic: avg("foot_traffic"),
-      parking: avg("parking"),
-    };
-
-    console.log("Ratings result:", result);
-    res.json(result);
-
+    res.json({ reviews });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
 
+//Submit a photos review
+const upload = multer({ storage: multer.memoryStorage() });
+router.post("/upload-photo", upload.single("photo"), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "No file received" });
+    
+    const file = req.file;
+    // sanitize filename - remove special characters
+    const ext = file.originalname.split('.').pop();
+    const fileName = `${Date.now()}.${ext}`;  // ← just use timestamp + extension
+    console.log("uploading to supabase:", fileName);
+
+    const { data, error } = await supabase.storage
+      .from("review-photos")
+      .upload(fileName, file.buffer, { contentType: file.mimetype });
+
+    console.log("supabase upload result:", data, error);
+
+    if (error) return res.status(500).json({ error: error.message });
+
+    const { data: urlData } = supabase.storage
+      .from("review-photos")
+      .getPublicUrl(fileName);
+
+    res.json({ url: urlData.publicUrl });
+  } catch (err) {
+    console.error("UPLOAD ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/ratings                  ← submit a rating
 router.post("/", async (req, res) => {
-  const { google_place_id, name, address, foot_traffic, parking, outlet, noise, seating, comments } = req.body;
+  const { google_place_id, name, address, foot_traffic, parking, outlet, noise, seating, comments,photos} = req.body;
 
   try {
     const { data: place, error: placeError } = await supabase
@@ -54,7 +78,7 @@ router.post("/", async (req, res) => {
 
     const { error: ratingError } = await supabase
       .from("ratings")
-      .insert({ place_id: place.id, address, name, foot_traffic, parking, outlet, noise,seating,comments });
+      .insert({ place_id: place.id, address, name, foot_traffic, parking, outlet, noise,seating,comments,photos});
       
     if (ratingError) return res.status(500).json({ error: ratingError.message });
 
@@ -63,5 +87,6 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 export default router;

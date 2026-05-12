@@ -123,10 +123,11 @@
   height:100vh;
   width:100vw;
   background-color: rgba(0,0,0,0.3);
+  backdrop-filter: blur(1px);
   display:flex;
   align-items:center;
   justify-content:center;
-
+  z-index: 9999; 
 }
 
 .modal{
@@ -213,7 +214,12 @@
 }
 
 
-
+.requiredError {
+  color: red;
+  font-size: 12px;
+  font-weight: normal;
+  margin-left: 6px;
+}
 
 
 .modalBottom{
@@ -253,7 +259,7 @@
 
 .pillOption {
   margin-top:0px;
-  padding: 5px 20px;
+  padding: 2px 20px;
   font-size:12px;
   border-radius: 20px;
   background-color: #FFFF;
@@ -262,6 +268,133 @@
 
 .pillOptionActive{
   background-color:#D8EADB;
+}
+
+
+.photoPreviewRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.photoPreviewWrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.photoPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.removePhoto {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.photoUploadLabel {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  border: 2px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #aaa;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.photoUploadLabel:hover {
+  border-color: #888;
+  color: #555;
+}
+
+
+
+.reviewCard {
+  padding: 16px 0;
+  position: relative;
+}
+
+/* divider */
+.reviewCard::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 90%;
+  border-bottom: 2px solid #6D5757;
+}
+
+
+.reviewGrid {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  gap: 10px;
+  padding: 0 15px;
+}
+
+/* avatar */
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* right side content */
+.reviewContent {
+  display: flex;
+  flex-direction: column;
+}
+
+/* header */
+.reviewsHeader h4 {
+  margin-bottom:10px;
+  text-decoration: underline;
+}
+
+/* text */
+.reviewText p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* photos */
+.reviewPhotos {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.reviewPhotos img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
 }
 
 
