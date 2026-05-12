@@ -182,7 +182,7 @@ export function PlaceReviews({place}) {
 
                         <div className = {styles.categoryReview}>
                             <h3 className = {styles.categoryHeader}>Foot Traffic
-                                {submitted && !noiseOption && <span className={styles.requiredError}>* required</span>}                          
+                                {submitted && !footTrafficOption && <span className={styles.requiredError}>* required</span>}                          
                             </h3>
                             <div className = {styles.categoryPills}>
                                 {footTrafficOptions.map((option) =>(
@@ -199,7 +199,7 @@ export function PlaceReviews({place}) {
 
                         <div className = {styles.categoryReview}>
                             <h3 className = {styles.categoryHeader}>Seating Capacity
-                                {submitted && !noiseOption && <span className={styles.requiredError}>* required</span>}  
+                                {submitted && !seatingCapacityOption && <span className={styles.requiredError}>* required</span>}  
                             </h3>
                             <div className = {styles.categoryPills}>
                                 {seatingCapacityOptions.map((option) =>(
@@ -216,7 +216,7 @@ export function PlaceReviews({place}) {
 
                         <div className = {styles.categoryReview}>
                             <h3 className = {styles.categoryHeader}>Outlets Availability
-                                {submitted && !noiseOption && <span className={styles.requiredError}>* required</span>}  
+                                {submitted && !outletOption && <span className={styles.requiredError}>* required</span>}  
                             </h3>
                             <div className = {styles.categoryPills}>
                                 {outletOptions.map((option) =>(
@@ -233,7 +233,7 @@ export function PlaceReviews({place}) {
 
                         <div className = {styles.categoryReview}>
                             <h3 className = {styles.categoryHeader}>Parking Availability
-                                {submitted && !noiseOption && <span className={styles.requiredError}>* required</span>}  
+                                {submitted && !parkingOption && <span className={styles.requiredError}>* required</span>}  
                             </h3>
                             <div className = {styles.categoryPills}>
                                 {parkingOptions.map((option) =>(
