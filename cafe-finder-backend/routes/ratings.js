@@ -37,46 +37,36 @@ router.get("/attributes/:google_place_id", async (req, res) => {
   try {
     const { data: place } = await supabase
       .from("places")
-      .select("*")
+      .select("id")
       .eq("google_place_id", google_place_id)
       .single();
 
-    if (!place) return res.status(404).json({ error: "Not found" });
+    if (!place) return res.json({ attributes: [] });
 
     const { data: ratings } = await supabase
       .from("ratings")
       .select("noise, foot_traffic, seating, outlet, parking, study_score")
       .eq("place_id", place.id);
 
-    if (!ratings || ratings.length === 0) {
-      return res.json({
-        ...place,
-        attributes: [],
-        study_score: null
-      });
-    }
+    if (!ratings || ratings.length === 0) return res.json({ attributes: [] });
 
+    // get most common value for each category
     const mostCommon = (key) => {
       const counts = {};
       ratings.forEach(r => {
         if (r[key]) counts[r[key]] = (counts[r[key]] || 0) + 1;
       });
-      return Object.entries(counts)
-        .sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+      return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
     };
 
     const getMean = (key) => {
-      const values = ratings
-        .map(r => r[key])
-        .filter(v => typeof v === "number");
-
-      if (!values.length) return null;
-
-      const sum = values.reduce((a, b) => a + b, 0);
-      return Math.round((sum / values.length) * 10) / 10;
+        const values = ratings.map(r => r[key]).filter(v => typeof v === "number");
+        if (values.length === 0) return null;
+        const sum = values.reduce((acc, v) => acc + v, 0);
+        return Math.round((sum / values.length) * 10) / 10;
     };
 
-    const study_score = getMean("study_score");
+   // console.log("study scores:", ratings.map(r => r.study_score));
 
     const attributes = [
       mostCommon("noise"),
@@ -84,18 +74,18 @@ router.get("/attributes/:google_place_id", async (req, res) => {
       mostCommon("seating"),
       mostCommon("outlet"),
       mostCommon("parking"),
-    ].filter(Boolean);
+      getMean("study_score"),
+    ].filter(Boolean); // remove nulls
 
-    res.json({
-      ...place,
-      study_score,
-      attributes
-    });
+    //console.log(getMean("study_score"));
 
+    res.json(
+      { attributes });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 //Submit a photos review
