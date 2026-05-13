@@ -38,7 +38,7 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
       setLoading(false);
     }
   };
-  console.log("render activeSuggestion:", activeSuggestion);
+  //console.log("render activeSuggestion:", activeSuggestion);
   return (
     <div className={styles.header}>
       <div className={styles.searchWrapper}>

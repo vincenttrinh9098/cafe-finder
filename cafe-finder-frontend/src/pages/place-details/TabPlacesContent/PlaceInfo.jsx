@@ -5,8 +5,8 @@ import {useState,useEffect} from 'react'
 //import storeDetailTestImg from './store-details-test.png';
 
 export function PlaceInfo({place, placeDetails, loadingDetails }){
-  console.log("placeDetails:", placeDetails);
-  console.log("loadingDetails:", loadingDetails);
+  //console.log("placeDetails:", placeDetails);
+  //console.log("loadingDetails:", loadingDetails);
 
   const [attributes, setAttributes] = useState({});
   const [loadingAttributes, setLoadingAttributes] = useState(true);
@@ -132,8 +132,8 @@ function AttributeBar({ category, value }) {
   .indexOf(value.toLowerCase());
 
   //console.log("category:", category, "value:", value, "index:", index);
-console.log("RAW value:", JSON.stringify(value));
-console.log("LEVELS:", config.levels.map(v => JSON.stringify(v)));
+  //console.log("RAW value:", JSON.stringify(value));
+  //console.log("LEVELS:", config.levels.map(v => JSON.stringify(v)));
   if (index === -1) return null;
 
   const total = config.levels.length;

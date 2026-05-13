@@ -28,7 +28,7 @@ export function PlaceHeader( {place}) {
             <div className={styles.contentSection}>
                 <div className={styles.topRowContentSection}>
                     <h2>{place.name}</h2>
-                    <p>Study Score: {place.rating}/10</p>
+                    <p>Study Score: {place.study_score}/5</p>
                     <p>Google: {place.rating} ⭐</p>
                     
                 </div>
