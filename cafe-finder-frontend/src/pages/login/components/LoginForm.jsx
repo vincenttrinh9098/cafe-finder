@@ -5,6 +5,7 @@ export function LoginForm({
   password,
   emailError,
   passwordError,
+  authError,
   onEmailChange,
   onPasswordChange,
   onSubmit
@@ -38,6 +39,7 @@ export function LoginForm({
         <span className={styles.errorMsg}>{passwordError}</span>
       </div>
 
+      {authError && <span className={styles.errorMsg}>{authError}</span>}
       <button type="submit" className={styles.submitBtn}>Log in</button>
 
     </form>
