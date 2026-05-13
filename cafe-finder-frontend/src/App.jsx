@@ -11,6 +11,7 @@ function App() {
     
     <Routes>
       <Route index element ={<Discovery/>} />
+      <Route path="discovery" element = {<Discovery/>} />
       <Route path="place" element={<Place/>} />
       <Route path="login" element={<Login />} />
       <Route 
