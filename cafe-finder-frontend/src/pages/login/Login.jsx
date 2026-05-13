@@ -1,14 +1,19 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import styles from './Login.module.css'
 import { LoginForm } from './components/LoginForm'
 import { SocialLogin } from './components/SocialLogin'
 import { validateEmail, validatePassword } from './utils/loginValidation'
+import supabase from '../../lib/supabase'
 
 export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
+  const [authError, setAuthError] = useState('')
+
+  const navigate = useNavigate()
 
   function handleEmailChange(e) {
     console.log(e)
@@ -23,7 +28,7 @@ export function Login() {
     setPasswordError(validatePassword(value))
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
 
     const emailErr = validateEmail(email)
@@ -33,7 +38,19 @@ export function Login() {
     setPasswordError(passwordErr)
 
     if (!emailErr && !passwordErr) {
-      console.log('Form is valid — ready to connect to Supabase')
+      // If login fails: error has a message
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+
+      if (error) {
+        setAuthError(error.message)
+        return
+      }
+
+      console.log('logged in user:', data.user)
+      navigate('/profile')
     }
   }
 
@@ -51,6 +68,7 @@ export function Login() {
           password={password}
           emailError={emailError}
           passwordError={passwordError}
+          authError={authError}
           onEmailChange={handleEmailChange}
           onPasswordChange={handlePasswordChange}
           onSubmit={handleSubmit}

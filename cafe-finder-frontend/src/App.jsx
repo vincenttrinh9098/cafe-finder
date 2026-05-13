@@ -13,9 +13,15 @@ function App() {
       <Route index element ={<Discovery/>} />
       <Route path="place" element={<Place/>} />
       <Route path="login" element={<Login />} />
-      <Route path="profile" element={<Profile />} />
+      <Route 
+        path="profile" 
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        } 
+      />
     </Routes>
-
   )
 }
 
