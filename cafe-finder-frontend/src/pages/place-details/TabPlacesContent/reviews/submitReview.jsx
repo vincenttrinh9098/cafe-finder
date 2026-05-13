@@ -1,6 +1,11 @@
 import styles from '../PlaceReviews.module.css';
+
 import { useState } from 'react';
 import { submitRating, uploadReviewPhoto } from '../../../../api/placesApi.js';
+
+import smile5 from '../../../../assets/images/smile5.jpeg';
+import moderate3 from '../../../../assets/images/moderate3.jpg';
+import angry1 from '../../../../assets/images/angry1.png';
 
 export function SubmitReview({ place, onReviewSubmitted }) {
     const [showModal, setShowModal] = useState(false);
@@ -11,10 +16,17 @@ export function SubmitReview({ place, onReviewSubmitted }) {
     const MAX_PHOTOS = 5;
 
     const noiseOptions = ["Very quiet", "Quiet", "Moderate noise", "Loud", "Very loud"];
-    const footTrafficOptions = ["Empty","Light foot traffic","Moderate foot traffic","Busy","Heavy foot traffic"];
-    const seatingCapacityOptions = ["Plenty of seats","Some seats","Limited seats","Usually full"];
-    const outletOptions = ["Plenty of outlets","Some outlets available","Limited outlets","No visible outlets"];
-    const parkingOptions = ["Plenty of parking","Moderate parking","Limited parking","Very hard to park"];
+    const footTrafficOptions = ["Empty", "Light foot traffic", "Moderate foot traffic", "Busy", "Heavy foot traffic"];
+    const seatingCapacityOptions = ["Plenty of seats", "Some seats", "Limited seats", "Usually full"];
+    const outletOptions = ["Plenty of outlets", "Some outlets available", "Limited outlets", "No visible outlets"];
+    const parkingOptions = ["Plenty of parking", "Moderate parking", "Limited parking", "Very hard to park"];
+
+    const scoreOptions = [
+        {img: angry1, value:1},
+        {img: moderate3, value:3},
+        {img: smile5, value:5},
+    ];
+    const [scoreOption, setScoreOption] = useState("null");
 
     const [noiseOption, setNoiseOption] = useState("");
     const [footTrafficOption, setFootTrafficOption] = useState("");
@@ -44,13 +56,14 @@ export function SubmitReview({ place, onReviewSubmitted }) {
         setParkingOption("");
         setComment("");
         setPhotos([]);
+        setScoreOption("");
         setSubmitted(false);
         setShowModal(false);
     };
 
     const handleSubmit = async () => {
         setSubmitted(true);
-        if (!noiseOption || !footTrafficOption || !outletOption || !seatingCapacityOption || !parkingOption) return;
+        if (!noiseOption || !footTrafficOption || !outletOption || !seatingCapacityOption || !parkingOption || !scoreOption) return;
 
         setSubmitting(true);
         try {
@@ -66,9 +79,10 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                 parking: parkingOption,
                 comments: comment,
                 photos: photoUrls,
+                study_score: scoreOption
             });
             resetForm();
-            onReviewSubmitted(); 
+            onReviewSubmitted();
         } catch (err) {
             console.error("Failed to submit review:", err);
         } finally {
@@ -106,6 +120,39 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                         </div>
 
                         <div className={styles.modalContent}>
+
+
+
+                            <div className={styles.categoryReview}>
+                                <h3 className={styles.categoryHeader}>
+                                    Study Score
+                                    {submitted && !scoreOption && (
+                                        <span className={styles.requiredError}>* required</span>
+                                    )}
+                                </h3>
+                                <div className = {styles.scoreContainer}>
+                                    <div className={styles.scorePhoto}>
+                                        {scoreOptions.map((option, index) => (
+                                            <button
+                                                type="button"
+                                                key={index}
+                                                onClick={() => setScoreOption(option.value)}
+                                                className={`${styles.scoreOption} ${
+                                                    scoreOption === option.value ? styles.scoreOptionActive : ""
+                                                }`}
+                                            >
+                                                <img
+                                                    src={option.img}
+                                                    alt={`score option ${option.value}`}
+                                                    className={styles.scoreImage}
+                                                />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                            </div>
+
                             <div className={styles.categoryReview}>
                                 <h3 className={styles.categoryHeader}>Noise level
                                     {submitted && !noiseOption && <span className={styles.requiredError}>* required</span>}
@@ -202,6 +249,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                                     )}
                                 </div>
                             </div>
+
                         </div>
 
                         <div className={styles.modalBottom}>
