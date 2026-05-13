@@ -9,7 +9,7 @@ export function Place() {
   const [activeTab, setActiveTab] = useState("info");
   const { state } = useLocation()
   const place = state?.place;
-  console.log("place:", place);
+  //console.log("place:", place);
 
   const [placeDetails, setPlaceDetails] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(true);
