@@ -41,6 +41,10 @@
   overflow: hidden;
 }
 
+.distance{
+  font-weight:500;
+}
+
 .searchedRatedCardImage {
   width: 100%;
   height: 100%;

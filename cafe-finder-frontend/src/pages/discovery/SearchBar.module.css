@@ -22,6 +22,7 @@
 }
 
 
+
 /*Icon bar*/
 .icon {
   position: absolute;
@@ -89,6 +90,10 @@ display: none;
   white-space: nowrap;   /* prevents weird wrapping */
 }
 
+.suggestionItem.suggestionItemActive {
+  background: #A1CAA9;
+}
+
 .suggestionItem:hover {
   background: #f1f5f9;
 }
@@ -149,7 +154,10 @@ display: none;
   background: white;
   transition: 0.2s ease;
   font-size:12px;
+  }
 
+  .suggestionItem.suggestionItemActive {
+    background: #A1CAA9;
   }
 
 }

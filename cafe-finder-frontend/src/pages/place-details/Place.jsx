@@ -34,8 +34,22 @@ export function Place() {
     };
 
     fetchDetails();
-}, [place?.google_place_id]);
+  }, [place?.google_place_id]);
 
+  const [userLocation, setUserLocation] = useState(null);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        });
+      },
+      (err) => console.error(err),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+    );
+  }, []);
   return (
     <div className={styles.placePage}>
       <PlaceHeader place = {place}/>
@@ -43,7 +57,7 @@ export function Place() {
       <TabBar activeTab={activeTab} setActiveTab={setActiveTab}/>
 
       <div className={styles.dynamicSection}>
-      <TabContent activeTab={activeTab} place={place} placeDetails={placeDetails} loadingDetails={loadingDetails} />
+      <TabContent activeTab={activeTab} place={place} placeDetails={placeDetails} loadingDetails={loadingDetails} userLocation={userLocation} />
       </div>
     </div>
   );

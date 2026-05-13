@@ -36,3 +36,53 @@
 /* Dynamic Info Section End */
 /*                          */
 
+
+
+
+
+
+
+
+.attributeBars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.attributeCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.attributeCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.attributeLabel {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.attributeValue {
+  font-size: 12px;
+  color: #666;
+  text-transform: capitalize;
+}
+
+.barBackground {
+  width: 100%;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
