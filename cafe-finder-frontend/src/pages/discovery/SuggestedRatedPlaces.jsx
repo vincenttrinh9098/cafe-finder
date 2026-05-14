@@ -95,12 +95,14 @@ useEffect(() => {
                 </div>
 
                 <div className={styles.suggestionRatedAttributeRow}>
-                  {store.attributes?.length > 0 ? (
-                    store.attributes.map((attr) => (
-                      <span key={attr} className={styles.suggestionAttributeChip}>
-                        {attr}
-                      </span>
-                    ))
+                  {store.attributes?.filter(attr => typeof attr !== "number").length > 0 ? (
+                    store.attributes
+                      .filter(attr => typeof attr !== "number")
+                      .map((attr) => (
+                        <span key={attr} className={styles.suggestionAttributeChip}>
+                          {attr}
+                        </span>
+                      ))
                   ) : (
                     <span className={styles.suggestionAttributeChip}>No reviews yet</span>
                   )}
