@@ -12,7 +12,8 @@ function App() {
     <Routes>
       <Route index element ={<Discovery/>} />
       <Route path="discovery" element = {<Discovery/>} />
-      <Route path="place" element={<Place/>} />
+      {/*<Route path="/place/:google_place_id" element={<Place />} />*/}
+      <Route path ="/place" element = {<Place/>}/>
       <Route path="login" element={<Login />} />
       <Route 
         path="profile" 

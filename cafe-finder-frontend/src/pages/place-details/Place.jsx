@@ -10,7 +10,7 @@ export function Place() {
   const { state } = useLocation()
   const place = state?.place;
   //console.log("place:", place);
-  //console.log();
+  //console.log
 
   const [placeDetails, setPlaceDetails] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(true);
