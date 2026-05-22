@@ -41,6 +41,7 @@ export async function getTopRatedPlaces() {
 }
 
 export async function submitRating(ratingData) {
+  console.log("submitRating called with:", ratingData);
   const res = await fetch(`${BASE_URL}/ratings`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
