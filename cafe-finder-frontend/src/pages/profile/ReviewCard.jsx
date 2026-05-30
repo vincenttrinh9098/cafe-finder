@@ -9,21 +9,38 @@ function truncate(text) {
 }
 
 export default function ReviewCard({ review, onSelect }) {
-  const preview = truncate(review.comment);
-  const hasComment = review.comment && review.comment.trim() !== '';
+  const preview = truncate(review.comments);
+  const hasComment = review.comments && review.comments.trim() !== '';
+
+  const selections = [
+    review.noise,
+    review.foot_traffic,
+    review.seating,
+    review.outlet,
+    review.parking,
+  ].filter(Boolean);
+
+  const timeAgo = new Date(review.created_at).toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric'
+  });
 
   return (
     <div className={styles.reviewCard} onClick={onSelect}>
       <div className={styles.reviewCardHeader}>
         <div>
-          <p className={styles.spotName}>{review.spotName}</p>
-          <p className={styles.reviewMeta}>{review.neighborhood} · {review.timeAgo}</p>
+          <p className={styles.spotName}>{review.places?.name ?? "Unknown place"}</p>
+          <p className={styles.reviewMeta}>{timeAgo}</p>
         </div>
         <div className={styles.ratingBadge}>
-          <span>{review.rating}</span>
+          <span>{review.study_score}</span>
         </div>
       </div>
 
+      <div className={styles.selectionPills}>
+        {selections.map((s) => (
+          <span key={s} className={styles.pill}>{s}</span>
+        ))}
+      </div>
       {hasComment ? (
         <p className={styles.reviewComment}>
           {preview.text}
@@ -32,9 +49,13 @@ export default function ReviewCard({ review, onSelect }) {
           )}
         </p>
       ) : (
-        <div className={styles.selectionPills}>
-          {review.selections.map((s) => (
-            <span key={s} className={styles.pill}>{s}</span>
+        console.log()
+      )}
+
+      {review.photos && review.photos.length > 0 && (
+        <div className={styles.photoRow}>
+          {review.photos.map((url, i) => (
+            <img key={i} src={url} alt="review" className={styles.photoThumb} />
           ))}
         </div>
       )}

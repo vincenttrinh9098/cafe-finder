@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export function PlaceHeader( {place}) {
     const navigate = useNavigate();
     const studyScore = place.attributes.find(attr => typeof attr === "number");
-    console.log(studyScore);
+    //console.log(studyScore);
 
     if (!place) return <div>Loading...</div>;  
 

@@ -4,6 +4,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
     if (loadingReviews) return <p>Loading reviews...</p>;
 
     const filtered = reviews.filter(r => r.comments || (r.photos && r.photos.length > 0));
+    console.log(filtered);
 
     if (filtered.length === 0) return <p></p>;
 
@@ -19,7 +20,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
                         />
                         <div className={styles.reviewContent}>
                             <div className={styles.reviewsHeader}>
-                                <h4>Anonymous</h4>
+                                <h4>{r.user_name}</h4>
                             </div>
 
                             {r.comments && (
