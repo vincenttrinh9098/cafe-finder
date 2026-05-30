@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import styles from './Login.module.css'
 import { LoginForm } from './components/LoginForm'
 import { SocialLogin } from './components/SocialLogin'
@@ -7,6 +7,14 @@ import { validateEmail, validatePassword } from './utils/loginValidation'
 import supabase from '../../lib/supabase'
 
 export function Login() {
+
+  const location = useLocation();
+  const from = location.state?.from?.pathname ?? '/';
+  navigate(from, { replace: true });
+
+
+
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [emailError, setEmailError] = useState('')

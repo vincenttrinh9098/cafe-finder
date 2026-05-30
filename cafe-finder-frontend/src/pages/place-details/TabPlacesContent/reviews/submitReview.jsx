@@ -1,13 +1,32 @@
 import styles from '../PlaceReviews.module.css';
-
 import { useState,useRef } from 'react';
 import { submitRating, uploadReviewPhoto } from '../../../../api/placesApi.js';
+import { useNavigate,useLocation } from 'react-router-dom';
+import supabase from '../../../../lib/supabase';
 
 import smile5 from '../../../../assets/images/smile5.jpeg';
 import moderate3 from '../../../../assets/images/moderate3.jpg';
 import angry1 from '../../../../assets/images/angry1.png';
 
 export function SubmitReview({ place, onReviewSubmitted }) {
+
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const handleOpenModal = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    console.log("session: ", session);
+    if (!session) {
+        // save current place so we can return after login
+        navigate('/login', { state: { from: location } });
+        return;
+    }
+    setUser(session.user);
+    //console.log(user.id);
+    //console.log(user.user_metadata.name);
+    setShowModal(true);
+    };
+
     const [showModal, setShowModal] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -104,7 +123,9 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                 parking: parkingOption,
                 comments: comment,
                 photos: photoUrls,
-                study_score: scoreOption
+                study_score: scoreOption,
+                user_id: user.id,
+                user_name:user.user_metadata.name
             });
             resetForm();
             onReviewSubmitted();
@@ -129,7 +150,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                             <img src={person.profileImage} alt={person.name} />
                             <p>{person.name}</p>
                         </div>
-                        <div className={styles.leaveReviewText} onClick={() => setShowModal(true)}>
+                        <div className={styles.leaveReviewText} onClick={handleOpenModal}>
                             <p>Tap to leave a review....</p>
                         </div>
                     </div>
