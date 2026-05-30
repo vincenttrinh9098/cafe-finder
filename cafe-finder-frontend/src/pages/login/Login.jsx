@@ -7,7 +7,7 @@ import { validateEmail, validatePassword } from './utils/loginValidation'
 import supabase from '../../lib/supabase'
 
 export function Login() {
-
+  const navigate = useNavigate()
   const location = useLocation();
   const from = location.state?.from?.pathname ?? '/';
   navigate(from, { replace: true });
@@ -21,7 +21,7 @@ export function Login() {
   const [passwordError, setPasswordError] = useState('')
   const [authError, setAuthError] = useState('')
 
-  const navigate = useNavigate()
+
 
   function handleEmailChange(e) {
     console.log(e)
