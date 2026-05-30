@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import styles from './Profile.module.css';
+import { useNavigate } from "react-router-dom";
 import ReviewCard from './ReviewCard';
 import ReviewDetailModal from './ReviewDetailModal';
 import supabase from '../../lib/supabase';
@@ -10,6 +11,19 @@ export function Profile() {
   const [loading, setLoading] = useState(true);
   const [selectedReview, setSelectedReview] = useState(null);
 
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    navigate("/login"); // or your route
+  }
+  
   useEffect(() => {
     const getData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -48,7 +62,7 @@ export function Profile() {
       <div className={styles.profileHeader}>
         <div className={styles.headerRow}>
           <p className={styles.sectionLabel}>Profile</p>
-          <button className={styles.signOutButton}>Sign Out</button>
+          <button className={styles.signOutButton} onClick={handleLogout}>Sign Out</button>
         </div>
 
         <div className={styles.userRow}>
