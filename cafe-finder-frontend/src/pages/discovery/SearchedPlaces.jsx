@@ -71,10 +71,14 @@ export function SearchedPlaces({ places, query, searchResults }) {
               </div>
 
               <div className={styles.searchedRatedAttributeRow}>
-                {place.attributes?.length > 0 ? (
-                  place.attributes.map((attr) => (
-                    <span key={attr} className={styles.searchedAttributeChip}>{attr}</span>
-                  ))
+                {place.attributes?.filter(attr => typeof attr !== "number").length > 0 ? (
+                  place.attributes
+                    .filter(attr => typeof attr !== "number")
+                    .map((attr) => (
+                      <span key={attr} className={styles.searchedAttributeChip}>
+                        {attr}
+                      </span>
+                    ))
                 ) : (
                   <span className={styles.searchedAttributeChip}>No reviews yet</span>
                 )}

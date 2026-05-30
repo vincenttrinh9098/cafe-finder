@@ -84,13 +84,16 @@ export function TopRatedPlaces({userLocation}) {
                 </div>
 
                 <div className={styles.topRatedAttributeRow}>
-                  {store.attributes?.length > 0 ? (
-                    store.attributes.map((attr) => (
-                      <span key={attr} className={styles.topRatedAttributeChip}>
-                        {attr}
-                      </span>
-                    ))
-                  ) : (
+                  {store.attributes?.filter(attr => typeof attr !== "number").length > 0 ? (
+                    store.attributes
+                      .filter(attr => typeof attr !== "number")
+                      .map((attr) => (
+                        <span key={attr} className={styles.topRatedAttributeChip}>
+                          {attr}
+                        </span>
+                      ))
+                  ) 
+                  :(
                     <span className={styles.topRatedAttributeChip}>No reviews yet</span>
                   )}
                 </div>

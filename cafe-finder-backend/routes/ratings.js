@@ -121,7 +121,7 @@ router.post("/upload-photo", upload.single("photo"), async (req, res) => {
 
 // POST /api/ratings                  ← submit a rating
 router.post("/", async (req, res) => {
-  const { google_place_id, name, address, foot_traffic, parking, outlet, noise, seating, comments,photos, study_score} = req.body;
+  const { google_place_id, name, address, foot_traffic, parking, outlet, noise, seating, comments,photos, study_score,user_id,user_name} = req.body;
 
   try {
     const { data: place, error: placeError } = await supabase
@@ -134,7 +134,7 @@ router.post("/", async (req, res) => {
 
     const { error: ratingError } = await supabase
       .from("ratings")
-      .insert({ place_id: place.id, address, name, foot_traffic, parking, outlet, noise,seating,comments,photos,study_score});
+      .insert({ place_id: place.id, address, name, foot_traffic, parking, outlet, noise,seating,comments,photos,study_score,user_id,user_name});
       
     if (ratingError) return res.status(500).json({ error: ratingError.message });
 
