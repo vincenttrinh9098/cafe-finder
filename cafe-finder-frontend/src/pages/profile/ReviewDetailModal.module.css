@@ -114,3 +114,26 @@
   font-size: 11px;
   color: #6b5e4e;
 }
+
+
+.photoRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.photoRow::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.photoThumb {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+  border: 1px solid #e8e2d9;
+  background: #f5f0e8;
+}
