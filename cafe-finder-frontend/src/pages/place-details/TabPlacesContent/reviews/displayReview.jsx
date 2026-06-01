@@ -1,10 +1,44 @@
-import styles from '../PlaceReviews.module.css';
+//import styles from '../PlaceReviews.module.css';
+import styles from './DisplayReview.module.css';
+import editIcon from '../../../../assets/images/editIcon.png'
+import smile5 from '../../../../assets/images/smile5.jpeg';
+
+import supabase from '../../../../lib/supabase.js';
+
+
+import { useEffect, useState } from 'react';
 
 export function DisplayReview({ reviews, loadingReviews }) {
+
+    const [selectedReview, setSelectedReview] = useState(null);
+    const [user, setUser] = useState(null);
+    const filtered = reviews.filter(r => r.comments || (r.photos && r.photos.length > 0));
+
+    console.log(filtered);
+
+    const handleOpenModal = (review) => {
+        setSelectedReview(review);
+    };
+    useEffect(() => {
+        async function loadUser() {
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (session) {
+                setUser(session.user);
+            }
+        }
+
+        loadUser();
+    }, []);
     if (loadingReviews) return <p>Loading reviews...</p>;
 
-    const filtered = reviews.filter(r => r.comments || (r.photos && r.photos.length > 0));
-    //console.log(filtered);
+    //Put Option
+    const editOption = () => {
+    }
+    //Delete option
+    const deleteOption = () => {
+
+    }
 
     if (filtered.length === 0) return <p></p>;
 
@@ -34,6 +68,39 @@ export function DisplayReview({ reviews, loadingReviews }) {
                                     {r.photos.map((url, i) => (
                                         <img key={i} src={url} alt="review" />
                                     ))}
+                                </div>
+                            )}
+                        </div>
+                        <div>
+                            {user?.id === r.user_id && (
+                                <button
+                                    onClick={() => handleOpenModal(r)}
+                                    className={styles.editButton}
+                                >
+                                    <img
+                                        src={editIcon}
+                                        alt="Edit"
+                                        className={styles.editIcon}
+                                    />
+                                </button>
+                            )}
+                            {selectedReview && (
+                                <div
+                                    className={styles.overlay}
+                                    onClick={() => setSelectedReview(null)}
+                                >
+                                    <div
+                                        className={styles.modal}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <h2>Edit Review</h2>
+
+                                        <p>{selectedReview.comments}</p>
+
+                                        <button onClick={() => setSelectedReview(null)}>
+                                            Close
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>

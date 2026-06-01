@@ -1,0 +1,103 @@
+.reviews {
+    display: flex;
+    flex-direction: column;
+}
+
+.reviewCard {
+    padding: 16px 0;
+    position: relative;
+}
+
+/* divider */
+.reviewCard::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 90%;
+    border-bottom: 2px solid #6D5757;
+}
+
+.reviewGrid {
+    display: grid;
+    grid-template-columns: 50px 1fr auto;
+    gap: 10px;
+    padding: 0 15px;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.reviewContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.reviewsHeader h4 {
+    margin-bottom: 10px;
+    text-decoration: underline;
+}
+
+.reviewText p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.reviewPhotos {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.reviewPhotos img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.editButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.editIcon {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+}
+
+
+.overlay {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.4);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1000;
+}
+
+.modal {
+    background: white;
+    width: 500px;
+    max-width: 90vw;
+
+    padding: 20px;
+    border-radius: 12px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
