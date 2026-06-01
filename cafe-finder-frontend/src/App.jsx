@@ -3,12 +3,14 @@ import {Discovery} from './pages/discovery/Discovery';
 import {Place} from './pages/place-details/Place';
 import {Login} from './pages/login/Login';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { RouteTracker } from './components/RouteTracker';
 import {Profile} from './pages/profile/Profile';
 
 function App() {
 
   return (
-    
+    <>
+    <RouteTracker />
     <Routes>
       <Route index element ={<Discovery/>} />
       <Route path="discovery" element = {<Discovery/>} />
@@ -24,7 +26,8 @@ function App() {
         } 
       />
     </Routes>
-  )
+    </>
+  );
 }
 
 export default App
