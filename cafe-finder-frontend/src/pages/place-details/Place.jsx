@@ -4,6 +4,7 @@ import styles from './Place.module.css';
 import { PlaceHeader } from './PlaceHeader.jsx';
 import { TabBar } from './TabBar.jsx';
 import { TabContent } from './TabContent.jsx';
+import { NavBar } from '../navigation/NavBar.jsx';
 import { getPlaceAttributes } from '../../api/placesApi.js';
 
 
@@ -85,6 +86,8 @@ export function Place() {
           userLocation={userLocation}
         />
       </div>
+
+      <NavBar/>
     </div>
   );
 }
