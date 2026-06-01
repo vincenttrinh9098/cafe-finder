@@ -51,23 +51,23 @@ export function TopRatedPlaces({userLocation}) {
       </div>
 
       <div className={styles.topRatedContainer}>
-        {stores.map((store) => (
-          <Link
-            key={store.google_place_id}
-            to="/place"
-            state={{ place: store }}
-            className={styles.cardLink}
-          >
+        {stores.map((place) => (
+            <Link
+              key={place.google_place_id}
+              to={`/place/${place.google_place_id}`}
+              state={{ place: place }}
+              className={styles.cardLink}
+            >
             <div className={styles.topRatedCard}>
               <div className={styles.topRatedCardImageWrapper}>
-                {store.photo_reference ? (
+                {place.photo_reference ? (
                   <img
-                    src={`http://localhost:3000/api/places/photo?ref=${store.photo_reference}`}
-                    alt={store.name}
+                    src={`http://localhost:3000/api/places/photo?ref=${place.photo_reference}`}
+                    alt={place.name}
                     className={styles.topRatedCardImage}
                   />
                 ) : (
-                  <img src={storeTestImg} alt={store.name} className={styles.topRatedCardImage} />
+                  <img src={storeTestImg} alt={place.name} className={styles.topRatedCardImage} />
                 )}
               </div>
 
@@ -75,17 +75,17 @@ export function TopRatedPlaces({userLocation}) {
 
                 <div className={styles.topRatedCardTop}>
                   <div className={styles.topRatedCardLeft}>
-                    <h2>{store.name.length > 15 ? store.name.slice(0, 15) + ".." : store.name}</h2>
+                    <h2>{place.name.length > 15 ? place.name.slice(0, 15) + ".." : place.name}</h2>
                   </div>
 
                   <div className={styles.topRatedCardRight}>
-                    <p>⭐ {store.rating}</p>
+                    <p>⭐ {place.rating}</p>
                   </div>
                 </div>
 
                 <div className={styles.topRatedAttributeRow}>
-                  {store.attributes?.filter(attr => typeof attr !== "number").length > 0 ? (
-                    store.attributes
+                  {place.attributes?.filter(attr => typeof attr !== "number").length > 0 ? (
+                    place.attributes
                       .filter(attr => typeof attr !== "number")
                       .map((attr) => (
                         <span key={attr} className={styles.topRatedAttributeChip}>
