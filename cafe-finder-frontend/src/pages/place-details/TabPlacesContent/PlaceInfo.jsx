@@ -1,12 +1,13 @@
 import styles from './PlaceInfo.module.css'
 import { getPlaceAttributes } from '../../../api/placesApi.js';
-import {useState,useEffect} from 'react'
-;
+import { useState, useEffect } from 'react'
+  ;
 //import storeDetailTestImg from './store-details-test.png';
 
-export function PlaceInfo({place, placeDetails, loadingDetails }){
+export function PlaceInfo({ place, placeDetails, loadingDetails }) {
   //console.log("placeDetails:", placeDetails);
   //console.log("loadingDetails:", loadingDetails);
+  //console.log(place.google_place_id);
 
   const [attributes, setAttributes] = useState({});
   const [loadingAttributes, setLoadingAttributes] = useState(true);
@@ -26,67 +27,69 @@ export function PlaceInfo({place, placeDetails, loadingDetails }){
     fetch();
   }, [place?.google_place_id]);
 
-    return(
-            <div className = {styles.dynamicInfoSection}>
+  //console.log(attributes);
 
-            <div className={styles.dynamicInfo}>
-              <h2>Opening Hours</h2>
-              {loadingDetails ? (
-                <p>Loading hours...</p>
-              ) : placeDetails?.opening_hours?.weekday_text ? (
-                placeDetails.opening_hours.weekday_text.map((day) => {
-                  const [dayName, hours] = day.split(/:\s(.+)/);
-                  return (
-                    <div className={styles.infoRow} key={day}>
-                      <span className={styles.highlight}>{dayName}:</span>
-                      <span className={styles.infomation}>{hours}</span>
-                    </div>
-                  );
-                })
-              ) : (
-                <p>Hours not available</p>
-              )}
-            </div>
+  return (
+    <div className={styles.dynamicInfoSection}>
 
-            <div className={styles.dynamicInfo}>
-              <h2>Contact Information</h2>
-              <div className={styles.infoRow}>
-                <span className={styles.highlight}>Phone:</span>
-                <span className={styles.information}>{placeDetails?.formatted_phone_number ?? "Not available"}</span>
+      <div className={styles.dynamicInfo}>
+        <h2>Facility Snapshot</h2>
+        {loadingAttributes ? (
+          <p>Loading...</p>
+        ) : attributes.length === 0 ? (
+          <p>No reviews yet</p>
+        ) : (
+          <div className={styles.attributeBars}>
+            <AttributeBar category="noise" value={attributes[0]} />
+            <AttributeBar category="foot_traffic" value={attributes[1]} />
+            <AttributeBar category="seating" value={attributes[2]} />
+            <AttributeBar category="outlet" value={attributes[3]} />
+            <AttributeBar category="parking" value={attributes[4]} />
+          </div>
+        )}
+      </div>
+
+      <div className={styles.dynamicInfo}>
+        <h2>Opening Hours</h2>
+        {loadingDetails ? (
+          <p>Loading hours...</p>
+        ) : placeDetails?.opening_hours?.weekday_text ? (
+          placeDetails.opening_hours.weekday_text.map((day) => {
+            const [dayName, hours] = day.split(/:\s(.+)/);
+            return (
+              <div className={styles.infoRow} key={day}>
+                <span className={styles.highlight}>{dayName}:</span>
+                <span className={styles.infomation}>{hours}</span>
               </div>
-              <div className={styles.infoRow}>
-                <span className={styles.highlight}>Website:</span>
-                {placeDetails?.website ? (
-                  <a href={placeDetails.website} target="_blank" rel="noreferrer" className = {styles.infomation}>
-                    {placeDetails.website}
-                  </a>
-                ) 
-                :(
-                  <span className={styles.information}>Not available</span>
-                )}
+            );
+          })
+        ) : (
+          <p>Hours not available</p>
+        )}
+      </div>
 
-              </div>
-            </div>
-
-          <div className={styles.dynamicInfo}>
-            <h2>Facility Snapshot</h2>
-            {loadingAttributes ? (
-              <p>Loading...</p>
-            ) : attributes.length === 0 ? (
-              <p>No reviews yet</p>
-            ) : (
-              <div className={styles.attributeBars}>
-                <AttributeBar category="noise" value={attributes[0]} />
-                <AttributeBar category="foot_traffic" value={attributes[1]} />
-                <AttributeBar category="seating" value={attributes[2]} />
-                <AttributeBar category="outlet" value={attributes[3]} />
-                <AttributeBar category="parking" value={attributes[4]} />
-              </div>
+      <div className={styles.dynamicInfo}>
+        <h2>Contact Information</h2>
+        <div className={styles.infoRow}>
+          <span className={styles.highlight}>Phone:</span>
+          <span className={styles.information}>{placeDetails?.formatted_phone_number ?? "Not available"}</span>
+        </div>
+        <div className={styles.infoRow}>
+          <span className={styles.highlight}>Website:</span>
+          {placeDetails?.website ? (
+            <a href={placeDetails.website} target="_blank" rel="noreferrer" className={styles.infomation}>
+              {placeDetails.website}
+            </a>
+          )
+            : (
+              <span className={styles.information}>Not available</span>
             )}
-          </div>
-            
-          </div>
-    );
+
+        </div>
+      </div>
+
+    </div>
+  );
 
 
 }
@@ -100,7 +103,7 @@ const attributeConfig = {
 
   foot_traffic: {
     label: "Foot Traffic",
-    levels: ["empty", "light foot traffic", "moderate foot traffic", "busy", "heavy foot traffic"],
+    levels: ["nearly empty", "lightly busy", "busy", "very Busy"],
     colors: ["#4caf50", "#8bc34a", "#ffc107", "#ff9800", "#f44336"],
   },
 
@@ -128,8 +131,8 @@ function AttributeBar({ category, value }) {
   if (!config || !value) return null;
 
   const index = config.levels
-  .map(v => v.toLowerCase())
-  .indexOf(value.toLowerCase());
+    .map(v => v.toLowerCase())
+    .indexOf(value.toLowerCase());
 
   //console.log("category:", category, "value:", value, "index:", index);
   //console.log("RAW value:", JSON.stringify(value));
@@ -137,8 +140,9 @@ function AttributeBar({ category, value }) {
   if (index === -1) return null;
 
   const total = config.levels.length;
-  const percentage = ((index + 1) / total) * 100;
-  const color = config.colors[index];
+  const reversedIndex = total - 1 - index; // 
+  const percentage = ((reversedIndex + 1) / total) * 100; 
+  const color = config.colors[index]; 
 
   return (
     <div className={styles.attributeCard}>

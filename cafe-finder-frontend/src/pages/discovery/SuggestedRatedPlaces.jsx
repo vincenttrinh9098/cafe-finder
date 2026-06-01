@@ -53,27 +53,27 @@ useEffect(() => {
       </div>
 
       <div className={styles.suggestionRatedContainer}>
-        {stores.map((store) => (
-          <Link
-            key={store.google_place_id}
-            to={'/place'}
-            state={{ place: store }}
-            className={styles.cardLink}
-          >
+        {stores.map((place) => (
+            <Link
+              key={place.google_place_id}
+              to={`/place/${place.google_place_id}`}
+              state={{ place }}
+              className={styles.cardLink}
+            >
             <div className={styles.suggestionRatedCard}>
 
               {/* LEFT: image */}
               <div className={styles.suggestionRatedCardImageWrapper}>
-                {store.photo_reference ? (
+                {place.photo_reference ? (
                   <img
-                    src={`http://localhost:3000/api/places/photo?ref=${store.photo_reference}`}
-                    alt={store.name}
+                    src={`http://localhost:3000/api/places/photo?ref=${place.photo_reference}`}
+                    alt={place.name}
                     className={styles.suggestionRatedCardImage}
                   />
                 ) : (
                   <img
                     src={storeTestImg}
-                    alt={store.name}
+                    alt={place.name}
                     className={styles.suggestionRatedCardImage}
                   />
                 )}
@@ -83,20 +83,20 @@ useEffect(() => {
               <div className={styles.suggestionRatedCardContent}>
                 <div className={styles.suggestionRatedCardTop}>
                   <div className={styles.suggestionRatedCardLeft}>
-                    <h2>{store.name.length > 13 ? store.name.slice(0, 13) + ".." : store.name}</h2>
+                    <h2>{place.name.length > 13 ? place.name.slice(0, 13) + ".." : place.name}</h2>
                     
-                    {store.distance != null && (
-                      <p className = {styles.distance}>{store.distance.toFixed(1)} mi</p>
+                    {place.distance != null && (
+                      <p className = {styles.distance}>{place.distance.toFixed(1)} mi</p>
                     )}
                   </div>
                   <div className={styles.suggestionRatedCardRight}>
-                    <p>⭐ {store.rating}</p>
+                    <p>⭐ {place.rating}</p>
                   </div>
                 </div>
 
                 <div className={styles.suggestionRatedAttributeRow}>
-                  {store.attributes?.filter(attr => typeof attr !== "number").length > 0 ? (
-                    store.attributes
+                  {place.attributes?.filter(attr => typeof attr !== "number").length > 0 ? (
+                    place.attributes
                       .filter(attr => typeof attr !== "number")
                       .map((attr) => (
                         <span key={attr} className={styles.suggestionAttributeChip}>

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ReviewCard from './ReviewCard';
 import ReviewDetailModal from './ReviewDetailModal';
 import supabase from '../../lib/supabase';
+import { NavBar } from '../navigation/NavBar';
 
 export function Profile() {
   const [user, setUser] = useState(null);
@@ -21,9 +22,9 @@ export function Profile() {
       return;
     }
 
-    navigate("/login"); // or your route
+    navigate("/"); 
   }
-  
+
   useEffect(() => {
     const getData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -112,6 +113,8 @@ export function Profile() {
           onClose={() => setSelectedReview(null)}
         />
       )}
+      <NavBar/>
     </div>
+    
   );
 }

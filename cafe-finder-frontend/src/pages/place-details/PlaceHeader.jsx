@@ -9,6 +9,8 @@ export function PlaceHeader( {place}) {
 
     if (!place) return <div>Loading...</div>;  
 
+    //console.log(place.photo_reference);
+
     //console.log(place);
 
     return (
