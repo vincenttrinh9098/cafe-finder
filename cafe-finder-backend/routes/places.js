@@ -50,15 +50,31 @@ router.get("/details", async (req, res) => {
   if (!place_id) return res.status(400).json({ error: "Missing place_id" });
 
   try {
-    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=name,formatted_phone_number,website,opening_hours&key=${process.env.GOOGLE_API_KEY}`;
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=name,formatted_address,rating,opening_hours,formatted_phone_number,website,geometry,photos&key=${process.env.GOOGLE_API_KEY}`;
+
     const response = await fetch(url);
     const data = await response.json();
-    console.log("details result:", data.result); 
-    res.json(data.result); // sends back { opening_hours: { open_now, weekday_text, periods } }
+    const result = data.result;
+
+    res.json({
+      // existing placeDetails fields
+      opening_hours: result.opening_hours,
+      formatted_phone_number: result.formatted_phone_number,
+      website: result.website,
+
+      // extra fields for building place object when no state
+      name: result.name,
+      formatted_address: result.formatted_address,
+      rating: result.rating,
+      lat: result.geometry?.location?.lat,
+      lng: result.geometry?.location?.lng,
+      photo_reference: result.photos?.[0]?.photo_reference ?? null,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 router.get("/nearby", async (req, res) => {
   const { lat, lng } = req.query;

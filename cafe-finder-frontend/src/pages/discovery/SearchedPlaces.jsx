@@ -38,7 +38,7 @@ export function SearchedPlaces({ places, query, searchResults }) {
       {displayPlaces.map(place => (
         <Link
           key={place.google_place_id}
-          to={'/place'}
+          to={`/place/${place.google_place_id}`}
           state={{ place, searchQuery: query, searchResults: searchResults }}
           className={styles.cardLink}
           onClick={() => sessionStorage.setItem("discoveryScroll", window.scrollY)}

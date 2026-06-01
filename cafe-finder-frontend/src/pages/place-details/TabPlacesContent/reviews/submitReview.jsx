@@ -138,7 +138,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
 
     const person = {
         name: "User T",
-        profileImage: "https://randomuser.me/api/portraits/men/32.jpg"
+        profileImage: "https://www.m2i.nl/wp-content/uploads/2018/11/blank-profile-picture-973460_1280-e1559726803294.png"
     };
 
     return (

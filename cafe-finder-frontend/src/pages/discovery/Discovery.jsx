@@ -7,6 +7,7 @@ import { SuggestedRatedPlaces } from './SuggestedRatedPlaces.jsx'
 import { SearchedPlaces } from './SearchedPlaces.jsx'
 import { getDistance } from '../../utils/distance.js';
 import { searchPlaces } from '../../api/placesApi.js';
+import {NavBar} from '../navigation/NavBar.jsx'
 
 export function Discovery() {
   const { state } = useLocation();
@@ -144,6 +145,7 @@ export function Discovery() {
             <SuggestedRatedPlaces userLocation={userLocation} />
           </>
         )}
+        <NavBar/>
     </div>
   );
 }
