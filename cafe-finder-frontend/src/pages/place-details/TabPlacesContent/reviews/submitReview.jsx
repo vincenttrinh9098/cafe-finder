@@ -2,7 +2,7 @@ import styles from '../PlaceReviews.module.css';
 import { useState,useRef } from 'react';
 import { submitRating, uploadReviewPhoto } from '../../../../api/placesApi.js';
 import { useNavigate,useLocation } from 'react-router-dom';
-import supabase from '../../../../lib/supabase';
+import supabase from '../../../../lib/supabase.js';
 
 import smile5 from '../../../../assets/images/smile5.jpeg';
 import moderate3 from '../../../../assets/images/moderate3.jpg';
