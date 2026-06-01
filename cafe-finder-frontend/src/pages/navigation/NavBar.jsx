@@ -1,29 +1,22 @@
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { getLastPlaceRoute } from '../place-details/placeNav';
+import { NavLink, useNavigate } from 'react-router-dom';
 import styles from './NavBar.module.css';
 
 export function NavBar() {
   const navigate = useNavigate();
-  const location = useLocation();
 
-    const handlePlacesClick = (e) => {
+  const handleHomeClick = (e) => {
     e.preventDefault();
-
-    const last = getLastPlaceRoute();
-
-    // always restore last viewed place
+    const last = sessionStorage.getItem("lastMainRoute") ?? "/";
     navigate(last);
-    };
-
+  };
 
   return (
     <nav className={styles.navbar}>
-      <NavLink to="/" className={styles.link}>
+      <a href="/" className={styles.link} onClick={handleHomeClick}>
         Home
-      </NavLink>
-
+      </a>
       <NavLink to="/profile" className={styles.link}>
-        Profile
+        👤 Profile
       </NavLink>
     </nav>
   );
