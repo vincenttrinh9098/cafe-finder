@@ -2,6 +2,7 @@ import styles from '../PlaceReviews.module.css';
 import { useState,useRef } from 'react';
 import { submitRating, uploadReviewPhoto } from '../../../../api/placesApi.js';
 import { useNavigate,useLocation } from 'react-router-dom';
+import {useEffect} from 'react';
 import supabase from '../../../../lib/supabase.js';
 
 import smile5 from '../../../../assets/images/smile5.jpeg';
@@ -13,6 +14,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
+
     const handleOpenModal = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     console.log("session: ", session);
@@ -136,10 +138,20 @@ export function SubmitReview({ place, onReviewSubmitted }) {
         }
     };
 
+    useEffect(() => {
+        const getUser = async () => {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) setUser(session.user);
+        };
+        getUser();
+      }, []);
+
     const person = {
-        name: "User T",
-        profileImage: "https://www.m2i.nl/wp-content/uploads/2018/11/blank-profile-picture-973460_1280-e1559726803294.png"
-    };
+        name: user?.user_metadata?.name || "",
+        profileImage:
+          user?.user_metadata?.avatar_url ||
+          "https://www.m2i.nl/wp-content/uploads/2018/11/blank-profile-picture-973460_1280-e1559726803294.png",
+      };
 
     return (
         <>
@@ -151,7 +163,11 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                             <p>{person.name}</p>
                         </div>
                         <div className={styles.leaveReviewText} onClick={handleOpenModal}>
-                            <p>Tap to leave a review....</p>
+                            {user ? 
+                                <p>Tap to leave a review...</p> 
+                            : 
+                                <p>Sign in to leave a review...</p>
+                            }
                         </div>
                     </div>
                 </div>
