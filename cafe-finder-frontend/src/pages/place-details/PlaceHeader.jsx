@@ -1,10 +1,31 @@
 import styles from './PlaceHeader.module.css'
-
+import { getPlaceAttributes } from '../../api/placesApi.js';
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react'
+
 
 export function PlaceHeader( {place}) {
+
     const navigate = useNavigate();
-    const studyScore = place.attributes.find(attr => typeof attr === "number");
+    const [attributes, setAttributes] = useState({});
+    const [loadingAttributes, setLoadingAttributes] = useState(true);
+
+    useEffect(() => {
+        if (!place?.google_place_id) return;
+        const fetch = async () => {
+        try {
+            const data = await getPlaceAttributes(place.google_place_id);
+            setAttributes(data);
+        } catch (err) {
+            console.error("Failed to fetch attributes:", err);
+        } finally {
+            setLoadingAttributes(false);
+        }
+        };
+        fetch();
+    }, [place?.google_place_id]);
+  
+    //const studyScore = place.attributes.find(attr => typeof attr === "number");
     //console.log(studyScore);
 
     if (!place) return <div>Loading...</div>;  
@@ -12,6 +33,7 @@ export function PlaceHeader( {place}) {
     //console.log(place.photo_reference);
 
     //console.log(place);
+    console.log(place);
 
     return (
         <>
@@ -31,7 +53,13 @@ export function PlaceHeader( {place}) {
             <div className={styles.contentSection}>
                 <div className={styles.topRowContentSection}>
                     <h2>{place.name}</h2>
-                    <p>Study Score: {studyScore != null ? `${studyScore}/5` : "Not rated"}</p>
+                    {loadingAttributes ? (
+                    <p>Loading...</p>
+                    ) : attributes.length === 0 ? (
+                    <p>Study Scrore: No reviews yet</p>
+                    ) : (
+                    <p>Study Scrore: {attributes[5].toFixed(1)}</p>
+                    )}
                     <p>Google: {place.rating} ⭐</p>
                     
                 </div>
