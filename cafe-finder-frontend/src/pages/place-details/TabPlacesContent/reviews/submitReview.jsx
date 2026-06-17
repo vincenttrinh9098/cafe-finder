@@ -178,6 +178,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
             {showModal && (
                 <div className={styles.overlay}>
                     <div className={styles.modal}>
+                        
                         <div className={styles.modalHeader}>
                             <span onClick={resetForm}>Back</span>
                             <span>Write a Review</span>
@@ -321,6 +322,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                                 {submitting ? "Posting..." : "Post Review"}
                             </button>
                         </div>
+                        
                     </div>
                 </div>
             )}
