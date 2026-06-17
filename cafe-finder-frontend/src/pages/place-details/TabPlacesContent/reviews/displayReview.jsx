@@ -70,6 +70,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
 
     useEffect(() => {
         if (!selectedReview) return;
+        setScoreOption(selectedReview.study_score|| "");
         setNoiseOption(selectedReview.noise || "");
         setFootTrafficOption(selectedReview.foot_traffic || "");
         setSeatingCapacityOption(selectedReview.seating || "");
@@ -82,10 +83,12 @@ export function DisplayReview({ reviews, loadingReviews }) {
                 preview: url
             }))
         );
+        selectedReview.photos.forEach(photo => {
+            console.log(photo);
+        });
 
     }, [selectedReview]);
 
-    console.log(selectedReview);
     const [user, setUser] = useState(null);
     const filtered = reviews.filter(r => r.comments || (r.photos && r.photos.length > 0));
 
@@ -287,7 +290,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
                                                     {photos.map((p, i) => (
                                                         <div key={i} className={styles.photoPreviewWrapper}>
                                                             <img
-                                                                src={p}
+                                                                src={p.preview}
                                                                 alt="preview"
                                                                 className={styles.photoPreview}
                                                             />
