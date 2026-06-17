@@ -39,6 +39,7 @@ export function Profile() {
         .order("created_at", { ascending: false });
 
       console.log("reviews:", reviewsData, reviewsError);
+      console.log("id:",session.user);
       if (reviewsData) setReviews(reviewsData);
 
       setLoading(false);
@@ -69,7 +70,7 @@ export function Profile() {
         <div className={styles.userRow}>
           <div className={styles.avatar}>{initials}</div>
           <div>
-            <h1 className={styles.displayName}>{user.email}</h1>
+            <h1 className={styles.displayName}>{user.user_metadata.name}</h1>
             <p className={styles.memberSince}>Member since {memberSince}</p>
           </div>
         </div>
