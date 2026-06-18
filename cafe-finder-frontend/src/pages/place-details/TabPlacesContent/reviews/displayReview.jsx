@@ -67,6 +67,9 @@ export function DisplayReview({ reviews, loadingReviews }) {
     const deleteForm = () => {
         setSelectedReview(null)
     };
+    const editForm = () =>{
+        setSelectedReview(null)
+    }
 
     useEffect(() => {
         if (!selectedReview) return;
@@ -113,13 +116,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
 
     if (loadingReviews) return <p>Loading reviews...</p>;
 
-    //Put Option
-    const editOption = () => {
-    }
-    //Delete option
-    const deleteOption = () => {
 
-    }
 
     if (filtered.length === 0) return <p></p>;
 
