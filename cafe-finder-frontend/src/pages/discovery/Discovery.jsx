@@ -104,7 +104,7 @@ export function Discovery() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [nextPageToken, loadingMore]); // ← re-register when these change
+  }, [nextPageToken, loadingMore]); // re-register when these change
 
 
   const [activeSuggestion, setActiveSuggestion] = useState(

@@ -1,15 +1,15 @@
-//import styles from '../PlaceReviews.module.css';
 import styles from './DisplayReview.module.css';
 import editIcon from '../../../../assets/images/editIcon.png'
 import smile5 from '../../../../assets/images/smile5.jpeg';
 import moderate3 from '../../../../assets/images/moderate3.jpg';
 import angry1 from '../../../../assets/images/angry1.png';
 import supabase from '../../../../lib/supabase.js';
+import { deleteReview, updateReview } from '../../../../api/placesApi.js';
 
 
 import { useEffect, useState } from 'react';
 
-export function DisplayReview({ reviews, loadingReviews }) {
+export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
 
     const noiseOptions = ["Very quiet", "Quiet", "Moderate noise", "Loud", "Very loud"];
     const footTrafficOptions = ["Nearly empty", "Lightly busy", "Busy", "Very Busy"];
@@ -64,12 +64,26 @@ export function DisplayReview({ reviews, loadingReviews }) {
 
     };
 
-    const deleteForm = () => {
-        setSelectedReview(null)
-    };
-    const editForm = () =>{
-        setSelectedReview(null)
+    const deleteOption = async (id) => {
+    try {
+        await deleteReview(id);
+        onReviewDeleted(); // refresh reviews after delete
+        setSelectedReview(null);
+    } catch (err) {
+        console.error("Failed to delete review:", err);
+        setSelectedReview(null);
     }
+    };
+
+    const editOption = async () => {
+    try {
+        await updateReview(selectedReview.id, { comments: comment });
+        setSelectedReview(null);
+        onReviewDeleted(); // reuse same refresh callback
+    } catch (err) {
+        console.error("Failed to update review:", err);
+    }
+    };
 
     useEffect(() => {
         if (!selectedReview) return;
@@ -171,7 +185,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
                                         <div className={styles.modalHeader}>
                                             <span className={styles.left} onClick={resetForm}>Back</span>
                                             <span className={styles.title}>Edit Review</span>
-                                            <span className={styles.right} onClick={deleteForm}>Delete</span>
+                                            <span className={styles.right} onClick={() => deleteOption(selectedReview.id)} disabled={submitting}>Delete</span>
                                         </div>
                                         <div className={styles.modalContent}>
 
@@ -303,7 +317,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
                                                     {photos.length < MAX_PHOTOS && (
                                                         <label className={styles.photoUploadLabel}>
                                                             +
-                                                            <input type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handlePhotoSelect} />
+                                                            <input type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handlePhotoSelect}/>
                                                         </label>
                                                     )}
                                                 </div>
@@ -311,7 +325,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
 
                                         </div>
                                         <div className={styles.modalBottom}>
-                                            <button className={styles.submitButton} onClick={() => setSelectedReview(null)} disabled={submitting}>
+                                            <button className={styles.submitButton} onClick={() => editOption()} disabled={submitting}>
                                                 {submitting ? "Posting..." : "Post Review"}
                                             </button>
                                         </div>

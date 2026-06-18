@@ -18,6 +18,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
     const handleOpenModal = async () => {
         const { data: { session } } = await supabase.auth.getSession();
         console.log("session: ", session);
+        //console.log( place.google_place_id);
         if (!session) {
             // save current place so we can return after login
             navigate('/login', { state: { from: location } });
@@ -163,6 +164,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                                 src={person.profileImage || "https://www.m2i.nl/wp-content/uploads/2018/11/blank-profile-picture-973460_1280-e1559726803294.png"}
                                 alt={person.name}
                             />
+                            <p>{person.name}</p>
                         </div>
                         <div className={styles.leaveReviewText} onClick={handleOpenModal}>
                             {user ?

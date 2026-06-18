@@ -58,7 +58,7 @@ export function Login() {
       }
 
       console.log('logged in user:', data.user)
-      navigate('/profile')
+      navigate('/profile/')
     }
   }
 
