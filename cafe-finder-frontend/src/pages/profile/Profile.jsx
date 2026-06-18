@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useParams } from "react-router";
+
 import styles from './Profile.module.css';
 import { useNavigate } from "react-router-dom";
 import ReviewCard from './ReviewCard';
@@ -7,10 +9,15 @@ import supabase from '../../lib/supabase';
 import { NavBar } from '../navigation/NavBar';
 
 export function Profile() {
+  const { profileId } = useParams();
   const [user, setUser] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [avgReviews, setAvgReviews] = useState(null);
+  const [profileOwner, setProfileOwner] = useState(null);
+
 
   const navigate = useNavigate();
 
@@ -22,56 +29,104 @@ export function Profile() {
       return;
     }
 
-    navigate("/"); 
+    navigate("/");
   }
+
+  const fetchReviews = async () => {
+    if (!profileId) return;
+
+    const { data: reviewsData, error } = await supabase
+      .from("ratings")
+      .select("*, places(name, address)")
+      .eq("user_id", profileId)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching reviews:", error);
+      return;
+    }
+
+    if (!reviewsData) return;
+
+    // Set profile owner from first review
+    if (reviewsData.length > 0) {
+      setProfileOwner({
+        name: reviewsData[0].user_name,
+        initials: reviewsData[0].user_name?.[0]?.toUpperCase() ?? "?",
+      });
+    }
+
+    // Calculate average safely
+    const avgStudy =
+      reviewsData.length > 0
+        ? reviewsData.reduce(
+          (sum, r) => sum + Number(r.study_score || 0),
+          0
+        ) / reviewsData.length
+        : 0;
+
+    setReviews(reviewsData);
+    setAvgReviews(avgStudy.toFixed(2));
+  };
+
 
   useEffect(() => {
     const getData = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { setLoading(false); return; }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      setUser(session.user);
+      if (session?.user) {
+        setUser(session.user);
+        setIsOwnProfile(session.user.id === profileId);
+      } else {
+        setIsOwnProfile(false);
+      }
 
-      const { data: reviewsData, error: reviewsError } = await supabase
-        .from("ratings")
-        .select("*, places(name, address)")
-        .eq("user_id", session.user.id)
-        .order("created_at", { ascending: false });
-
-      console.log("reviews:", reviewsData, reviewsError);
-      console.log("id:",session.user);
-      if (reviewsData) setReviews(reviewsData);
-
+      await fetchReviews();
       setLoading(false);
     };
+
     getData();
-  }, []);
-  
-  /*
-  const formatAvgRating = (count, avg) => {
-    if (!count || count === 0 || avg == null) return '—';
-    return avg.toFixed(1);
-  };*/
+  }, [profileId]);
+
+
+
 
   if (loading) return <p>Loading...</p>;
-  if (!user) return <p>Not logged in</p>;
+  if (!profileOwner && reviews.length === 0) return <p>Profile not found</p>;
 
-  const memberSince = new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-  const initials = user.email?.[0].toUpperCase();
+  const displayName = isOwnProfile
+    ? user?.user_metadata?.name
+    : profileOwner?.name ?? "Unknown User";
+
+  const displayInitials = isOwnProfile
+    ? user?.email?.[0].toUpperCase()
+    : profileOwner?.initials ?? "?";
+
+  const memberSince = isOwnProfile && user
+    ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+    : null;
 
   return (
     <div className={styles.page}>
       <div className={styles.profileHeader}>
         <div className={styles.headerRow}>
           <p className={styles.sectionLabel}>Profile</p>
-          <button className={styles.signOutButton} onClick={handleLogout}>Sign Out</button>
+          {isOwnProfile && (  // only show sign out on own profile
+            <button className={styles.signOutButton} onClick={handleLogout}>
+              Sign Out
+            </button>
+          )}
         </div>
 
         <div className={styles.userRow}>
-          <div className={styles.avatar}>{initials}</div>
+          <div className={styles.avatar}>{displayInitials}</div>
           <div>
-            <h1 className={styles.displayName}>{user.user_metadata.name}</h1>
-            <p className={styles.memberSince}>Member since {memberSince}</p>
+            <h1 className={styles.displayName}>{displayName}</h1>
+            {memberSince && (
+              <p className={styles.memberSince}>Member since {memberSince}</p>
+            )}
           </div>
         </div>
 
@@ -82,13 +137,13 @@ export function Profile() {
           </div>
           <div className={styles.statDivider} />
           <div className={styles.stat}>
-            <p className={styles.statNumber}>—</p>
+            <p className={styles.statNumber}>{avgReviews}</p>
             <p className={styles.statLabel}>avg rating given</p>
           </div>
           <div className={styles.statDivider} />
           <div className={styles.stat}>
-            <p className={styles.statNumber}>0</p>
-            <p className={styles.statLabel}>saved spots</p>
+            {/*<p className={styles.statNumber}>0</p>
+            <p className={styles.statLabel}>saved spots</p>*/}
           </div>
         </div>
       </div>
@@ -103,6 +158,7 @@ export function Profile() {
               key={review.id}
               review={review}
               onSelect={() => setSelectedReview(review)}
+              isOwnProfile={isOwnProfile}
             />
           ))
         )}
@@ -112,10 +168,12 @@ export function Profile() {
         <ReviewDetailModal
           review={selectedReview}
           onClose={() => setSelectedReview(null)}
+          isOwnProfile={isOwnProfile}
+          onReviewDeleted={fetchReviews}
         />
       )}
-      <NavBar/>
+      <NavBar />
     </div>
-    
+
   );
 }

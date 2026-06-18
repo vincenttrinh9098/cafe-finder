@@ -22,7 +22,12 @@
 
 .detailHeader {
   padding: 16px 20px 0;
-  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  position: relative;
 }
 
 .backBtn {
@@ -38,6 +43,21 @@
 .backBtn:hover {
   color: #6b5e4e;
 }
+
+.deleteBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 14px;
+  color: #8a7f6e;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.deleteBtn:hover {
+  color: #6b5e4e;
+}
+
 
 .detailContent {
   padding: 16px 20px 24px;
@@ -136,4 +156,10 @@
   flex-shrink: 0;
   border: 1px solid #e8e2d9;
   background: #f5f0e8;
+}
+
+.reviewLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }

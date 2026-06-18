@@ -61,3 +61,19 @@ export async function uploadReviewPhoto(file) {
   const data = await res.json();
   return data.url;
 }
+
+export async function deleteReview(id) {
+  const res = await fetch(`${BASE_URL}/ratings/${id}`, {
+    method: "DELETE",
+  });
+  return res.json();
+}
+
+export async function updateReview(id, data) {
+  const res = await fetch(`${BASE_URL}/ratings/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}

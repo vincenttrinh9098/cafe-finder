@@ -1,5 +1,6 @@
 import styles from './ReviewCard.module.css';
 
+
 const CHAR_LIMIT = 150;
 
 function truncate(text) {
@@ -8,7 +9,7 @@ function truncate(text) {
   return { text: text.slice(0, CHAR_LIMIT).trimEnd() + '…', truncated: true };
 }
 
-export default function ReviewCard({ review, onSelect }) {
+export default function ReviewCard({ review, onSelect}) {
   const preview = truncate(review.comments);
   const hasComment = review.comments && review.comments.trim() !== '';
 
@@ -31,7 +32,15 @@ export default function ReviewCard({ review, onSelect }) {
           <p className={styles.spotName}>{review.places?.name ?? "Unknown place"}</p>
           <p className={styles.reviewMeta}>{timeAgo}</p>
         </div>
-        <div className={styles.ratingBadge}>
+        <div
+          className={`${styles.ratingBadge} 
+          ${review.study_score === 5
+              ? styles.green
+              : review.study_score === 3
+                ? styles.yellow
+                : styles.red
+            }`}
+        >
           <span>{review.study_score}</span>
         </div>
       </div>
