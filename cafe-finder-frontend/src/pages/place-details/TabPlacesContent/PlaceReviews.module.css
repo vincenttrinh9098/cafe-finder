@@ -115,21 +115,19 @@
   object-fit: cover;
   border-radius: 6px;
 }
+.overlay {
+  position: fixed;
+  inset: 0;
 
-.overlay{
-  position:fixed;
-  top:0;
-  bottom:0;
-  height:100vh;
-  width:100vw;
   background-color: rgba(0,0,0,0.3);
   backdrop-filter: blur(1px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index: 9999; 
-}
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
 .modal{
   background-color: white;
   width: 90vw;
@@ -259,7 +257,7 @@
 
 .pillOption {
   margin-top:0px;
-  padding: 2px 20px;
+  padding: 8px 20px;
   font-size:12px;
   border-radius: 20px;
   background-color: #FFFF;
@@ -429,7 +427,7 @@
   justify-content: center;
   align-items: center;  
   margin-top:0px;
-  padding: 2px 10px;
+  padding: 15px 20px;
   font-size:12px;
   border-radius: 20px;
   background-color: #FFFF;
