@@ -72,7 +72,9 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
     } catch (err) {
         console.error("Failed to delete review:", err);
         setSelectedReview(null);
-    }
+    }finally {
+    setSubmitting(false);
+  }
     };
 
     const editOption = async () => {
@@ -82,7 +84,9 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
         onReviewDeleted(); // reuse same refresh callback
     } catch (err) {
         console.error("Failed to update review:", err);
-    }
+    }finally {
+    setSubmitting(false);
+  }
     };
 
     useEffect(() => {
