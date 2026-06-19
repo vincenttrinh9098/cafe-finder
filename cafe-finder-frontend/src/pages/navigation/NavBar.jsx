@@ -23,7 +23,7 @@ export function NavBar() {
 
   return (
     <nav className={styles.navbar}>
-      <a href="#" className={styles.link} onClick={handleHomeClick}>
+      <a href="#k" className={styles.link} onClick={handleHomeClick}>
         Home
       </a>
       <NavLink onClick={handleProfileClick} className={styles.link}>

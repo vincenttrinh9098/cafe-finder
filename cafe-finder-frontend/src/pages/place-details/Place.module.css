@@ -3,7 +3,11 @@
 }
 .placePage {
   background-color: #ffffff;
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* STACK vertically */
+  min-height:100vh;
+  padding-bottom: 70px;
+
 }
 
 .header {
@@ -19,12 +23,6 @@
   border-bottom: 1px solid #eee;
 }
 
-.placePage {
-  display: flex;
-  flex-direction: column; /* 🔥 STACK vertically */
-  width: 100%;
-  min-height: 100vh;
-}
 
 /*                          */
 /*   Content Section Start  */
@@ -83,7 +81,7 @@
 .dynamicSection{
   position: relative;
   width: 100%;
-  height: 77vh;
+  flex: 1;
   overflow: visible;
   margin-top:0;
 }
@@ -94,8 +92,6 @@
 /*                          */
 /*   Dynamic Section End    */
 /*                          */
-
-
 
 
 

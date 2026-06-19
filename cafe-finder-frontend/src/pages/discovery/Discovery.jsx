@@ -139,7 +139,8 @@ export function Discovery() {
           <SearchedPlaces places={sortedResults} query={query} searchResults={results} />
           {loadingMore && <p style={{ textAlign: "center", padding: "1rem" }}>Loading more...</p>}
         </>
-        ) : (
+        ) 
+        : (
           <>
             <TopRatedPlaces userLocation={userLocation}/>
             <SuggestedRatedPlaces userLocation={userLocation} />
