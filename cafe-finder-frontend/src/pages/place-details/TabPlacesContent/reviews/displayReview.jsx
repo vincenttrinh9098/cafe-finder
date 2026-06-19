@@ -65,33 +65,33 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
     };
 
     const deleteOption = async (id) => {
-    try {
-        await deleteReview(id);
-        onReviewDeleted(); // refresh reviews after delete
-        setSelectedReview(null);
-    } catch (err) {
-        console.error("Failed to delete review:", err);
-        setSelectedReview(null);
-    }finally {
-    setSubmitting(false);
-  }
+        try {
+            await deleteReview(id);
+            onReviewDeleted(); // refresh reviews after delete
+            setSelectedReview(null);
+        } catch (err) {
+            console.error("Failed to delete review:", err);
+            setSelectedReview(null);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const editOption = async () => {
-    try {
-        await updateReview(selectedReview.id, { comments: comment });
-        setSelectedReview(null);
-        onReviewDeleted(); // reuse same refresh callback
-    } catch (err) {
-        console.error("Failed to update review:", err);
-    }finally {
-    setSubmitting(false);
-  }
+        try {
+            await updateReview(selectedReview.id, { comments: comment });
+            setSelectedReview(null);
+            onReviewDeleted(); // reuse same refresh callback
+        } catch (err) {
+            console.error("Failed to update review:", err);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     useEffect(() => {
         if (!selectedReview) return;
-        setScoreOption(selectedReview.study_score|| "");
+        setScoreOption(selectedReview.study_score || "");
         setNoiseOption(selectedReview.noise || "");
         setFootTrafficOption(selectedReview.foot_traffic || "");
         setSeatingCapacityOption(selectedReview.seating || "");
@@ -111,9 +111,7 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
     }, [selectedReview]);
 
     const [user, setUser] = useState(null);
-    const filtered = reviews.filter(r => r.comments || (r.photos && r.photos.length > 0));
-
-    console.log(filtered);
+    const filteredReviews = reviews.filter(r => r.comments || (r.photos && r.photos.length > 0));
 
     const handleOpenModal = (review) => {
         setSelectedReview(review);
@@ -136,13 +134,19 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
 
 
 
-    if (filtered.length === 0) return <p></p>;
+    if (filteredReviews.length === 0) return <p></p>;
 
-
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+        });
+    };
 
     return (
         <div className={styles.reviews}>
-            {filtered.map((r) => (
+            {filteredReviews.map((r) => (
                 <div key={r.id} className={styles.reviewCard}>
                     <div className={styles.reviewGrid}>
                         <img
@@ -153,6 +157,7 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
                         <div className={styles.reviewContent}>
                             <div className={styles.reviewsHeader}>
                                 <h4>{r.user_name}</h4>
+                                <span>{formatDate(r.created_at)}</span>
                             </div>
 
                             {r.comments && (
@@ -321,7 +326,7 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
                                                     {photos.length < MAX_PHOTOS && (
                                                         <label className={styles.photoUploadLabel}>
                                                             +
-                                                            <input type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handlePhotoSelect}/>
+                                                            <input type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handlePhotoSelect} />
                                                         </label>
                                                     )}
                                                 </div>
