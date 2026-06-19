@@ -14,15 +14,16 @@ export function NavBar() {
       navigate('/login');
     }
   };
+
   const handleHomeClick = (e) => {
     e.preventDefault();
-    const last = sessionStorage.getItem("lastMainRoute") ?? "/";
+    const last = sessionStorage.getItem('lastNonProfileRoute') ?? '/';
     navigate(last);
   };
 
   return (
     <nav className={styles.navbar}>
-      <a href="/" className={styles.link} onClick={handleHomeClick}>
+      <a href="#" className={styles.link} onClick={handleHomeClick}>
         Home
       </a>
       <NavLink onClick={handleProfileClick} className={styles.link}>

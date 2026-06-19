@@ -6,9 +6,10 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { RouteTracker } from './components/RouteTracker';
 import { AuthCallback } from './pages/auth/AuthCallback';
 import { Profile } from './pages/profile/Profile';
+import { useTrackLastRoute } from './hooks/useTrackLastRoute';
 
 function App() {
-
+  useTrackLastRoute();
   return (
     <>
       <RouteTracker />

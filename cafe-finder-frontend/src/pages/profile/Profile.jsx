@@ -32,9 +32,22 @@ export function Profile() {
     navigate("/");
   }
 
-  const fetchReviews = async () => {
-    if (!profileId) return;
+  const fetchProfile = async () => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", profileId)
+      .single();
 
+    if (error) {
+      console.error("Error fetching profile:", error);
+      return;
+    }
+
+    setProfileOwner(data);
+  };
+  
+  const fetchReviews = async () => {
     const { data: reviewsData, error } = await supabase
       .from("ratings")
       .select("*, places(name, address)")
@@ -46,32 +59,25 @@ export function Profile() {
       return;
     }
 
-    if (!reviewsData) return;
+    const safeReviews = reviewsData || [];
 
-    // Set profile owner from first review
-    if (reviewsData.length > 0) {
-      setProfileOwner({
-        name: reviewsData[0].user_name,
-        initials: reviewsData[0].user_name?.[0]?.toUpperCase() ?? "?",
-      });
-    }
-
-    // Calculate average safely
     const avgStudy =
-      reviewsData.length > 0
-        ? reviewsData.reduce(
+      safeReviews.length > 0
+        ? safeReviews.reduce(
           (sum, r) => sum + Number(r.study_score || 0),
           0
-        ) / reviewsData.length
+        ) / safeReviews.length
         : 0;
 
-    setReviews(reviewsData);
+    setReviews(safeReviews);
     setAvgReviews(avgStudy.toFixed(2));
   };
 
 
   useEffect(() => {
     const getData = async () => {
+      setLoading(true);
+
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -83,7 +89,11 @@ export function Profile() {
         setIsOwnProfile(false);
       }
 
-      await fetchReviews();
+      await Promise.all([
+        fetchProfile(),
+        fetchReviews(),
+      ]);
+
       setLoading(false);
     };
 
@@ -92,9 +102,9 @@ export function Profile() {
 
 
 
-
   if (loading) return <p>Loading...</p>;
-  if (!profileOwner && reviews.length === 0) return <p>Profile not found</p>;
+  if (!profileOwner) return <p>Profile not found</p>;
+
 
   const displayName = isOwnProfile
     ? user?.user_metadata?.name

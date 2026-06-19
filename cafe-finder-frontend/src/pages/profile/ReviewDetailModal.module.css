@@ -57,7 +57,12 @@
 .deleteBtn:hover {
   color: #6b5e4e;
 }
-
+.deleteBtn img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: block;
+}
 
 .detailContent {
   padding: 16px 20px 24px;
