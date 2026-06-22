@@ -18,7 +18,7 @@ function App() {
       <Route path="/place/:placeId" element={<Place />} />
       <Route path="login" element={<Login />} />
       <Route 
-        path="profile/:profileId" 
+        path="profile" 
         element={
           <ProtectedRoute>
             <Profile />
