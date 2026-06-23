@@ -38,9 +38,22 @@
     flex-direction: column;
 }
 
+.reviewsHeader{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
 .reviewsHeader h4 {
-    margin-bottom: 10px;
-    text-decoration: underline;
+  margin-bottom: 10px;
+  text-decoration: underline;
+}
+
+.reviewsHeader span {
+  font-size: 15px;
+  color: #81735d;
+  margin: 0;
 }
 
 .reviewText p {

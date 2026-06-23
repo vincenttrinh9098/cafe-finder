@@ -18,8 +18,8 @@
 }
 
 .spotName {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight:600;
   margin: 0 0 2px;
   color: #1a1a18;
 }
@@ -32,10 +32,26 @@
 
 .ratingBadge {
   background: #2c2c2a;
-  border-radius: 6px;
-  padding: 3px 8px;
+  border-radius: 5px;
+  padding: 6px 12px;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.green {
+  background-color: #22c55e; /* green */
+}
+
+.yellow {
+  background-color: #eab308; /* yellow */
+}
+
+.red {
+  background-color: #ef4444; /* red */
+}
+
 
 .ratingBadge span {
   font-size: 12px;
@@ -48,6 +64,7 @@
   color: #1a1a18;
   margin: 0;
   line-height: 1.5;
+  margin-top:10px;
 }
 
 .readMoreHint {

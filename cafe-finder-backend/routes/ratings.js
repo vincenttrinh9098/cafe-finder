@@ -87,7 +87,6 @@ router.get("/attributes/:google_place_id", async (req, res) => {
 });
 
 
-
 //Submit a photos review
 const upload = multer({ storage: multer.memoryStorage() });
 router.post("/upload-photo", upload.single("photo"), async (req, res) => {
@@ -134,10 +133,45 @@ router.post("/", async (req, res) => {
 
     const { error: ratingError } = await supabase
       .from("ratings")
-      .insert({ place_id: place.id, address, name, foot_traffic, parking, outlet, noise,seating,comments,photos,study_score,user_id,user_name});
+      .insert({ place_id: place.id, address, name, foot_traffic, parking, outlet, noise,seating,comments,photos,study_score,user_id,user_name, google_place_id});
       
     if (ratingError) return res.status(500).json({ error: ratingError.message });
 
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// DELETE /api/ratings/:id
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { error } = await supabase
+      .from("ratings")
+      .delete()
+      .eq("id", id);
+
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT /api/ratings/:id
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { comments, noise, foot_traffic, seating, outlet, parking } = req.body;
+
+  try {
+    const { error } = await supabase
+      .from("ratings")
+      .update({ comments, noise, foot_traffic, seating, outlet, parking })
+      .eq("id", id);
+
+    if (error) return res.status(500).json({ error: error.message });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
