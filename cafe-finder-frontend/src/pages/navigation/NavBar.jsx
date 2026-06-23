@@ -18,6 +18,7 @@ export function NavBar() {
   const handleHomeClick = (e) => {
     e.preventDefault();
     const last = sessionStorage.getItem('lastNonProfileRoute') ?? '/';
+    console.log(last);
     navigate(last);
   };
 
