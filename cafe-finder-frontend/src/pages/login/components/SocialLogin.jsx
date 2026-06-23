@@ -7,10 +7,9 @@ export function SocialLogin() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/profile`
+        redirectTo: `${window.location.origin}/auth/callback` // ← callback page
       }
-    })
-
+    });
     if (error) {
       console.error('Google login error:', error.message)
     }
@@ -22,9 +21,9 @@ export function SocialLogin() {
         <span>or</span>
       </div>
 
-      <button 
-        type="button" 
-        className={styles.googleBtn} 
+      <button
+        type="button"
+        className={styles.googleBtn}
         onClick={handleGoogleLogin}
       >
         <GoogleIcon />

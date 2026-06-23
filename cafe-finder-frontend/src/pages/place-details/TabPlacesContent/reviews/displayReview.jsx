@@ -1,15 +1,15 @@
-//import styles from '../PlaceReviews.module.css';
 import styles from './DisplayReview.module.css';
 import editIcon from '../../../../assets/images/editIcon.png'
 import smile5 from '../../../../assets/images/smile5.jpeg';
 import moderate3 from '../../../../assets/images/moderate3.jpg';
 import angry1 from '../../../../assets/images/angry1.png';
 import supabase from '../../../../lib/supabase.js';
+import { deleteReview, updateReview } from '../../../../api/placesApi.js';
 
 
 import { useEffect, useState } from 'react';
 
-export function DisplayReview({ reviews, loadingReviews }) {
+export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
 
     const noiseOptions = ["Very quiet", "Quiet", "Moderate noise", "Loud", "Very loud"];
     const footTrafficOptions = ["Nearly empty", "Lightly busy", "Busy", "Very Busy"];
@@ -64,16 +64,34 @@ export function DisplayReview({ reviews, loadingReviews }) {
 
     };
 
-    const deleteForm = () => {
-        setSelectedReview(null)
+    const deleteOption = async (id) => {
+        try {
+            await deleteReview(id);
+            onReviewDeleted(); // refresh reviews after delete
+            setSelectedReview(null);
+        } catch (err) {
+            console.error("Failed to delete review:", err);
+            setSelectedReview(null);
+        } finally {
+            setSubmitting(false);
+        }
     };
-    const editForm = () =>{
-        setSelectedReview(null)
-    }
+
+    const editOption = async () => {
+        try {
+            await updateReview(selectedReview.id, { comments: comment });
+            setSelectedReview(null);
+            onReviewDeleted(); // reuse same refresh callback
+        } catch (err) {
+            console.error("Failed to update review:", err);
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     useEffect(() => {
         if (!selectedReview) return;
-        setScoreOption(selectedReview.study_score|| "");
+        setScoreOption(selectedReview.study_score || "");
         setNoiseOption(selectedReview.noise || "");
         setFootTrafficOption(selectedReview.foot_traffic || "");
         setSeatingCapacityOption(selectedReview.seating || "");
@@ -93,9 +111,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
     }, [selectedReview]);
 
     const [user, setUser] = useState(null);
-    const filtered = reviews.filter(r => r.comments || (r.photos && r.photos.length > 0));
-
-    console.log(filtered);
+    const filteredReviews = reviews.filter(r => r.comments || (r.photos && r.photos.length > 0));
 
     const handleOpenModal = (review) => {
         setSelectedReview(review);
@@ -118,13 +134,19 @@ export function DisplayReview({ reviews, loadingReviews }) {
 
 
 
-    if (filtered.length === 0) return <p></p>;
+    if (filteredReviews.length === 0) return <p></p>;
 
-
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+        });
+    };
 
     return (
         <div className={styles.reviews}>
-            {filtered.map((r) => (
+            {filteredReviews.map((r) => (
                 <div key={r.id} className={styles.reviewCard}>
                     <div className={styles.reviewGrid}>
                         <img
@@ -135,6 +157,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
                         <div className={styles.reviewContent}>
                             <div className={styles.reviewsHeader}>
                                 <h4>{r.user_name}</h4>
+                                <span>{formatDate(r.created_at)}</span>
                             </div>
 
                             {r.comments && (
@@ -171,7 +194,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
                                         <div className={styles.modalHeader}>
                                             <span className={styles.left} onClick={resetForm}>Back</span>
                                             <span className={styles.title}>Edit Review</span>
-                                            <span className={styles.right} onClick={deleteForm}>Delete</span>
+                                            <span className={styles.right} onClick={() => deleteOption(selectedReview.id)} disabled={submitting}>Delete</span>
                                         </div>
                                         <div className={styles.modalContent}>
 
@@ -311,7 +334,7 @@ export function DisplayReview({ reviews, loadingReviews }) {
 
                                         </div>
                                         <div className={styles.modalBottom}>
-                                            <button className={styles.submitButton} onClick={() => setSelectedReview(null)} disabled={submitting}>
+                                            <button className={styles.submitButton} onClick={() => editOption()} disabled={submitting}>
                                                 {submitting ? "Posting..." : "Post Review"}
                                             </button>
                                         </div>

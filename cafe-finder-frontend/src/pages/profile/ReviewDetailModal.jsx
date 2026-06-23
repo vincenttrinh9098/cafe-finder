@@ -1,7 +1,11 @@
 import { useEffect } from 'react';
 import styles from './ReviewDetailModal.module.css';
+import { Link } from 'react-router';
+import trashcan from '../../assets/images/trashcan.png';
+import { deleteReview } from '../../api/PlacesApi';
 
-export default function ReviewDetailModal({ review, onClose }) {
+
+export default function ReviewDetailModal({ review, onClose, isOwnProfile, onReviewDeleted }) {
   useEffect(() => {
     // locks the page so user can't scroll while modal is open
     document.body.style.overflow = 'hidden';
@@ -17,24 +21,53 @@ export default function ReviewDetailModal({ review, onClose }) {
     review.parking,
   ].filter(Boolean);
 
-  const timeAgo = new Date(review.created_at).toLocaleDateString('en-US', {
+  /*const timeAgo = new Date(review.created_at).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric'
-  });
+  });*/
 
+  console.log(review);
+
+  const deleteOption = async (id) => {
+    try {
+      await deleteReview(id);
+      onClose();
+      onReviewDeleted(); // ← refresh the list
+    } catch (err) {
+      console.error("Failed to delete review:", err);
+    }
+  };
   return (
     <div className={styles.backdrop} onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className={styles.detailSheet}>
 
         <div className={styles.detailHeader}>
-          <button className={styles.backBtn} onClick={onClose}>←</button>
+          <button className={styles.backBtn} onClick={onClose}>
+            ←
+          </button>
+
+          {isOwnProfile && (
+            <button
+              className={styles.deleteBtn}
+              onClick={() => deleteOption(review.id)}
+            >
+              <img className={styles.deleteBtnImg} src={trashcan} alt="Delete" />
+            </button>
+          )}
         </div>
 
         <div className={styles.detailContent}>
           <div className={styles.detailTopRow}>
-            <div>
-              <p className={styles.detailSpotName}>{review.places?.name ?? "Unknown place"}</p>
-              <p className={styles.detailMeta}>{review.places?.address} · {timeAgo}</p>
-            </div>
+            <Link
+              key={review.google_place_id}
+              to={`/place/${review.google_place_id}`}
+              className={styles.reviewLink}
+            >
+              <p className={styles.detailSpotName}>
+                {review.places?.name ?? "Unknown place"}
+              </p>
+              <p className={styles.detailMeta}> {review.places?.address} </p>
+              {/*<p className={styles.detailMeta}> {timeAgo}</p>*/}
+            </Link>
           </div>
 
           <div className={styles.detailDivider} />

@@ -28,7 +28,7 @@ export function SearchedPlaces({ places, query, searchResults }) {
     };
 
     fetchAttributes();
-  }, [places]); // ← re-run when places changes
+  }, [places]); // re-run when places changes
 
   const displayPlaces = stores.length > 0 ? stores : places;
   if (loading) return <p>Loading searched places...</p>;

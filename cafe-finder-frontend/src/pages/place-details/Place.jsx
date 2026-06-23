@@ -88,6 +88,7 @@ export function Place() {
       </div>
 
       <NavBar/>
+      
     </div>
   );
 }

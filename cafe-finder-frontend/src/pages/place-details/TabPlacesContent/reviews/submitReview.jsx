@@ -18,6 +18,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
     const handleOpenModal = async () => {
         const { data: { session } } = await supabase.auth.getSession();
         console.log("session: ", session);
+        //console.log( place.google_place_id);
         if (!session) {
             // save current place so we can return after login
             navigate('/login', { state: { from: location } });
@@ -157,14 +158,15 @@ export function SubmitReview({ place, onReviewSubmitted }) {
         <>
             <div className={styles.dynamicReviews}>
                 <div className={styles.postReviewsContainer}>
-                    <div className={styles.postReviewsCard}>
+                    <div className={styles.postReviewsCard} onClick={handleOpenModal}>
                         <div className={styles.postReviewHeader}>
                             <img
                                 src={person.profileImage || "https://www.m2i.nl/wp-content/uploads/2018/11/blank-profile-picture-973460_1280-e1559726803294.png"}
                                 alt={person.name}
                             />
+                            <p>{person.name}</p>
                         </div>
-                        <div className={styles.leaveReviewText} onClick={handleOpenModal}>
+                        <div className={styles.leaveReviewText}>
                             {user ?
                                 <p>Tap to leave a review...</p>
                                 :
@@ -178,8 +180,8 @@ export function SubmitReview({ place, onReviewSubmitted }) {
 
 
             {showModal && (
-                <div className={styles.overlay}>
-                    <div className={styles.modal}>
+                <div className={styles.overlay} onClick={resetForm}>
+                    <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
 
                         <div className={styles.modalHeader}>
                             <span onClick={resetForm}>Back</span>

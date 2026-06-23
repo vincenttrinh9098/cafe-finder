@@ -104,7 +104,7 @@ export function Discovery() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [nextPageToken, loadingMore]); // ← re-register when these change
+  }, [nextPageToken, loadingMore]); // re-register when these change
 
 
   const [activeSuggestion, setActiveSuggestion] = useState(
@@ -139,7 +139,8 @@ export function Discovery() {
           <SearchedPlaces places={sortedResults} query={query} searchResults={results} />
           {loadingMore && <p style={{ textAlign: "center", padding: "1rem" }}>Loading more...</p>}
         </>
-        ) : (
+        ) 
+        : (
           <>
             <TopRatedPlaces userLocation={userLocation}/>
             <SuggestedRatedPlaces userLocation={userLocation} />
