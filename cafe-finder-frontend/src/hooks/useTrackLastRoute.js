@@ -6,8 +6,8 @@ export function useTrackLastRoute() {
 
   useEffect(() => {
     const path = location.pathname;
-    // Save any route that isn't a profile page
-    if (!path.startsWith('/profile')) {
+    const skip = ['/profile', '/login', '/auth', '/saved'];
+    if (!skip.some(p => path.startsWith(p))) {
       sessionStorage.setItem('lastNonProfileRoute', path);
     }
   }, [location.pathname]);

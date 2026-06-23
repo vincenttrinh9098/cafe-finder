@@ -12,7 +12,6 @@ function App() {
   useTrackLastRoute();
   return (
     <>
-      <RouteTracker />
       <Routes>
         <Route index element={<Discovery />} />
         <Route path="discovery" element={<Discovery />} />
