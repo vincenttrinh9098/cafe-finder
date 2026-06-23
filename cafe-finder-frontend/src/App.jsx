@@ -22,6 +22,7 @@ function App() {
         <Route path="profile/:profileId" element={<Profile/>}
         />
       </Routes>
+
     </>
   );
 }

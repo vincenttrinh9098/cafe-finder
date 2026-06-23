@@ -7,7 +7,9 @@ import { deleteReview } from '../../api/PlacesApi';
 
 export default function ReviewDetailModal({ review, onClose, isOwnProfile, onReviewDeleted }) {
   useEffect(() => {
+    // locks the page so user can't scroll while modal is open
     document.body.style.overflow = 'hidden';
+    // when modal closes, resets overflow back to ''
     return () => { document.body.style.overflow = ''; };
   }, []);
 
