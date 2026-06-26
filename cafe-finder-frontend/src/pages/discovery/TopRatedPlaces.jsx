@@ -14,7 +14,7 @@ export function TopRatedPlaces({userLocation}) {
     const fetchTopRated = async () => {
       try {
         const places = await getTopRatedPlaces();
-        const top = places.slice(0, 5).map(place => ({
+        const top = places.slice(0, 10).map(place => ({
           ...place,
           distance: userLocation 
             ? getDistance(userLocation.lat, userLocation.lng, place.lat, place.lng)
