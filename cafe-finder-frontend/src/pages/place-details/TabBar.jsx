@@ -1,7 +1,7 @@
 import styles from './TabBar.module.css';
 
 export function TabBar({ activeTab, setActiveTab }) {
-  const tabs = ["info", "reviews", "map", "Attribute"];
+  const tabs = ["info", "reviews", "map", ""];
 
   return (
     <div className={styles.tabBar}>

@@ -67,6 +67,7 @@ export function SearchedPlaces({ places, query, searchResults }) {
                 </div>
                 <div className={styles.searchedRatedCardRight}>
                   <p>⭐ {place.rating}</p>
+                  <p>SS: {place.attributes?.[5] ?? "—"}</p>
                 </div>
               </div>
 
