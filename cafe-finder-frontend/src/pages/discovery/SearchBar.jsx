@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import styles from './SearchBar.module.css';
 import { searchPlaces } from '../../api/placesApi.js';
-
 import {FilterPopUp} from './search-bar/FilterPopUp.jsx';
 
 export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToken, activeSuggestion, setActiveSuggestion,onHome}) {
