@@ -1,10 +1,9 @@
-.tabBar{
+.tabBar {
   position: relative;
   width: 100%;
   overflow: hidden;
-  padding:10px;
-  padding-left:15px;
-  
+  padding: 10px 15px;
+  border-bottom: 2px solid #6D5757;
 }
 
 .tabBarButton {
@@ -14,13 +13,11 @@
   border: none;
   padding: 8px 16px;
   cursor: pointer;
-  transition: border-bottom 0.2s ease; /* smooth highlight change */
-  border-bottom: 2px solid #6D5757;
+  transition: 0.2s ease; /* smooth highlight change */
 }
 
 /* Only what changes when active */
 .activeTab {
-  border-bottom: 2px solid #4A6D56; /* highlight */
   color:#4A6D56;
   font-weight: bold;
 }
