@@ -10,7 +10,6 @@
 }
 
 .searchedRatedContainer {
-  margin-top: 0px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -46,7 +45,7 @@
 }
 
 .searchedRatedCardContent {
-  width: 100%;
+  width: 70%;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -60,6 +59,7 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 8px;
+  margin-bottom:10px;
 }
 
 .searchedRatedCardTop h2 {
@@ -76,12 +76,7 @@
   margin-top: 2px;
 }
 
-/* DISTANCE block with mini progress bar */
-.distanceBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+
 
 .distanceRow {
   display: flex;
@@ -214,7 +209,8 @@
   }
 
 .searchedRatedAttributeRow {
-  max-height: 80px;
+  max-height: 88px;
+  gap: 6px;
   overflow: hidden;
 }
 
