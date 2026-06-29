@@ -1,3 +1,7 @@
+/*
+Open home page -> Click on first cafe -> Expect URL to have /place -> Expect cafe page to have heading & review 
+*/
+
 import { test, expect } from "@playwright/test";
 
 test("user can open a cafe details page from discovery", async ({ page }) => {

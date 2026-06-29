@@ -1,3 +1,7 @@
+/*
+Not logged in -> Click on first cafe -> Click on reviews tab -> Expect to see 'sign in to leave a review'
+*/
+
 import { test, expect } from "@playwright/test";
 
 test("logged out user is prompted to sign in before leaving a review", async ({ page }) => {
