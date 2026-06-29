@@ -1,7 +1,6 @@
 import styles from './PlaceInfo.module.css'
 import { getPlaceAttributes } from '../../../api/placesApi.js';
-import { useState, useEffect } from 'react'
-  ;
+import { useState, useEffect } from 'react';
 //import storeDetailTestImg from './store-details-test.png';
 
 export function PlaceInfo({ place, placeDetails, loadingDetails }) {

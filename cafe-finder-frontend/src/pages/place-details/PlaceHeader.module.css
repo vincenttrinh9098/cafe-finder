@@ -1,10 +1,10 @@
+/* ========================= */
+/* Header Image */
+/* ========================= */
 
-/*                          */
-/* Header Image Header Start */
-/*                          */
 .imageSection {
   position: relative;
-  height:35vh;
+  height: 35vh;
 }
 
 .imageSection::after {
@@ -25,55 +25,224 @@
   top: 16px;
   left: 16px;
   z-index: 10;
-  background: rgb(255, 255, 255); /*background button color */
-  color: rgb(0, 0, 0);/*text color*/
+
+  background: white;
+  color: black;
 
   border: none;
   border-radius: 999px;
 
-  padding: 6px 12px;
+  padding: 8px 14px;
   cursor: pointer;
-}
-/*                          */
-/* Header Image Header End  */
-/*                          */
 
+  transition: 0.2s;
+}
+
+.backButton:hover {
+  background: #f3f3f3;
+}
+
+/* ========================= */
+/* Content */
+/* ========================= */
 
 .contentSection {
-  position: relative;
   width: 100%;
-  height: 10vh;
-  overflow: hidden;
-  padding:10px;
-  padding-left:15px;
+  padding: 24px;
 }
 
-.contentSection h2 {
-  margin: 0;
-  font-size: 30px;
-  font-weight:bold;
-}
-
-.contentSection p{
-  font-size:18px;
-  font-weight:700
-}
-.topRowContentSection{
-
-}
-
-
-.bottomRowAttributeRow {
-  margin-top:20px;
+.topRowContentSection {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 20px;
 }
 
-.bottomRowAttributeChip{
-  border: 1px solid #000;
-  border-radius:20px;
-  font-size:15px;
-  padding:5px;
+.topRowContentSection h2 {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #222;
+}
 
+/* ========================= */
+/* Score Cards */
+/* ========================= */
+
+.scoreRow {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+}
+
+.studyCard,
+.googleCard {
+  flex: 1;
+  padding: 24px 28px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+}
+
+.studyCard {
+  background: #e8f7f7;
+}
+
+.googleCard {
+  background: #fff1de;
+}
+
+/* ========================= */
+/* Score Cards */
+/* ========================= */
+
+.scoreRow {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.studyCard,
+.googleCard {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 90px;
+  gap: 6px;
+}
+
+.studyCard {
+  background: #e8f7f7;
+}
+
+.googleCard {
+  background: #fff1de;
+}
+
+/* ========================= */
+/* Card Header */
+/* ========================= */
+
+.scoreHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scoreTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scoreTitle h3 {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: .3px;
+  color: #111;
+}
+
+.googleG {
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1;
+  font-weight: 900;
+}
+
+/* ========================= */
+/* Bottom */
+/* ========================= */
+
+.scoreBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stars {
+  display: flex;
+  gap: 3px;
+}
+
+.stars svg {
+  width: 16px;
+  height: 16px;
+}
+
+.scoreNumber {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #111;
+}
+
+.scoreNumber span {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #222;
+}
+@media (max-width: 900px) {
+  .scoreRow {
+    gap: 10px; /* keep side-by-side, just remove flex-direction: column */
+  }
+
+  .scoreTitle h3 {
+    font-size: 0.7rem;
+  }
+
+  .scoreNumber {
+    font-size: 1.3rem;
+  }
+
+  .scoreNumber span {
+    font-size: 0.85rem;
+  }
+
+  .stars svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .contentSection {
+    padding: 14px;
+  }
+
+  .studyCard,
+  .googleCard {
+    padding: 10px 12px;
+    min-height: 80px;
+  }
+
+  .scoreTitle h3 {
+    font-size: 0.65rem;
+  }
+
+  .googleG {
+    font-size: 1.2rem;
+  }
+
+  .scoreBottom {
+    flex-direction: row; /* keep horizontal, not stacked */
+    align-items: center;
+  }
+
+  .scoreNumber {
+    font-size: 1.2rem;
+  }
+
+  .scoreNumber span {
+    font-size: 0.8rem;
+  }
+
+  .stars svg {
+    width: 12px;
+    height: 12px;
+  }
 }

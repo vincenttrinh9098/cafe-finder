@@ -6,6 +6,11 @@ import { TabBar } from './TabBar.jsx';
 import { TabContent } from './TabContent.jsx';
 import { NavBar } from '../navigation/NavBar.jsx';
 import { getPlaceAttributes } from '../../api/placesApi.js';
+import {
+  BookOpenText,
+  Star,
+  StarHalf,
+} from "lucide-react";
 
 
 export function Place() {

@@ -159,7 +159,7 @@ export function Profile() {
       </div>
 
       <div className={styles.reviewsSection}>
-        <p className={styles.sectionLabel}>Reviews</p>
+        <p className={styles.sectionLabel}></p>
         {reviews.length === 0 ? (
           <p className={styles.emptyState}>No reviews yet</p>
         ) : (
