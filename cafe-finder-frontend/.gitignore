@@ -25,3 +25,7 @@ dist-ssr
 
 # Supabase
 .env
+
+# Playwright-generate artifact
+test-results/
+tests/playwright/.auth
