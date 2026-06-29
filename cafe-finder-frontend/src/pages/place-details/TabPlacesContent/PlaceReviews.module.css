@@ -1,4 +1,3 @@
-
 /*                          */
 /* Dynamic Reviews Section start */
 /*                          */
@@ -6,12 +5,12 @@
 .postReviewsContainer {
   margin-top: 10px;
   padding: 30px;
-  overflow-x: hidden; 
+  overflow-x: hidden;
 }
 
 .postReviewsCard {
   display: flex;
-  flex-direction: column;   
+  flex-direction: column;
   width: 100%;
   max-width: 700px;
   height: 160px;
@@ -26,12 +25,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  align-self: flex-start; 
+  align-self: flex-start;
 }
 
 .postReviewHeader p {
-  font-size:15px;
-  font-weight:100;
+  font-size: 15px;
+  font-weight: 100;
   text-decoration: underline;
 }
 
@@ -46,13 +45,13 @@
 .leaveReviewText {
   display: flex;
   justify-content: center;
-  margin-top:10px;
+  margin-top: 10px;
 }
 
 .leaveReviewText p {
   margin: 0;
   font-size: 18px;
-  font-weight:bold;
+  font-weight: bold;
   line-height: 1.4;
   color: #333;
   text-align: center;
@@ -87,7 +86,7 @@
 
 
 
-.reviewsHeader h3{
+.reviewsHeader h3 {
   text-decoration: underline;
 }
 
@@ -103,6 +102,7 @@
   line-height: 1.4;
   color: #333;
 }
+
 .reviewPhotos {
   display: flex;
   gap: 10px;
@@ -115,11 +115,12 @@
   object-fit: cover;
   border-radius: 6px;
 }
+
 .overlay {
   position: fixed;
   inset: 0;
 
-  background-color: rgba(0,0,0,0.3);
+  background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(1px);
 
   display: flex;
@@ -128,21 +129,22 @@
 
   z-index: 9999;
 }
-.modal{
+
+.modal {
   background-color: white;
   width: 90vw;
   max-height: 70vh;
   padding: 10px;
   border: 1px solid black;
   border-radius: 40px;
-  overflow: hidden; 
-  display:flex;
+  overflow: hidden;
+  display: flex;
   flex-direction: column;
 }
 
 .modalContent {
   padding: 10px;
-  overflow-y: auto;   
+  overflow-y: auto;
   flex: 1;
 }
 
@@ -150,7 +152,7 @@
   display: none;
 }
 
-.modalHeader{
+.modalHeader {
   position: relative;
   display: flex;
   justify-content: center;
@@ -159,25 +161,25 @@
   padding: 16px;
   border-bottom: 1px solid black;
   font-size: 18px;
-  font-weight:bold;
+  font-weight: bold;
 }
 
-.modalHeader span:first-child{
+.modalHeader span:first-child {
   position: absolute;
   left: 10px;
   cursor: pointer;
   font-size: 15px;
 }
 
-.modalCommentsOuter{
+.modalCommentsOuter {
   width: 90%;
   margin: 0 auto;
   display: flex;
   justify-content: center;
-  margin-top:20px;
+  margin-top: 20px;
 }
 
-.modalCommentsInner{
+.modalCommentsInner {
   width: 100%;
   min-height: 100px;
   padding: 12px;
@@ -189,7 +191,7 @@
   box-sizing: border-box;
 }
 
-.modalCommentsInner textarea{
+.modalCommentsInner textarea {
   width: 100%;
   min-height: 100px;
 
@@ -200,14 +202,15 @@
   border: 1px solid #ccc;
   border-radius: 10px;
 
-  resize: none; /* or vertical if you want user resizing */
+  resize: none;
+  /* or vertical if you want user resizing */
   outline: none;
 
   box-sizing: border-box;
 }
 
 /* focus state */
-.modalCommentsInner textarea:focus{
+.modalCommentsInner textarea:focus {
   border-color: black;
 }
 
@@ -220,52 +223,56 @@
 }
 
 
-.modalBottom{
+.modalBottom {
   display: flex;
   justify-content: center;
   align-items: center;
-
+  gap: 12px;
   margin-top: auto;
+  padding: 0 15px 10px;
 }
 
 
-.submitButton{
+.submitButton {
+  border: 1px solid black;
   border-radius: 40px;
-  padding: 10px 40px; /* height, width */
-  margin-bottom:10px;
+  padding: 10px 30px;
   font-size: 15px;
-  font-weight:bold;
+  font-weight: bold;
+  background-color: #D8EADB;
 }
 
-.categoryReview{
+
+.categoryReview {
   padding: 0px 10px;
-  margin-top:0px;
+  margin-top: 0px;
   /*border-bottom: 1px solid #000000;*/
 
 }
-.categoryHeader{
-  margin-bottom:8px;
+
+.categoryHeader {
+  margin-bottom: 8px;
 }
 
 .categoryPills {
-  display:flex;
-  flex-direction:row;
-  flex-wrap:wrap;
-  gap:10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
 
 }
 
 .pillOption {
-  margin-top:0px;
+  margin-top: 0px;
   padding: 8px 20px;
-  font-size:12px;
+  font-size: 12px;
   border-radius: 20px;
   background-color: #FFFF;
   border: 1px solid #000000;
 }
 
-.pillOptionActive{
-  background-color:#D8EADB;
+.pillOptionActive {
+  background-color: #D8EADB;
 }
 
 
@@ -368,7 +375,7 @@
 
 /* header */
 .reviewsHeader h4 {
-  margin-bottom:10px;
+  margin-bottom: 10px;
   text-decoration: underline;
 }
 
@@ -403,19 +410,21 @@
 
 
 
-.scoreContainer{
+.scoreContainer {
   padding: 12px;
-  display:flex;
-  flex-direction:row;
-  gap:15px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
 }
 
-.scorePhoto{
-    display: flex;
-    gap: 12px; /* adjust spacing here */
-    align-items: center;
+.scorePhoto {
+  display: flex;
+  gap: 12px;
+  /* adjust spacing here */
+  align-items: center;
 }
-.scorePhoto img{
+
+.scorePhoto img {
   position: relative;
   width: 50px;
   height: 50px;
@@ -425,16 +434,16 @@
 .scoreOption {
   display: flex;
   justify-content: center;
-  align-items: center;  
-  margin-top:0px;
+  align-items: center;
+  margin-top: 0px;
   padding: 15px 20px;
-  font-size:12px;
+  font-size: 12px;
   border-radius: 20px;
   background-color: #FFFF;
   border: 1px solid #000000;
-  gap:25px;
+  gap: 25px;
 }
 
-.scoreOptionActive{
-  background-color:#D8EADB;
+.scoreOptionActive {
+  background-color: #D8EADB;
 }
