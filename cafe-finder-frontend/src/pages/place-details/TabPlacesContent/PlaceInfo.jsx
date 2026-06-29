@@ -72,7 +72,16 @@ export function PlaceInfo({ place, placeDetails, loadingDetails }) {
         <h2>Contact Information</h2>
         <div className={styles.infoRow}>
           <span className={styles.highlight}>Phone:</span>
-          <span className={styles.information}>{placeDetails?.formatted_phone_number ?? "Not available"}</span>
+          {placeDetails?.formatted_phone_number ?(
+            <a href={`tel:${place.phone_number}`}target="_blank" rel="noreferrer" className={styles.infomation}>
+              {placeDetails.formatted_phone_number}
+            </a>
+          ):(
+            <span className={styles.information}>Not available</span>
+          )}
+
+
+
         </div>
         <div className={styles.infoRow}>
           <span className={styles.highlight}>Website:</span>

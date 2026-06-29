@@ -1,7 +1,8 @@
 import styles from './PlaceHeader.module.css'
 import { getPlaceAttributes } from '../../api/placesApi.js';
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
+import noImageFound from '../../assets/images/noImageFound.png';
 import {
     BookOpenText,
     Star,
@@ -44,11 +45,20 @@ export function PlaceHeader({ place }) {
 
             <div key={place.name}>
                 <div className={styles.imageSection}>
+                    {place.photo_reference ?( 
                     <img
                         src={`http://localhost:3000/api/places/photo?ref=${place.photo_reference}`}
-                        alt="Store"
+                        alt="Store Image"
                         className={styles.image}
                     />
+                    ):(
+                    <img
+                        src={noImageFound}
+                        alt="No Image Found"
+                        className={styles.image}
+                    />
+                    )}
+
                     <button className={styles.backButton} onClick={() => navigate("/")}>
                         Back
                     </button>
