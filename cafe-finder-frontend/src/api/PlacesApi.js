@@ -1,3 +1,4 @@
+import supabase from '../lib/supabase.js';
 const BASE_URL = "http://localhost:3000/api";
 
 export async function searchPlaces(query, pagetoken = null) {
@@ -41,10 +42,13 @@ export async function getTopRatedPlaces() {
 }
 
 export async function submitRating(ratingData) {
-  console.log("submitRating called with:", ratingData);
+  const { data: { session } } = await supabase.auth.getSession();
   const res = await fetch(`${BASE_URL}/ratings`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${session?.access_token}`,
+    },
     body: JSON.stringify(ratingData),
   });
   return res.json();
@@ -63,16 +67,24 @@ export async function uploadReviewPhoto(file) {
 }
 
 export async function deleteReview(id) {
+  const { data: { session } } = await supabase.auth.getSession();
   const res = await fetch(`${BASE_URL}/ratings/${id}`, {
     method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${session?.access_token}`,
+    },
   });
   return res.json();
 }
 
 export async function updateReview(id, data) {
+  const { data: { session } } = await supabase.auth.getSession();
   const res = await fetch(`${BASE_URL}/ratings/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${session?.access_token}`,
+    },
     body: JSON.stringify(data),
   });
   return res.json();
