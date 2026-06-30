@@ -17,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/vincenttrinh9098/cafe-finder/issues"
   },
-  "homepage": "https://github.com/vincenttrinh9098/cafe-finder#readme"
+  "homepage": "https://github.com/vincenttrinh9098/cafe-finder#readme",
+  "dependencies": {
+    "playwright": "^1.61.1",
+    "vitest": "^4.1.9"
+  }
 }
