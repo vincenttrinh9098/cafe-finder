@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import styles from './SearchBar.module.css';
 import { searchPlaces } from '../../api/placesApi.js';
+import { FilterPopUp } from './search-bar/FilterPopUp.jsx';
 
-import {FilterPopUp} from './search-bar/FilterPopUp.jsx';
-
-export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToken, activeSuggestion, setActiveSuggestion,onHome}) {
+export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToken, activeSuggestion, setActiveSuggestion, onHome }) {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -13,14 +12,14 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
 
   const handleSelect = (item) => {
     if (item === "All") {
-    onHome();
-    setActiveSuggestion("All");
-    return;
-  }
+      onHome();
+      setActiveSuggestion("All");
+      return;
+    }
     setSearch(item);
     setActiveSuggestion(item);
     handleSearch(item);
-    
+
   };
   const handleSearch = async (query) => {
     const searchQuery = query || search;
@@ -29,24 +28,36 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
     setQuery(searchQuery);
     setLoading(true);
     try {
-      const { places, nextPageToken: newToken } = await searchPlaces(searchQuery); 
-      setResults(places);
-      setNextPageToken(newToken); 
+      const { places, nextPageToken: firstToken } = await searchPlaces(searchQuery);
+
+      let allPlaces = [...places];
+      let finalToken = firstToken;
+
+      if (firstToken) {
+        await new Promise(r => setTimeout(r, 2000)); // Google requires delay before next page
+        const { places: morePlaces, nextPageToken: secondToken } = await searchPlaces(searchQuery, firstToken);
+        allPlaces = [...allPlaces, ...morePlaces];
+        finalToken = secondToken;
+      }
+
+      setResults(allPlaces);
+      setNextPageToken(finalToken);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
+
   //console.log("render activeSuggestion:", activeSuggestion);
   return (
     <div className={styles.header}>
       <div className={styles.searchWrapper}>
-          <div className={styles.inputContainer}>
+        <div className={styles.inputContainer}>
 
-            <i className={`fa-solid fa-bars ${styles.icon}`}
+          <i className={`fa-solid fa-bars ${styles.icon}`}
             onClick={() => setShowModal(true)}
-            />
+          />
           {showModal && (
             <FilterPopUp
               sort={sort}
@@ -54,18 +65,18 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
               onClose={() => setShowModal(false)}
             />
           )}
-            <input
-              className={styles.searchBar}
-              value={search}
-              onChange={(e) => {setSearch(e.target.value); setActiveSuggestion("");}}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              placeholder="Search cafes, tea spots, bakeries..."
-            />
-              <button onClick={handleSearch} disabled={loading}>
-                {loading ? "Searching..." : ""}
-              </button>
-            </div>
-      
+          <input
+            className={styles.searchBar}
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setActiveSuggestion(""); }}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            placeholder="Search cafes, tea spots, bakeries..."
+          />
+          <button onClick={handleSearch} disabled={loading}>
+            {loading ? "Searching..." : ""}
+          </button>
+        </div>
+
         <div className={styles.searchSuggestions}>
           {suggestions.map((item) => (
             <div

@@ -1,0 +1,341 @@
+.reviews {
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewCard {
+  padding: 16px 0;
+  position: relative;
+}
+
+/* divider */
+.reviewCard::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 90%;
+  border-bottom: 2px solid #6D5757;
+}
+
+.reviewGrid {
+  display: grid;
+  grid-template-columns: 50px 1fr auto;
+  gap: 10px;
+  padding: 0 15px;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.reviewContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+.reviewsHeader h4 {
+  margin-bottom: 10px;
+  text-decoration: underline;
+}
+
+.reviewsHeader span {
+  font-size: 15px;
+  color: #81735d;
+  margin: 0;
+}
+
+.reviewText p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.reviewPhotos {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.reviewPhotos img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.editButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.editIcon {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+}
+
+
+.overlay {
+  position: fixed;
+  inset: 0;
+
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(1px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+.modal {
+  background-color: white;
+  width: 90vw;
+  max-height: 70vh;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 40px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalContent {
+  padding: 10px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modalContent::-webkit-scrollbar {
+  display: none;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 16px;
+  border-bottom: 1px solid black;
+  font-size: 18px;
+  font-weight: bold;
+  position: relative;
+}
+
+/* left button */
+.left {
+  cursor: pointer;
+  font-size: 15px;
+}
+
+/* center title */
+.title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+}
+
+/* right button */
+.right {
+  cursor: pointer;
+  font-size: 15px;
+}
+
+
+.modalCommentsOuter {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.modalCommentsInner {
+  width: 100%;
+  min-height: 100px;
+
+  padding: 12px;
+  font-size: 16px;
+  font-family: inherit;
+
+  border: 1px solid #000;
+  border-radius: 20px;
+
+  resize: none;
+  outline: none;
+
+  box-sizing: border-box;
+}
+
+.modalCommentsInner:focus {
+  border-color: black;
+}
+
+
+
+.scoreContainer {
+  padding: 12px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.scorePhoto {
+  display: flex;
+  gap: 12px;
+  /* adjust spacing here */
+  align-items: center;
+}
+
+.scorePhoto img {
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+
+.scoreOption {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0px;
+  padding: 15px 20px;
+  font-size: 12px;
+  border-radius: 20px;
+  background-color: #FFFF;
+  border: 1px solid #000000;
+  gap: 25px;
+}
+
+.scoreOptionActive {
+  background-color: #D8EADB;
+}
+
+
+.categoryReview {
+  padding: 0px 10px;
+  margin-top: 0px;
+  /*border-bottom: 1px solid #000000;*/
+
+}
+
+.categoryHeader {
+  margin-bottom: 8px;
+}
+
+.categoryPills {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+
+}
+
+.pillOption {
+  margin-top: 0px;
+  padding: 8px 20px;
+  font-size: 12px;
+  border-radius: 20px;
+  background-color: #FFFF;
+  border: 1px solid #000000;
+}
+
+.pillOptionActive {
+  background-color: #D8EADB;
+}
+
+
+.photoPreviewRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.photoPreviewWrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.photoPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.removePhoto {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.photoUploadLabel {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  border: 2px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #aaa;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.photoUploadLabel:hover {
+  border-color: #888;
+  color: #555;
+}
+
+
+.modalBottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding: 0 15px 10px;
+}
+
+
+.submitButton {
+  border: 1px solid black;
+  border-radius: 40px;
+  padding: 10px 30px;
+  font-size: 15px;
+  font-weight: bold;
+  background-color: #D8EADB;
+}

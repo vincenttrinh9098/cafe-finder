@@ -26,7 +26,7 @@ export function PlaceReviews({ place }) {
     return (
         <div className={styles.dynamicReviewsSection}>
             <SubmitReview place={place} onReviewSubmitted={fetchReviews} />
-            <DisplayReview reviews={reviews} loadingReviews={loadingReviews} />
+            <DisplayReview reviews={reviews} loadingReviews={loadingReviews} onReviewDeleted={fetchReviews} />
         </div>
     );
 }

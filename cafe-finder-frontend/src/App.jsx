@@ -1,29 +1,30 @@
 import { Routes, Route } from 'react-router-dom';
-import {Discovery} from './pages/discovery/Discovery';
-import {Place} from './pages/place-details/Place';
-import {Login} from './pages/login/Login';
+import { Discovery } from './pages/discovery/Discovery';
+import { Place } from './pages/place-details/Place';
+import { Login } from './pages/login/Login';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import {Profile} from './pages/profile/Profile';
+import { RouteTracker } from './components/RouteTracker';
+import { AuthCallback } from './pages/auth/AuthCallback';
+import { Profile } from './pages/profile/Profile';
+import { useTrackLastRoute } from './hooks/useTrackLastRoute';
 
 function App() {
-
+  useTrackLastRoute();
   return (
-    
-    <Routes>
-      <Route index element ={<Discovery/>} />
-      <Route path="discovery" element = {<Discovery/>} />
-      <Route path="place" element={<Place/>} />
-      <Route path="login" element={<Login />} />
-      <Route 
-        path="profile" 
-        element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        } 
-      />
-    </Routes>
-  )
+    <>
+      <Routes>
+        <Route index element={<Discovery />} />
+        <Route path="discovery" element={<Discovery />} />
+        {/*<Route path="/place/:google_place_id" element={<Place />}/>*/}
+        <Route path="/place/:placeId" element={<Place />} />
+        <Route path="login" element={<Login />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="profile/:profileId" element={<Profile/>}
+        />
+      </Routes>
+
+    </>
+  );
 }
 
 export default App

@@ -6,7 +6,8 @@ import { TopRatedPlaces } from './TopRatedPlaces.jsx'
 import { SuggestedRatedPlaces } from './SuggestedRatedPlaces.jsx'
 import { SearchedPlaces } from './SearchedPlaces.jsx'
 import { getDistance } from '../../utils/distance.js';
-import { searchPlaces } from '../../api/placesApi.js';
+import { searchPlaces, getPlaceAttributes } from '../../api/placesApi.js';
+import { NavBar } from '../navigation/NavBar.jsx'
 
 export function Discovery() {
   const { state } = useLocation();
@@ -25,11 +26,37 @@ export function Discovery() {
     return sessionStorage.getItem("searchQuery") ?? "";
   });
 
-  const [sort, setSort] = useState("rating");
-  const [userLocation, setUserLocation] = useState(null);
+  const [sort, setSort] = useState(() => {
+    return sessionStorage.getItem("sort") ?? "rating";
+  });
 
   useEffect(() => {
-    sessionStorage.setItem("searchResults", JSON.stringify(results));
+    sessionStorage.setItem("sort", sort);
+  }, [sort]);
+
+
+
+  const [userLocation, setUserLocation] = useState(null);
+  const [enrichedResults, setEnrichedResults] = useState([]);
+
+
+  useEffect(() => {
+    if (!results || results.length === 0) {
+      setEnrichedResults([]);
+      return;
+    }
+
+    const fetchAttributes = async () => {
+      const withAttributes = await Promise.all(
+        results.map(async (place) => {
+          const attributes = await getPlaceAttributes(place.google_place_id);
+          return { ...place, attributes };
+        })
+      );
+      setEnrichedResults(withAttributes);
+    };
+
+    fetchAttributes();
   }, [results]);
 
   useEffect(() => {
@@ -48,8 +75,9 @@ export function Discovery() {
 
 
   const sortedResults = useMemo(() => {
-    if (!results || !Array.isArray(results)) return [];
-    return [...results]
+    if (!enrichedResults || !Array.isArray(enrichedResults)) return [];
+    console.log(enrichedResults);
+    return [...enrichedResults]
       .map(place => {
         const distance = userLocation
           ? getDistance(userLocation.lat, userLocation.lng, place.lat, place.lng)
@@ -63,19 +91,25 @@ export function Discovery() {
           if (b.distance === null) return -1;
           return a.distance - b.distance;
         }
+        if (sort === "studyscore") {
+          const aScore = a.attributes?.[5] ?? -1;
+          const bScore = b.attributes?.[5] ?? -1;
+          return bScore - aScore;
+        }
         return 0;
       });
-  }, [results, sort, userLocation]);
+  }, [enrichedResults, sort, userLocation]);
 
 
-    useEffect(() => {
+
+  useEffect(() => {
     const savedScroll = sessionStorage.getItem("discoveryScroll");
     if (savedScroll) {
       window.scrollTo(0, parseInt(savedScroll));
       sessionStorage.removeItem("discoveryScroll");
     }
-  }, [sortedResults]); 
-    
+  }, [sortedResults]);
+
   const [nextPageToken, setNextPageToken] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
 
@@ -103,7 +137,7 @@ export function Discovery() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [nextPageToken, loadingMore]); // ← re-register when these change
+  }, [nextPageToken, loadingMore]); // re-register when these change
 
 
   const [activeSuggestion, setActiveSuggestion] = useState(
@@ -124,26 +158,28 @@ export function Discovery() {
 
   return (
     <div className={styles.discoveryPage}>
-          <SearchBar 
-            setResults={setResults} 
-            setSort={setSort} 
-            sort={sort} 
-            setQuery={setQuery} 
-            setNextPageToken={setNextPageToken}
-            activeSuggestion={activeSuggestion}
-            setActiveSuggestion={setActiveSuggestion}
-            onHome = {handleHome}
-          />      {sortedResults.length > 0 ? (
+      <SearchBar
+        setResults={setResults}
+        setSort={setSort}
+        sort={sort}
+        setQuery={setQuery}
+        setNextPageToken={setNextPageToken}
+        activeSuggestion={activeSuggestion}
+        setActiveSuggestion={setActiveSuggestion}
+        onHome={handleHome}
+      />      {sortedResults.length > 0 ? (
         <>
           <SearchedPlaces places={sortedResults} query={query} searchResults={results} />
           {loadingMore && <p style={{ textAlign: "center", padding: "1rem" }}>Loading more...</p>}
         </>
-        ) : (
+      )
+        : (
           <>
-            <TopRatedPlaces userLocation={userLocation}/>
+            <TopRatedPlaces userLocation={userLocation} />
             <SuggestedRatedPlaces userLocation={userLocation} />
           </>
         )}
+      <NavBar />
     </div>
   );
 }

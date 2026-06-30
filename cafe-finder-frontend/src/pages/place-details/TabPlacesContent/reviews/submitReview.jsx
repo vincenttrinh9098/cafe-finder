@@ -1,13 +1,35 @@
 import styles from '../PlaceReviews.module.css';
-
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { submitRating, uploadReviewPhoto } from '../../../../api/placesApi.js';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import supabase from '../../../../lib/supabase.js';
 
 import smile5 from '../../../../assets/images/smile5.jpeg';
 import moderate3 from '../../../../assets/images/moderate3.jpg';
 import angry1 from '../../../../assets/images/angry1.png';
 
 export function SubmitReview({ place, onReviewSubmitted }) {
+
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const handleOpenModal = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log("session: ", session);
+        //console.log( place.google_place_id);
+        if (!session) {
+            // save current place so we can return after login
+            navigate('/login', { state: { from: location } });
+            return;
+        }
+        setUser(session.user);
+        //console.log(user.id);
+        //console.log(user.user_metadata.name);
+        setShowModal(true);
+    };
+
     const [showModal, setShowModal] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -16,23 +38,32 @@ export function SubmitReview({ place, onReviewSubmitted }) {
     const MAX_PHOTOS = 5;
 
     const noiseOptions = ["Very quiet", "Quiet", "Moderate noise", "Loud", "Very loud"];
-    const footTrafficOptions = ["Empty", "Light foot traffic", "Moderate foot traffic", "Busy", "Heavy foot traffic"];
+    const footTrafficOptions = ["Nearly empty", "Lightly busy", "Busy", "Very Busy"];
     const seatingCapacityOptions = ["Plenty of seats", "Some seats", "Limited seats", "Usually full"];
     const outletOptions = ["Plenty of outlets", "Some outlets available", "Limited outlets", "No visible outlets"];
     const parkingOptions = ["Plenty of parking", "Moderate parking", "Limited parking", "Very hard to park"];
 
     const scoreOptions = [
-        {img: angry1, value:1},
-        {img: moderate3, value:3},
-        {img: smile5, value:5},
+        { img: angry1, value: 1 },
+        { img: moderate3, value: 3 },
+        { img: smile5, value: 5 },
     ];
-    const [scoreOption, setScoreOption] = useState("null");
-
+    const [scoreOption, setScoreOption] = useState(null);
     const [noiseOption, setNoiseOption] = useState("");
     const [footTrafficOption, setFootTrafficOption] = useState("");
     const [seatingCapacityOption, setSeatingCapacityOption] = useState("");
     const [outletOption, setOutletOptions] = useState("");
     const [parkingOption, setParkingOption] = useState("");
+
+
+    const scoreRef = useRef(null);
+    const noiseRef = useRef(null);
+    const footTrafficRef = useRef(null);
+    const seatingRef = useRef(null);
+    const outletRef = useRef(null);
+    const parkingRef = useRef(null);
+
+
 
     const handlePhotoSelect = (e) => {
         const files = Array.from(e.target.files);
@@ -56,14 +87,30 @@ export function SubmitReview({ place, onReviewSubmitted }) {
         setParkingOption("");
         setComment("");
         setPhotos([]);
-        setScoreOption("");
+        setScoreOption(null);
         setSubmitted(false);
         setShowModal(false);
     };
 
     const handleSubmit = async () => {
         setSubmitted(true);
-        if (!noiseOption || !footTrafficOption || !outletOption || !seatingCapacityOption || !parkingOption || !scoreOption) return;
+
+        const missingFields = [];
+
+        if (!scoreOption) missingFields.push(scoreRef);
+        if (!noiseOption) missingFields.push(noiseRef);
+        if (!footTrafficOption) missingFields.push(footTrafficRef);
+        if (!seatingCapacityOption) missingFields.push(seatingRef);
+        if (!outletOption) missingFields.push(outletRef);
+        if (!parkingOption) missingFields.push(parkingRef);
+
+        if (missingFields.length > 0) {
+            missingFields[0].current?.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+            return;
+        }
 
         setSubmitting(true);
         try {
@@ -79,7 +126,9 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                 parking: parkingOption,
                 comments: comment,
                 photos: photoUrls,
-                study_score: scoreOption
+                study_score: scoreOption,
+                user_id: user.id,
+                user_name: user.user_metadata.name
             });
             resetForm();
             onReviewSubmitted();
@@ -90,30 +139,50 @@ export function SubmitReview({ place, onReviewSubmitted }) {
         }
     };
 
+    useEffect(() => {
+        const getUser = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) setUser(session.user);
+        };
+        getUser();
+    }, []);
+
     const person = {
-        name: "User T",
-        profileImage: "https://randomuser.me/api/portraits/men/32.jpg"
+        name: user?.user_metadata?.name || "",
+        profileImage:
+            user?.user_metadata?.avatar_url ||
+            "https://www.m2i.nl/wp-content/uploads/2018/11/blank-profile-picture-973460_1280-e1559726803294.png",
     };
 
     return (
         <>
             <div className={styles.dynamicReviews}>
                 <div className={styles.postReviewsContainer}>
-                    <div className={styles.postReviewsCard}>
+                    <div className={styles.postReviewsCard} onClick={handleOpenModal}>
                         <div className={styles.postReviewHeader}>
-                            <img src={person.profileImage} alt={person.name} />
+                            <img
+                                src={person.profileImage || "https://www.m2i.nl/wp-content/uploads/2018/11/blank-profile-picture-973460_1280-e1559726803294.png"}
+                                alt={person.name}
+                            />
                             <p>{person.name}</p>
                         </div>
-                        <div className={styles.leaveReviewText} onClick={() => setShowModal(true)}>
-                            <p>Tap to leave a review....</p>
+                        <div className={styles.leaveReviewText}>
+                            {user ?
+                                <p>Tap to leave a review...</p>
+                                :
+                                <p>Sign in to leave a review...</p>
+                            }
                         </div>
                     </div>
                 </div>
+                {/*Create filter/sort options here */}
             </div>
 
+
             {showModal && (
-                <div className={styles.overlay}>
-                    <div className={styles.modal}>
+                <div className={styles.overlay} onClick={resetForm}>
+                    <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+
                         <div className={styles.modalHeader}>
                             <span onClick={resetForm}>Back</span>
                             <span>Write a Review</span>
@@ -123,23 +192,22 @@ export function SubmitReview({ place, onReviewSubmitted }) {
 
 
 
-                            <div className={styles.categoryReview}>
+                            <div ref={scoreRef} className={styles.categoryReview}>
                                 <h3 className={styles.categoryHeader}>
                                     Study Score
                                     {submitted && !scoreOption && (
                                         <span className={styles.requiredError}>* required</span>
                                     )}
                                 </h3>
-                                <div className = {styles.scoreContainer}>
+                                <div className={styles.scoreContainer}>
                                     <div className={styles.scorePhoto}>
                                         {scoreOptions.map((option, index) => (
                                             <button
                                                 type="button"
                                                 key={index}
                                                 onClick={() => setScoreOption(option.value)}
-                                                className={`${styles.scoreOption} ${
-                                                    scoreOption === option.value ? styles.scoreOptionActive : ""
-                                                }`}
+                                                className={`${styles.scoreOption} ${scoreOption === option.value ? styles.scoreOptionActive : ""
+                                                    }`}
                                             >
                                                 <img
                                                     src={option.img}
@@ -153,7 +221,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
 
                             </div>
 
-                            <div className={styles.categoryReview}>
+                            <div ref={noiseRef} className={styles.categoryReview}>
                                 <h3 className={styles.categoryHeader}>Noise level
                                     {submitted && !noiseOption && <span className={styles.requiredError}>* required</span>}
                                 </h3>
@@ -167,7 +235,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                                 </div>
                             </div>
 
-                            <div className={styles.categoryReview}>
+                            <div ref={footTrafficRef} className={styles.categoryReview}>
                                 <h3 className={styles.categoryHeader}>Foot Traffic
                                     {submitted && !footTrafficOption && <span className={styles.requiredError}>* required</span>}
                                 </h3>
@@ -181,7 +249,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                                 </div>
                             </div>
 
-                            <div className={styles.categoryReview}>
+                            <div ref={seatingRef} className={styles.categoryReview}>
                                 <h3 className={styles.categoryHeader}>Seating Capacity
                                     {submitted && !seatingCapacityOption && <span className={styles.requiredError}>* required</span>}
                                 </h3>
@@ -195,7 +263,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                                 </div>
                             </div>
 
-                            <div className={styles.categoryReview}>
+                            <div ref={outletRef} className={styles.categoryReview}>
                                 <h3 className={styles.categoryHeader}>Outlets Availability
                                     {submitted && !outletOption && <span className={styles.requiredError}>* required</span>}
                                 </h3>
@@ -209,7 +277,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                                 </div>
                             </div>
 
-                            <div className={styles.categoryReview}>
+                            <div ref={parkingRef} className={styles.categoryReview}>
                                 <h3 className={styles.categoryHeader}>Parking Availability
                                     {submitted && !parkingOption && <span className={styles.requiredError}>* required</span>}
                                 </h3>
@@ -257,9 +325,13 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                                 {submitting ? "Posting..." : "Post Review"}
                             </button>
                         </div>
+
                     </div>
                 </div>
             )}
+
+
+
         </>
     );
 }

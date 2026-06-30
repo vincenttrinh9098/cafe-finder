@@ -21,7 +21,7 @@ export function FilterPopUp({ sort, setSort, onClose }) {
             </label>
 
             <label className={styles.filterRow}>
-              <span>Rating</span>
+              <span>Google Rating</span>
               <input
                 type="radio"
                 name="sort"
@@ -36,8 +36,8 @@ export function FilterPopUp({ sort, setSort, onClose }) {
               <input
                 type="radio"
                 name="sort"
-                value="studyScore"
-                checked={sort === "studyScore"}
+                value="studyscore"
+                checked={sort === "studyscore"}
                 onChange={(e) => setSort(e.target.value)}
               />
             </label>

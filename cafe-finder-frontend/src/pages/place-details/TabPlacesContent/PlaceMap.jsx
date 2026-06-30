@@ -20,7 +20,7 @@ export function PlaceMap({ place }) {
     <div>
       <div className={styles.dynamicMap}>
         <div className={styles.mapSectionImageWrapper}>
-          <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={15}>
+          <GoogleMap  mapContainerStyle={containerStyle} center={center} zoom={15}>
             <Marker position={center} />
           </GoogleMap>
         </div>
