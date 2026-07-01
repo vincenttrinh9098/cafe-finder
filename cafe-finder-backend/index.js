@@ -1,5 +1,7 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+
 import "dotenv/config";
 import cors from "cors";
 import placesRoutes from "./routes/places.js";
@@ -27,6 +29,20 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.use(express.json());
+// apply helmet to all routes except photo
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/places/photo")) {
+    // allow cross-origin image loading for photo proxy
+    helmet({
+      crossOriginResourcePolicy: { policy: "cross-origin" },
+      contentSecurityPolicy: false,
+    })(req, res, next);
+  } else {
+    helmet({
+      contentSecurityPolicy: false, // disable CSP for now, configure properly at deployment
+    })(req, res, next);
+  }
+});
 
 // no global limiter — apply only where needed
 app.use("/api/places", placesRoutes);
