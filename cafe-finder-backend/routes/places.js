@@ -33,11 +33,11 @@ router.get("/",
       .trim()
       .notEmpty().withMessage("Missing query")
       .isLength({ max: 100 }).withMessage("Query too long"),
-    query("pagetoken")
+   /* query("pagetoken")
       .optional()
       .isString()
       .trim()
-      .isLength({ max: 500 }).withMessage("Invalid page token"),
+      .isLength({ max: 500 }).withMessage("Invalid page token"), */
   ],
   async (req, res) => {
     if (validate(req, res)) return;
