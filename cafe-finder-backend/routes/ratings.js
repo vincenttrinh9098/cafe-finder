@@ -62,7 +62,8 @@ router.get("/reviews/:google_place_id",
       if (error) return res.status(500).json({ error: error.message });
       res.json({ reviews });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Something went wrong" }); // generic message
+      console.error(err); // log internally 
     }
   }
 );
@@ -104,7 +105,8 @@ router.get("/attributes/:google_place_id",
 
       res.json({ attributes });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Something went wrong" }); // generic message
+      console.error(err); // log internally 
     }
   }
 );
@@ -133,7 +135,8 @@ router.post("/upload-photo", photoUploadLimiter, upload.single("photo"), async (
     const { data: urlData } = supabase.storage.from("review-photos").getPublicUrl(fileName);
     res.json({ url: urlData.publicUrl });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Something went wrong" }); // generic message
+    console.error(err); // log internally 
   }
 });
 
@@ -178,7 +181,8 @@ router.post("/",
       if (ratingError) return res.status(500).json({ error: ratingError.message });
       res.json({ success: true });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Something went wrong" }); // generic message
+      console.error(err); // log internally 
     }
   }
 );

@@ -29,6 +29,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.use(express.json());
+
 // apply helmet to all routes except photo
 app.use((req, res, next) => {
   if (req.path.startsWith("/api/places/photo")) {

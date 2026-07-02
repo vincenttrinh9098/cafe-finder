@@ -33,11 +33,11 @@ router.get("/",
       .trim()
       .notEmpty().withMessage("Missing query")
       .isLength({ max: 100 }).withMessage("Query too long"),
-   /* query("pagetoken")
-      .optional()
-      .isString()
-      .trim()
-      .isLength({ max: 500 }).withMessage("Invalid page token"), */
+    /* query("pagetoken")
+       .optional()
+       .isString()
+       .trim()
+       .isLength({ max: 500 }).withMessage("Invalid page token"), */
   ],
   async (req, res) => {
     if (validate(req, res)) return;
@@ -65,7 +65,8 @@ router.get("/",
 
       res.json({ places, next_page_token: data.next_page_token ?? null });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Something went wrong" }); // generic message
+      console.error(err); // log internally 
     }
   }
 );
@@ -126,7 +127,8 @@ router.get("/details",
         photo_reference: result.photos?.[0]?.photo_reference ?? null,
       });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Something went wrong" }); // generic message
+      console.error(err); // log internally 
     }
   }
 );
@@ -172,7 +174,8 @@ router.get("/nearby",
 
       res.json({ places });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Something went wrong" }); // generic message
+      console.error(err); // log internally 
     }
   }
 );
@@ -223,7 +226,8 @@ router.get("/top-rated", async (req, res) => {
 
     res.json({ places });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Something went wrong" }); // generic message
+    console.error(err); // log internally 
   }
 });
 
@@ -254,7 +258,8 @@ router.get("/eta",
         distance: element.distance.text,
       });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Something went wrong" }); // generic message
+      console.error(err); // log internally 
     }
   }
 );
