@@ -6,6 +6,8 @@ import "dotenv/config";
 import cors from "cors";
 import placesRoutes from "./routes/places.js";
 import ratingsRoutes from "./routes/ratings.js";
+import morgan from "morgan";
+
 
 const app = express();
 
@@ -15,7 +17,7 @@ const allowedOrigins = [
   "http://10.0.0.189:5173/",   //network dev
   // "https://yourdomain.com"  //real domain when deploy
 ];
-
+app.use(morgan("combined"));
 app.use(cors({
   origin: (origin, callback) => {
     // allow requests with no origin (curl, mobile apps, Postman)

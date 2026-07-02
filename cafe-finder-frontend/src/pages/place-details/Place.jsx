@@ -14,6 +14,7 @@ import {
 
 
 export function Place() {
+  
   const [activeTab, setActiveTab] = useState("info");
   const { state } = useLocation();
   const { placeId } = useParams();

@@ -7,21 +7,23 @@ import { RouteTracker } from './components/RouteTracker';
 import { AuthCallback } from './pages/auth/AuthCallback';
 import { Profile } from './pages/profile/Profile';
 import { useTrackLastRoute } from './hooks/useTrackLastRoute';
-
+import ErrorBoundary from './components/ErrorBoundary';
 function App() {
   useTrackLastRoute();
   return (
     <>
-      <Routes>
-        <Route index element={<Discovery />} />
-        <Route path="discovery" element={<Discovery />} />
-        {/*<Route path="/place/:google_place_id" element={<Place />}/>*/}
-        <Route path="/place/:placeId" element={<Place />} />
-        <Route path="login" element={<Login />} />
-        <Route path="/auth/callback" element={<AuthCallback />} />
-        <Route path="profile/:profileId" element={<Profile/>}
-        />
-      </Routes>
+      <ErrorBoundary>
+        <Routes>
+          <Route index element={<Discovery />} />
+          <Route path="discovery" element={<Discovery />} />
+          {/*<Route path="/place/:google_place_id" element={<Place />}/>*/}
+          <Route path="/place/:placeId" element={<Place />} />
+          <Route path="login" element={<Login />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="profile/:profileId" element={<Profile />}
+          />
+        </Routes>
+      </ErrorBoundary>
 
     </>
   );
