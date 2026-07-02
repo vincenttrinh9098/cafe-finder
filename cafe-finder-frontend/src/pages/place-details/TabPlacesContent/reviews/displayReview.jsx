@@ -5,12 +5,11 @@ import moderate3 from '../../../../assets/images/moderate3.jpg';
 import angry1 from '../../../../assets/images/angry1.png';
 import supabase from '../../../../lib/supabase.js';
 import { deleteReview, updateReview } from '../../../../api/placesApi.js';
-
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import { useEffect, useState } from 'react';
 
 export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
-
     const noiseOptions = ["Very quiet", "Quiet", "Moderate noise", "Loud", "Very loud"];
     const footTrafficOptions = ["Nearly empty", "Lightly busy", "Busy", "Very Busy"];
     const seatingCapacityOptions = ["Plenty of seats", "Some seats", "Limited seats", "Usually full"];
@@ -34,6 +33,8 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
     const [submitting, setSubmitting] = useState(false);
     const [photos, setPhotos] = useState([]);
     const MAX_PHOTOS = 5;
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const handlePhotoSelect = (e) => {
         const files = Array.from(e.target.files);
@@ -65,24 +66,43 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
     };
 
     const deleteOption = async (id) => {
+        setSubmitting(true);
         try {
             await deleteReview(id);
             onReviewDeleted(); // refresh reviews after delete
             setSelectedReview(null);
         } catch (err) {
-            console.error("Failed to delete review:", err);
+            if (err.message === "SESSION_EXPIRED") {
+                navigate('/login', { state: { from: location } });
+                return;
+            }
+            console.error("Failed to submit review:", err);
             setSelectedReview(null);
-        } finally {
+        }
+        finally {
             setSubmitting(false);
         }
     };
 
     const editOption = async () => {
+        setSubmitting(true);
         try {
-            await updateReview(selectedReview.id, { comments: comment });
-            setSelectedReview(null);
+            await updateReview(selectedReview.id, {
+                comments: comment,
+                noise: noiseOption,
+                foot_traffic: footTrafficOption,
+                seating: seatingCapacityOption,
+                outlet: outletOption,
+                parking: parkingOption,
+                study_score: scoreOption,
+            });
+            resetForm();
             onReviewDeleted(); // reuse same refresh callback
         } catch (err) {
+            if (err.message === "SESSION_EXPIRED") {
+                navigate('/login', { state: { from: location } });
+                return;
+            }
             console.error("Failed to update review:", err);
         } finally {
             setSubmitting(false);
@@ -104,9 +124,6 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
                 preview: url
             }))
         );
-        selectedReview.photos.forEach(photo => {
-            console.log(photo);
-        });
 
     }, [selectedReview]);
 

@@ -133,6 +133,10 @@ export function SubmitReview({ place, onReviewSubmitted }) {
             resetForm();
             onReviewSubmitted();
         } catch (err) {
+            if (err.message === "SESSION_EXPIRED") {
+                navigate('/login', { state: { from: location } });
+                return;
+            }
             console.error("Failed to submit review:", err);
         } finally {
             setSubmitting(false);

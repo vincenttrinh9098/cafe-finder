@@ -125,21 +125,38 @@ const upload = multer({
 });
 
 router.post("/upload-photo", photoUploadLimiter, upload.single("photo"), async (req, res) => {
+  const user = await getUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: "Unauthorized" });
+
   try {
     if (!req.file) return res.status(400).json({ error: "No file received" });
+
     const ext = req.file.originalname.split('.').pop();
     const fileName = `${Date.now()}.${ext}`;
-    const { data, error } = await supabase.storage
-      .from("review-photos").upload(fileName, req.file.buffer, { contentType: req.file.mimetype });
-    if (error) return res.status(500).json({ error: error.message });
+
+    // retry up to 3 times on SSL errors
+    let data, error;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      ({ data, error } = await supabase.storage
+        .from("review-photos")
+        .upload(fileName, req.file.buffer, { contentType: req.file.mimetype }));
+
+      if (!error) break; // success, stop retrying
+
+      console.error(`Upload attempt ${attempt} failed:`, error.message);
+
+      if (attempt < 3) await new Promise(r => setTimeout(r, 1000 * attempt)); // wait 1s, 2s between retries
+    }
+
+    if (error) return res.status(500).json({ error: "Upload failed, please try again." });
+
     const { data: urlData } = supabase.storage.from("review-photos").getPublicUrl(fileName);
     res.json({ url: urlData.publicUrl });
   } catch (err) {
-    res.status(500).json({ error: "Something went wrong" }); // generic message
-    console.error(err); // log internally 
+    console.error("UPLOAD ERROR:", err);
+    res.status(500).json({ error: "Something went wrong" });
   }
 });
-
 // POST /api/ratings
 router.post("/",
   reviewSubmitLimiter,

@@ -43,11 +43,13 @@ export async function getTopRatedPlaces() {
 
 export async function submitRating(ratingData) {
   const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("SESSION_EXPIRED"); // throw specific error
+
   const res = await fetch(`${BASE_URL}/ratings`, {
     method: "POST",
-    headers: { 
+    headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${session?.access_token}`,
+      "Authorization": `Bearer ${session.access_token}`,
     },
     body: JSON.stringify(ratingData),
   });
@@ -55,11 +57,15 @@ export async function submitRating(ratingData) {
 }
 
 export async function uploadReviewPhoto(file) {
+  const { data: { session } } = await supabase.auth.getSession();
   const formData = new FormData();
   formData.append("photo", file);
 
   const res = await fetch(`${BASE_URL}/ratings/upload-photo`, {
     method: "POST",
+    headers: {
+      "Authorization": `Bearer ${session?.access_token}`, 
+    },
     body: formData,
   });
   const data = await res.json();
@@ -68,6 +74,7 @@ export async function uploadReviewPhoto(file) {
 
 export async function deleteReview(id) {
   const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("SESSION_EXPIRED"); // throw specific error
   const res = await fetch(`${BASE_URL}/ratings/${id}`, {
     method: "DELETE",
     headers: {
@@ -79,6 +86,7 @@ export async function deleteReview(id) {
 
 export async function updateReview(id, data) {
   const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("SESSION_EXPIRED"); //  throw specific error
   const res = await fetch(`${BASE_URL}/ratings/${id}`, {
     method: "PUT",
     headers: {
