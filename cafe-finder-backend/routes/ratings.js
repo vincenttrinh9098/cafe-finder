@@ -192,6 +192,7 @@ router.post("/",
         .insert({
           place_id: place.id, address, name, foot_traffic, parking, outlet, noise,
           seating, comments, photos, study_score,
+          google_place_id: google_place_id,
           user_id: user.id,
           user_name: user.user_metadata?.name ?? "Anonymous",
         });

@@ -192,7 +192,8 @@
 
 
 .scoreContainer {
-  padding: 12px;
+  margin:0px;
+  padding:0px;
   display: flex;
   flex-direction: row;
   gap: 15px;
@@ -201,8 +202,7 @@
 .scorePhoto {
   display: flex;
   gap: 12px;
-  /* adjust spacing here */
-  align-items: center;
+ 
 }
 
 .scorePhoto img {
@@ -246,6 +246,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   gap: 10px;
+  text-decoration:none;
 
 }
 
@@ -254,8 +255,13 @@
   padding: 8px 20px;
   font-size: 12px;
   border-radius: 20px;
-  background-color: #FFFF;
+  background-color: #FFFFFF;
   border: 1px solid #000000;
+  color: #000000;           
+  -webkit-tap-highlight-color: transparent; 
+  appearance: none;
+  -webkit-appearance: none;
+  text-decoration: none;
 }
 
 .pillOptionActive {

@@ -14,10 +14,11 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",     // local dev
   "http://localhost:4173",     // vite preview
-  "http://10.0.0.189:5173/",   //network dev
+  "http://10.0.0.189:5173",   //network dev
   // "https://yourdomain.com"  //real domain when deploy
 ];
-app.use(morgan("combined"));
+//app.use(morgan("combined"));
+
 app.use(cors({
   origin: (origin, callback) => {
     // allow requests with no origin (curl, mobile apps, Postman)
@@ -53,4 +54,4 @@ app.use("/api/ratings", ratingsRoutes);
 
 // export limiters so routes can use them directly
 
-app.listen(3000, () => console.log("Server running on http://localhost:3000"));
+app.listen(3000, "0.0.0.0", () => console.log("Server running on http://localhost:3000"));

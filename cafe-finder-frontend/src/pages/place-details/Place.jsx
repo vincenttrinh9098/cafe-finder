@@ -33,7 +33,7 @@ export function Place() {
 
     const fetchDetails = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/places/details?place_id=${placeId}`);
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/places/details?place_id=${placeId}`);
         const data = await res.json();
         setPlaceDetails(data);
 

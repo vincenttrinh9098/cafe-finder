@@ -411,7 +411,8 @@
 
 
 .scoreContainer {
-  padding: 12px;
+  margin:0px;
+  padding:0px;
   display: flex;
   flex-direction: row;
   gap: 15px;
