@@ -10,14 +10,14 @@ const router = express.Router();
 async function getUserFromRequest(req) {
   const authHeader = req.headers.authorization;
   console.log("authHeader:", authHeader?.slice(0, 50)); // ← add this
-  
+
   if (!authHeader?.startsWith("Bearer ")) return null;
 
   const token = authHeader.split(" ")[1];
   const { data: { user }, error } = await supabase.auth.getUser(token);
-  
+
   console.log("getUser result:", user?.id, error?.message); // ← add this
-  
+
   if (error || !user) return null;
   return user;
 }
@@ -264,11 +264,13 @@ router.put("/:id",
     body("seating").optional().isIn(VALID_SEATING).withMessage("Invalid seating value"),
     body("outlet").optional().isIn(VALID_OUTLET).withMessage("Invalid outlet value"),
     body("parking").optional().isIn(VALID_PARKING).withMessage("Invalid parking value"),
+    body("study_score").optional().isInt({ min: 1, max: 5 }).withMessage("Study score must be 1-5"),
+    body("photos").optional().isArray({ max: 5 }).withMessage("Too many photos"),
   ],
   async (req, res) => {
     if (validate(req, res)) return;
     const { id } = req.params;
-    const { comments, noise, foot_traffic, seating, outlet, parking } = req.body;
+    const { comments, noise, foot_traffic, seating, outlet, parking, study_score, photos } = req.body;
     const user = await getUserFromRequest(req);
     if (!user) return res.status(401).json({ error: "Unauthorized" });
 
@@ -278,8 +280,10 @@ router.put("/:id",
     if (rating.user_id !== user.id) return res.status(403).json({ error: "Forbidden" });
 
     const { error } = await supabase
-      .from("ratings").update({ comments, noise, foot_traffic, seating, outlet, parking }).eq("id", id);
-    if (error) return res.status(500).json({ error: error.message });
+      .from("ratings")
+      .update({ comments, noise, foot_traffic, seating, outlet, parking, study_score, photos }) // ← added study_score and photos
+      .eq("id", id);
+    if (error) return res.status(500).json({ error: "Something went wrong" });
     res.json({ success: true });
   }
 );

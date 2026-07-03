@@ -4,7 +4,6 @@ import { Link } from 'react-router';
 import trashcan from '../../assets/images/trashcan.png';
 import { deleteReview } from '../../api/PlacesApi';
 import { useState } from 'react';
-import { useLockBodyScroll } from '../../hooks/useLockBodyScroll';
 import { useSwipe } from '../../hooks/useSwipe';
 
 

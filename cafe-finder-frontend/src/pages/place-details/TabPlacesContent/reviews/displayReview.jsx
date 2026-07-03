@@ -4,7 +4,7 @@ import smile5 from '../../../../assets/images/smile5.jpeg';
 import moderate3 from '../../../../assets/images/moderate3.jpg';
 import angry1 from '../../../../assets/images/angry1.png';
 import supabase from '../../../../lib/supabase.js';
-import { deleteReview, updateReview } from '../../../../api/placesApi.js';
+import { deleteReview, updateReview, uploadReviewPhoto } from '../../../../api/placesApi.js';
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useSwipe } from '../../../../hooks/useSwipe.js';
 import { useLockBodyScroll } from '../../../../hooks/useLockBodyScroll.js';
@@ -92,9 +92,24 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
         }
     };
 
+
     const editOption = async () => {
         setSubmitting(true);
         try {
+            // separate existing URLs from new files that need uploading
+            const existingUrls = photos
+                .filter(p => p.file === null)  // already uploaded, just a URL
+                .map(p => p.preview);
+
+            const newFiles = photos.filter(p => p.file !== null); // new files to upload
+
+            // upload new photos
+            const newUrls = await Promise.all(
+                newFiles.map(p => uploadReviewPhoto(p.file))
+            );
+
+            const allPhotoUrls = [...existingUrls, ...newUrls];
+
             await updateReview(selectedReview.id, {
                 comments: comment,
                 noise: noiseOption,
@@ -103,9 +118,10 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
                 outlet: outletOption,
                 parking: parkingOption,
                 study_score: scoreOption,
+                photos: allPhotoUrls, // send updated photos array
             });
             resetForm();
-            onReviewDeleted(); // reuse same refresh callback
+            onReviewDeleted();
         } catch (err) {
             if (err.message === "SESSION_EXPIRED") {
                 navigate('/login', { state: { from: location } });
