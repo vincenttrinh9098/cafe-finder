@@ -5,7 +5,7 @@ import styles from './Profile.module.css';
 import { useNavigate } from "react-router-dom";
 import ReviewCard from './ReviewCard';
 import ReviewDetailModal from './ReviewDetailModal';
-import supabase from '../../lib/supabase';
+import supabase from '../../lib/supabase.js';
 import { NavBar } from '../navigation/NavBar';
 
 export function Profile() {

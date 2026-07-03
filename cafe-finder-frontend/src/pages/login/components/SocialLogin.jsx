@@ -1,4 +1,4 @@
-import supabase from '../../../lib/supabase'
+import supabase from '../../../lib/supabase.js'
 import styles from '../Login.module.css'
 import { GoogleIcon } from './GoogleIcon'
 
