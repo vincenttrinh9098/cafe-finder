@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import styles from './ReviewDetailModal.module.css';
 import { Link } from 'react-router';
 import trashcan from '../../assets/images/trashcan.png';
-import { deleteReview } from '../../api/PlacesApi';
+import { deleteReview } from '../../api/placesApi.js';
 import { useState } from 'react';
 import { useSwipe } from '../../hooks/useSwipe';
 
