@@ -3,9 +3,30 @@ import styles from './ReviewDetailModal.module.css';
 import { Link } from 'react-router';
 import trashcan from '../../assets/images/trashcan.png';
 import { deleteReview } from '../../api/PlacesApi';
+import { useState } from 'react';
+import { useLockBodyScroll } from '../../hooks/useLockBodyScroll';
+import { useSwipe } from '../../hooks/useSwipe';
 
 
 export default function ReviewDetailModal({ review, onClose, isOwnProfile, onReviewDeleted }) {
+
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
+  const [selectedPhotoSet, setSelectedPhotoSet] = useState([]);
+
+    const swipeHandlers = useSwipe(
+        // swipe left → next photo
+        () => {
+            if (selectedPhotoIndex < selectedPhotoSet.length - 1) {
+                setSelectedPhotoIndex(prev => prev + 1);
+            }
+        },
+        // swipe right → previous photo
+        () => {
+            if (selectedPhotoIndex > 0) {
+                setSelectedPhotoIndex(prev => prev - 1);
+            }
+        }
+    );
   useEffect(() => {
     // locks the page so user can't scroll while modal is open
     document.body.style.overflow = 'hidden';
@@ -93,14 +114,41 @@ export default function ReviewDetailModal({ review, onClose, isOwnProfile, onRev
               <p className={styles.detailSectionLabel}>Photos</p>
               <div className={styles.photoRow}>
                 {review.photos.map((url, i) => (
-                  <img key={i} src={url} alt="review" className={styles.photoThumb} />
+                  <img key={i} src={url} alt="review" className={styles.photoImage} className={styles.photoThumb} onClick={() => {
+                    setSelectedPhotoSet(review.photos);
+                    setSelectedPhotoIndex(i);
+                  }} />
                 ))}
               </div>
             </>
           )}
         </div>
-
       </div>
+      {selectedPhotoIndex !== null && (
+        <div
+          className={styles.photoModal}
+          onClick={() => setSelectedPhotoIndex(null)}
+          {...swipeHandlers}
+        >
+          <img
+            src={selectedPhotoSet[selectedPhotoIndex]}
+            className={styles.enlargedPhoto}
+            alt="Enlarged review"
+            onClick={(e) => e.stopPropagation()}
+          />
+          {selectedPhotoSet.length > 1 && (
+            <div className={styles.photoDots}>
+              {selectedPhotoSet.map((_, i) => (
+                <span
+                  key={i}
+                  className={`${styles.photoDot} ${i === selectedPhotoIndex ? styles.photoDotActive : ""}`}
+                  onClick={(e) => { e.stopPropagation(); setSelectedPhotoIndex(i); }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -9,9 +9,15 @@ const router = express.Router();
 /*HELPER FUNCTIONS*/
 async function getUserFromRequest(req) {
   const authHeader = req.headers.authorization;
+  console.log("authHeader:", authHeader?.slice(0, 50)); // ← add this
+  
   if (!authHeader?.startsWith("Bearer ")) return null;
+
   const token = authHeader.split(" ")[1];
   const { data: { user }, error } = await supabase.auth.getUser(token);
+  
+  console.log("getUser result:", user?.id, error?.message); // ← add this
+  
   if (error || !user) return null;
   return user;
 }
@@ -62,7 +68,8 @@ router.get("/reviews/:google_place_id",
       if (error) return res.status(500).json({ error: error.message });
       res.json({ reviews });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Something went wrong" }); // generic message
+      console.error(err); // log internally 
     }
   }
 );
@@ -104,7 +111,8 @@ router.get("/attributes/:google_place_id",
 
       res.json({ attributes });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Something went wrong" }); // generic message
+      console.error(err); // log internally 
     }
   }
 );
@@ -123,20 +131,38 @@ const upload = multer({
 });
 
 router.post("/upload-photo", photoUploadLimiter, upload.single("photo"), async (req, res) => {
+  const user = await getUserFromRequest(req);
+  if (!user) return res.status(401).json({ error: "Unauthorized" });
+
   try {
     if (!req.file) return res.status(400).json({ error: "No file received" });
+
     const ext = req.file.originalname.split('.').pop();
     const fileName = `${Date.now()}.${ext}`;
-    const { data, error } = await supabase.storage
-      .from("review-photos").upload(fileName, req.file.buffer, { contentType: req.file.mimetype });
-    if (error) return res.status(500).json({ error: error.message });
+
+    // retry up to 3 times on SSL errors
+    let data, error;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      ({ data, error } = await supabase.storage
+        .from("review-photos")
+        .upload(fileName, req.file.buffer, { contentType: req.file.mimetype }));
+
+      if (!error) break; // success, stop retrying
+
+      console.error(`Upload attempt ${attempt} failed:`, error.message);
+
+      if (attempt < 3) await new Promise(r => setTimeout(r, 1000 * attempt)); // wait 1s, 2s between retries
+    }
+
+    if (error) return res.status(500).json({ error: "Upload failed, please try again." });
+
     const { data: urlData } = supabase.storage.from("review-photos").getPublicUrl(fileName);
     res.json({ url: urlData.publicUrl });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("UPLOAD ERROR:", err);
+    res.status(500).json({ error: "Something went wrong" });
   }
 });
-
 // POST /api/ratings
 router.post("/",
   reviewSubmitLimiter,
@@ -172,13 +198,15 @@ router.post("/",
         .insert({
           place_id: place.id, address, name, foot_traffic, parking, outlet, noise,
           seating, comments, photos, study_score,
+          google_place_id: google_place_id,
           user_id: user.id,
           user_name: user.user_metadata?.name ?? "Anonymous",
         });
       if (ratingError) return res.status(500).json({ error: ratingError.message });
       res.json({ success: true });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      res.status(500).json({ error: "Something went wrong" }); // generic message
+      console.error(err); // log internally 
     }
   }
 );
@@ -192,13 +220,36 @@ router.delete("/:id",
     const user = await getUserFromRequest(req);
     if (!user) return res.status(401).json({ error: "Unauthorized" });
 
+    // fetch rating including photos for cleanup
     const { data: rating, error: fetchError } = await supabase
-      .from("ratings").select("user_id").eq("id", id).single();
+      .from("ratings")
+      .select("user_id, photos")  // ← add photos
+      .eq("id", id)
+      .single();
+
     if (fetchError || !rating) return res.status(404).json({ error: "Review not found" });
     if (rating.user_id !== user.id) return res.status(403).json({ error: "Forbidden" });
 
+    // delete photos from storage if any exist
+    if (rating.photos && rating.photos.length > 0) {
+      const filePaths = rating.photos
+        .map(url => url.split("/review-photos/")[1])
+        .filter(Boolean); // remove any nulls from bad URLs
+
+      if (filePaths.length > 0) {
+        const { error: storageError } = await supabase.storage
+          .from("review-photos")
+          .remove(filePaths);
+
+        if (storageError) {
+          console.error("Failed to delete photos from storage:", storageError.message);
+        }
+      }
+    }
+
     const { error } = await supabase.from("ratings").delete().eq("id", id);
-    if (error) return res.status(500).json({ error: error.message });
+    if (error) return res.status(500).json({ error: "Something went wrong" });
+
     res.json({ success: true });
   }
 );

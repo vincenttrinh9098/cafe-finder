@@ -5,12 +5,15 @@ import moderate3 from '../../../../assets/images/moderate3.jpg';
 import angry1 from '../../../../assets/images/angry1.png';
 import supabase from '../../../../lib/supabase.js';
 import { deleteReview, updateReview } from '../../../../api/placesApi.js';
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useSwipe } from '../../../../hooks/useSwipe.js';
+import { useLockBodyScroll } from '../../../../hooks/useLockBodyScroll.js';
+
 
 
 import { useEffect, useState } from 'react';
 
 export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
-
     const noiseOptions = ["Very quiet", "Quiet", "Moderate noise", "Loud", "Very loud"];
     const footTrafficOptions = ["Nearly empty", "Lightly busy", "Busy", "Very Busy"];
     const seatingCapacityOptions = ["Plenty of seats", "Some seats", "Limited seats", "Usually full"];
@@ -33,7 +36,13 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
     const [submitted, setSubmitted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [photos, setPhotos] = useState([]);
+    const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(null);
+    const [selectedPhotoSet, setSelectedPhotoSet] = useState([]);
+    useLockBodyScroll(selectedReview !== null || selectedPhotoIndex !== null);
+
     const MAX_PHOTOS = 5;
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const handlePhotoSelect = (e) => {
         const files = Array.from(e.target.files);
@@ -65,29 +74,63 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
     };
 
     const deleteOption = async (id) => {
+        setSubmitting(true);
         try {
             await deleteReview(id);
             onReviewDeleted(); // refresh reviews after delete
             setSelectedReview(null);
         } catch (err) {
-            console.error("Failed to delete review:", err);
+            if (err.message === "SESSION_EXPIRED") {
+                navigate('/login', { state: { from: location } });
+                return;
+            }
+            console.error("Failed to submit review:", err);
             setSelectedReview(null);
-        } finally {
+        }
+        finally {
             setSubmitting(false);
         }
     };
 
     const editOption = async () => {
+        setSubmitting(true);
         try {
-            await updateReview(selectedReview.id, { comments: comment });
-            setSelectedReview(null);
+            await updateReview(selectedReview.id, {
+                comments: comment,
+                noise: noiseOption,
+                foot_traffic: footTrafficOption,
+                seating: seatingCapacityOption,
+                outlet: outletOption,
+                parking: parkingOption,
+                study_score: scoreOption,
+            });
+            resetForm();
             onReviewDeleted(); // reuse same refresh callback
         } catch (err) {
+            if (err.message === "SESSION_EXPIRED") {
+                navigate('/login', { state: { from: location } });
+                return;
+            }
             console.error("Failed to update review:", err);
         } finally {
             setSubmitting(false);
         }
     };
+
+    useEffect(() => {
+        const modal = document.querySelector(`.${styles.photoModal}`);
+        if (!modal) return;
+
+        const preventScroll = (e) => e.preventDefault();
+
+        if (selectedPhotoIndex !== null) {
+            modal.addEventListener("touchmove", preventScroll, { passive: false });
+        }
+
+        return () => {
+            modal?.removeEventListener("touchmove", preventScroll);
+        };
+    }, [selectedPhotoIndex]);
 
     useEffect(() => {
         if (!selectedReview) return;
@@ -104,9 +147,6 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
                 preview: url
             }))
         );
-        selectedReview.photos.forEach(photo => {
-            console.log(photo);
-        });
 
     }, [selectedReview]);
 
@@ -129,11 +169,22 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
     }, []);
 
 
+    const swipeHandlers = useSwipe(
+        // swipe left → next photo
+        () => {
+            if (selectedPhotoIndex < selectedPhotoSet.length - 1) {
+                setSelectedPhotoIndex(prev => prev + 1);
+            }
+        },
+        // swipe right → previous photo
+        () => {
+            if (selectedPhotoIndex > 0) {
+                setSelectedPhotoIndex(prev => prev - 1);
+            }
+        }
+    );
 
     if (loadingReviews) return <p>Loading reviews...</p>;
-
-
-
     if (filteredReviews.length === 0) return <p></p>;
 
     const formatDate = (dateString) => {
@@ -169,57 +220,51 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
                             {r.photos && r.photos.length > 0 && (
                                 <div className={styles.reviewPhotos}>
                                     {r.photos.map((url, i) => (
-                                        <img key={i} src={url} alt="review" />
+                                        <img
+                                            key={i}
+                                            src={url}
+                                            className={styles.photoImage}
+                                            alt="review"
+                                            onClick={() => {
+                                                setSelectedPhotoSet(r.photos);
+                                                setSelectedPhotoIndex(i);
+                                            }}
+                                        />
                                     ))}
                                 </div>
                             )}
                         </div>
+
                         <div>
                             {user?.id === r.user_id && (
                                 <button
                                     onClick={() => handleOpenModal(r)}
                                     className={styles.editButton}
                                 >
-                                    <img
-                                        src={editIcon}
-                                        alt="Edit"
-                                        className={styles.editIcon}
-                                    />
+                                    <img src={editIcon} alt="Edit" className={styles.editIcon} />
                                 </button>
                             )}
+
                             {selectedReview && (
                                 <div className={styles.overlay} onClick={() => setSelectedReview(null)}>
                                     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-
                                         <div className={styles.modalHeader}>
                                             <span className={styles.left} onClick={resetForm}>Back</span>
                                             <span className={styles.title}>Edit Review</span>
                                             <span className={styles.right} onClick={() => deleteOption(selectedReview.id)} disabled={submitting}>Delete</span>
                                         </div>
                                         <div className={styles.modalContent}>
-
                                             <div className={styles.categoryReview}>
                                                 <h3 className={styles.categoryHeader}>
                                                     Study Score
-                                                    {submitted && !scoreOption && (
-                                                        <span className={styles.requiredError}>* required</span>
-                                                    )}
+                                                    {submitted && !scoreOption && <span className={styles.requiredError}>* required</span>}
                                                 </h3>
                                                 <div className={styles.scoreContainer}>
                                                     <div className={styles.scorePhoto}>
                                                         {scoreOptions.map((option, index) => (
-                                                            <button
-                                                                type="button"
-                                                                key={index}
-                                                                onClick={() => setScoreOption(option.value)}
-                                                                className={`${styles.scoreOption} ${scoreOption === option.value ? styles.scoreOptionActive : ""
-                                                                    }`}
-                                                            >
-                                                                <img
-                                                                    src={option.img}
-                                                                    alt={`score option ${option.value}`}
-                                                                    className={styles.scoreImage}
-                                                                />
+                                                            <button type="button" key={index} onClick={() => setScoreOption(option.value)}
+                                                                className={`${styles.scoreOption} ${scoreOption === option.value ? styles.scoreOptionActive : ""}`}>
+                                                                <img src={option.img} alt={`score option ${option.value}`} className={styles.scoreImage} />
                                                             </button>
                                                         ))}
                                                     </div>
@@ -309,18 +354,8 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
                                                 <div className={styles.photoPreviewRow}>
                                                     {photos.map((p, i) => (
                                                         <div key={i} className={styles.photoPreviewWrapper}>
-                                                            <img
-                                                                src={p.preview}
-                                                                alt="preview"
-                                                                className={styles.photoPreview}
-                                                            />
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => removePhoto(i)}
-                                                                className={styles.removePhoto}
-                                                            >
-                                                                ✕
-                                                            </button>
+                                                            <img src={p.preview} alt="preview" className={styles.photoPreview} />
+                                                            <button type="button" onClick={() => removePhoto(i)} className={styles.removePhoto}>✕</button>
                                                         </div>
                                                     ))}
                                                     {photos.length < MAX_PHOTOS && (
@@ -331,24 +366,46 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
                                                     )}
                                                 </div>
                                             </div>
-
                                         </div>
+
                                         <div className={styles.modalBottom}>
                                             <button className={styles.submitButton} onClick={() => editOption()} disabled={submitting}>
                                                 {submitting ? "Posting..." : "Post Review"}
                                             </button>
                                         </div>
                                     </div>
-
                                 </div>
-
-
-
                             )}
                         </div>
                     </div>
                 </div>
             ))}
+
+            {selectedPhotoIndex !== null && (
+                <div
+                    className={styles.photoModal}
+                    onClick={() => setSelectedPhotoIndex(null)}
+                    {...swipeHandlers}
+                >
+                    <img
+                        src={selectedPhotoSet[selectedPhotoIndex]}
+                        className={styles.enlargedPhoto}
+                        alt="Enlarged review"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                    {selectedPhotoSet.length > 1 && (
+                        <div className={styles.photoDots}>
+                            {selectedPhotoSet.map((_, i) => (
+                                <span
+                                    key={i}
+                                    className={`${styles.photoDot} ${i === selectedPhotoIndex ? styles.photoDotActive : ""}`}
+                                    onClick={(e) => { e.stopPropagation(); setSelectedPhotoIndex(i); }}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

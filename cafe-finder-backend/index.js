@@ -6,15 +6,18 @@ import "dotenv/config";
 import cors from "cors";
 import placesRoutes from "./routes/places.js";
 import ratingsRoutes from "./routes/ratings.js";
+import morgan from "morgan";
+
 
 const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",     // local dev
   "http://localhost:4173",     // vite preview
-  "http://10.0.0.189:5173/",   //network dev
+  "http://10.0.0.189:5173",   //network dev
   // "https://yourdomain.com"  //real domain when deploy
 ];
+//app.use(morgan("combined"));
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -29,6 +32,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.use(express.json());
+
 // apply helmet to all routes except photo
 app.use((req, res, next) => {
   if (req.path.startsWith("/api/places/photo")) {
@@ -50,4 +54,4 @@ app.use("/api/ratings", ratingsRoutes);
 
 // export limiters so routes can use them directly
 
-app.listen(3000, () => console.log("Server running on http://localhost:3000"));
+app.listen(3000, "0.0.0.0", () => console.log("Server running on http://localhost:3000"));

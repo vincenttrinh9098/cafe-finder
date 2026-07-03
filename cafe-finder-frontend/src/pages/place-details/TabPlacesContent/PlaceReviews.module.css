@@ -240,6 +240,13 @@
   font-size: 15px;
   font-weight: bold;
   background-color: #D8EADB;
+  color: #000000;                        
+  cursor: pointer;                         
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  text-decoration: none;
+  outline: none;
 }
 
 
@@ -259,20 +266,29 @@
   flex-direction: row;
   flex-wrap: wrap;
   gap: 10px;
+  text-decoration:none;
 
 }
 
+/* SubmitReview.module.css */
 .pillOption {
   margin-top: 0px;
   padding: 8px 20px;
   font-size: 12px;
   border-radius: 20px;
-  background-color: #FFFF;
+  background-color: #FFFFFF;
   border: 1px solid #000000;
+  color: #000000;                       
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  text-decoration: none;
+  outline: none;                          
 }
 
 .pillOptionActive {
-  background-color: #D8EADB;
+  background-color: #D8EADB !important;
+  border: 1px solid #000000 !important;
 }
 
 
@@ -411,7 +427,8 @@
 
 
 .scoreContainer {
-  padding: 12px;
+  margin:0px;
+  padding:0px;
   display: flex;
   flex-direction: row;
   gap: 15px;

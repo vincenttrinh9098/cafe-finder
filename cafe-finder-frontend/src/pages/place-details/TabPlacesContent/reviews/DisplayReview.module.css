@@ -70,6 +70,85 @@
   flex-wrap: wrap;
 }
 
+.photoImage {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.photoImage:hover {
+  transform: scale(1.05);
+}
+.photoModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(.5px);
+  background-color: rgba(0, 0, 0, 0.3);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+}
+
+.enlargedPhoto {
+  max-width: 90vw;
+  max-height: 80vh;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.photoNavLeft,
+.photoNavRight {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.photoNavLeft {
+  left: 10px;
+}
+
+.photoNavRight {
+  right: 10px;
+}
+
+.photoDots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+}
+
+.photoDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 0%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
+.photoDotActive {
+  background: white;
+}
+
 .reviewPhotos img {
   width: 80px;
   height: 80px;
@@ -192,7 +271,8 @@
 
 
 .scoreContainer {
-  padding: 12px;
+  margin:0px;
+  padding:0px;
   display: flex;
   flex-direction: row;
   gap: 15px;
@@ -201,8 +281,7 @@
 .scorePhoto {
   display: flex;
   gap: 12px;
-  /* adjust spacing here */
-  align-items: center;
+ 
 }
 
 .scorePhoto img {
@@ -246,6 +325,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   gap: 10px;
+  text-decoration:none;
 
 }
 
@@ -254,14 +334,20 @@
   padding: 8px 20px;
   font-size: 12px;
   border-radius: 20px;
-  background-color: #FFFF;
+  background-color: #FFFFFF;
   border: 1px solid #000000;
+  color: #000000;           
+  -webkit-tap-highlight-color: transparent; 
+  appearance: none;
+  -webkit-appearance: none;
+  text-decoration: none;
+  outline: none;
 }
 
 .pillOptionActive {
-  background-color: #D8EADB;
+  background-color: #D8EADB !important;
+  border: 1px solid #000000 !important;
 }
-
 
 .photoPreviewRow {
   display: flex;
@@ -338,4 +424,11 @@
   font-size: 15px;
   font-weight: bold;
   background-color: #D8EADB;
+  color: #000000;                        
+  cursor: pointer;                         
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  text-decoration: none;
+  outline: none;
 }

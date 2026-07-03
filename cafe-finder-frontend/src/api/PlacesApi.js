@@ -1,5 +1,5 @@
 import supabase from '../lib/supabase.js';
-const BASE_URL = "http://localhost:3000/api";
+const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 export async function searchPlaces(query, pagetoken = null) {
   const params = new URLSearchParams({ query });
@@ -43,11 +43,14 @@ export async function getTopRatedPlaces() {
 
 export async function submitRating(ratingData) {
   const { data: { session } } = await supabase.auth.getSession();
+  console.log("session:", session); 
+  if (!session) throw new Error("SESSION_EXPIRED"); // throw specific error
+
   const res = await fetch(`${BASE_URL}/ratings`, {
     method: "POST",
-    headers: { 
+    headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${session?.access_token}`,
+      "Authorization": `Bearer ${session.access_token}`,
     },
     body: JSON.stringify(ratingData),
   });
@@ -55,19 +58,32 @@ export async function submitRating(ratingData) {
 }
 
 export async function uploadReviewPhoto(file) {
-  const formData = new FormData();
-  formData.append("photo", file);
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("SESSION_EXPIRED");
 
-  const res = await fetch(`${BASE_URL}/ratings/upload-photo`, {
-    method: "POST",
-    body: formData,
-  });
-  const data = await res.json();
-  return data.url;
+  const ext = file.name.split('.').pop();
+  const fileName = `${Date.now()}.${ext}`;
+
+  const { data, error } = await supabase.storage
+    .from("review-photos")
+    .upload(fileName, file, {
+      contentType: file.type,
+      upsert: false,
+    });
+
+  if (error) throw new Error(error.message);
+
+  const { data: urlData } = supabase.storage
+    .from("review-photos")
+    .getPublicUrl(fileName);
+
+  return urlData.publicUrl;
 }
+
 
 export async function deleteReview(id) {
   const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("SESSION_EXPIRED"); // throw specific error
   const res = await fetch(`${BASE_URL}/ratings/${id}`, {
     method: "DELETE",
     headers: {
@@ -79,6 +95,7 @@ export async function deleteReview(id) {
 
 export async function updateReview(id, data) {
   const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("SESSION_EXPIRED"); //  throw specific error
   const res = await fetch(`${BASE_URL}/ratings/${id}`, {
     method: "PUT",
     headers: {

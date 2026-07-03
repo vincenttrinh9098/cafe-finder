@@ -94,7 +94,7 @@ export function SuggestedRatedPlaces({ userLocation }) {
                 <div className={styles.suggestionRatedCardImageWrapper}>
                   {place.photo_reference ? (
                     <img
-                      src={`http://localhost:3000/api/places/photo?ref=${place.photo_reference}`}
+                      src={`${import.meta.env.VITE_API_BASE_URL}/api/places/photo?ref=${place.photo_reference}`}
                       alt={place.name}
                       className={styles.suggestionRatedCardImage}
                     />
