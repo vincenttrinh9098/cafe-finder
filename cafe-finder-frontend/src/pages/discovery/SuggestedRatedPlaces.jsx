@@ -32,20 +32,26 @@ function getAttributeIcon(attr) {
   return Users;
 }
 
-export function SuggestedRatedPlaces({ userLocation }) {
+export function SuggestedRatedPlaces({ userLocation,onLoaded }) {
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const hasFetched = useRef(false);
 
   useEffect(() => {
     if (!userLocation || hasFetched.current) return;
     hasFetched.current = true;
 
+    const cached = sessionStorage.getItem("nearbyPlaces");
+    if (cached) {
+      setStores(JSON.parse(cached));
+      setLoading(false);
+      onLoaded?.();
+      return; 
+    }
+
     const fetchNearby = async () => {
       try {
         const { places } = await getNearbyPlaces(userLocation.lat, userLocation.lng);
-
         const limited = places.slice(0, 15);
 
         const withAttributes = await Promise.all(
@@ -59,7 +65,9 @@ export function SuggestedRatedPlaces({ userLocation }) {
           })
         );
         setStores(withAttributes);
-      } catch (err) {
+        sessionStorage.setItem("nearbyPlaces", JSON.stringify(withAttributes)); // cache
+        onLoaded?.();
+      } catch (err) { 
         console.error("Failed to fetch nearby:", err);
       } finally {
         setLoading(false);
@@ -67,6 +75,8 @@ export function SuggestedRatedPlaces({ userLocation }) {
     };
     fetchNearby();
   }, [userLocation]);
+
+
 
   if (loading) return <p>Loading nearby places...</p>;
   if (stores.length === 0) return <p>No nearby places found.</p>;
@@ -88,7 +98,11 @@ export function SuggestedRatedPlaces({ userLocation }) {
               to={`/place/${place.google_place_id}`}
               state={{ place }}
               className={styles.cardLink}
-              onClick={() => sessionStorage.setItem("discoveryScroll", window.scrollY)}
+              
+              onClick={() => {
+                console.log("saving scroll:", window.scrollY);
+                sessionStorage.setItem("discoveryScroll", window.scrollY)}
+              }
 
             >
               <div className={styles.suggestionRatedCard}>

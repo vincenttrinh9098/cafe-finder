@@ -13,6 +13,7 @@ export function Discovery() {
   const { state } = useLocation();
   const location = useLocation();
   const navigate = useNavigate();
+  const [nearbyLoaded, setNearbyLoaded] = useState(false);
 
   const [results, setResults] = useState(() => {
     try {
@@ -42,20 +43,19 @@ export function Discovery() {
   const [userLocation, setUserLocation] = useState(null);
   const [enrichedResults, setEnrichedResults] = useState([]);
 
-  // In Discovery.jsx, update the enrichedResults useEffect:
+  // Update the enrichedResults useEffect:
   useEffect(() => {
     if (!results || results.length === 0) {
       setEnrichedResults([]);
       return;
     }
 
-    // check if we already have enriched results cached
     try {
       const cached = sessionStorage.getItem("enrichedResults");
       const cachedQuery = sessionStorage.getItem("searchQuery");
       if (cached && cachedQuery === query) {
         setEnrichedResults(JSON.parse(cached));
-        return; // ← use cache, skip re-fetching
+        return;
       }
     } catch { }
 
@@ -70,7 +70,6 @@ export function Discovery() {
       // cache enriched results
       sessionStorage.setItem("enrichedResults", JSON.stringify(withAttributes));
     };
-
     fetchAttributes();
   }, [results]);
 
@@ -119,13 +118,26 @@ export function Discovery() {
 
   useEffect(() => {
     const savedScroll = sessionStorage.getItem("discoveryScroll");
-    if (savedScroll && sortedResults.length > 0) {
-      // small delay to ensure cards are rendered in DOM
-      setTimeout(() => {
-        window.scrollTo(0, parseInt(savedScroll));
+    if (!savedScroll || sortedResults.length === 0) return;
+
+    const targetScroll = parseInt(savedScroll);
+
+    // keep trying until page is tall enough to scroll there
+    const attemptScroll = (attempts = 0) => {
+      if (attempts > 20) {
         sessionStorage.removeItem("discoveryScroll");
-      }, 100);
-    }
+        return;
+      }
+
+      if (document.body.offsetHeight >= targetScroll) {
+        window.scrollTo(0, targetScroll);
+        sessionStorage.removeItem("discoveryScroll");
+      } else {
+        setTimeout(() => attemptScroll(attempts + 1), 200);
+      }
+    };
+
+    attemptScroll();
   }, [sortedResults]);
 
   const [nextPageToken, setNextPageToken] = useState(null);
@@ -163,6 +175,28 @@ export function Discovery() {
     sessionStorage.setItem("activeSuggestion", activeSuggestion);
   }, [activeSuggestion]);
 
+
+  useEffect(() => {
+  if (sortedResults.length > 0) return;
+  const savedScroll = sessionStorage.getItem("discoveryScroll");
+  if (!savedScroll || !nearbyLoaded) return;
+
+  const targetScroll = parseInt(savedScroll);
+  const attemptScroll = (attempts = 0) => {
+    if (attempts > 20) {
+      sessionStorage.removeItem("discoveryScroll");
+      return;
+    }
+    if (document.body.offsetHeight >= targetScroll) {
+      window.scrollTo(0, targetScroll);
+      sessionStorage.removeItem("discoveryScroll");
+    } else {
+      setTimeout(() => attemptScroll(attempts + 1), 150);
+    }
+  };
+  attemptScroll();
+}, [nearbyLoaded]);
+
   const handleHome = () => {
     sessionStorage.removeItem("searchResults");
     sessionStorage.removeItem("searchQuery");
@@ -197,7 +231,7 @@ export function Discovery() {
       ) : (
         <>
           <TopRatedPlaces userLocation={userLocation} />
-          <SuggestedRatedPlaces userLocation={userLocation} />
+          <SuggestedRatedPlaces userLocation={userLocation} onLoaded={() => setNearbyLoaded(true)} />
         </>
       )}
       <NavBar />

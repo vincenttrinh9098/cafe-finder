@@ -13,13 +13,13 @@ export default function ReviewDetailModal({ review, onClose, isOwnProfile, onRev
   const [selectedPhotoSet, setSelectedPhotoSet] = useState([]);
 
     const swipeHandlers = useSwipe(
-        // swipe left → next photo
+        // swipe left -> next photo
         () => {
             if (selectedPhotoIndex < selectedPhotoSet.length - 1) {
                 setSelectedPhotoIndex(prev => prev + 1);
             }
         },
-        // swipe right → previous photo
+        // swipe right ->previous photo
         () => {
             if (selectedPhotoIndex > 0) {
                 setSelectedPhotoIndex(prev => prev - 1);
@@ -45,7 +45,7 @@ export default function ReviewDetailModal({ review, onClose, isOwnProfile, onRev
     month: 'short', day: 'numeric', year: 'numeric'
   });*/
 
-  console.log(review);
+  //console.log(review);
 
   const deleteOption = async (id) => {
     try {

@@ -43,7 +43,7 @@ export async function getTopRatedPlaces() {
 
 export async function submitRating(ratingData) {
   const { data: { session } } = await supabase.auth.getSession();
-  console.log("session:", session); 
+  //console.log("session:", session); 
   if (!session) throw new Error("SESSION_EXPIRED"); // throw specific error
 
   const res = await fetch(`${BASE_URL}/ratings`, {

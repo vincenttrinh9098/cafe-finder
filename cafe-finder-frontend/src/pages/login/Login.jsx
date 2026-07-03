@@ -24,7 +24,7 @@ export function Login() {
 
 
   function handleEmailChange(e) {
-    console.log(e)
+    //console.log(e)
     const value = e.target.value
     setEmail(value)
     setEmailError(validateEmail(value))
@@ -57,7 +57,7 @@ export function Login() {
         return
       }
 
-      console.log('logged in user:', data.user)
+      //console.log('logged in user:', data.user)
       navigate('/profile/')
     }
   }

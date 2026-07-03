@@ -38,7 +38,7 @@ export function PlaceHeader({ place }) {
     //console.log(place.photo_reference);
 
     //console.log(place);
-    console.log(place);
+    //console.log(place);
 
     return (
         <>
@@ -62,10 +62,7 @@ export function PlaceHeader({ place }) {
                     <button
                         className={styles.backButton}
                         onClick={() => {
-                            console.log("sessionStorage searchResults:", sessionStorage.getItem("searchResults")?.slice(0, 100));
-                            console.log("sessionStorage searchQuery:", sessionStorage.getItem("searchQuery"));
                             const last = sessionStorage.getItem('lastNonProfileRoute') ?? '/';
-                            console.log("navigating to:", last);
                             navigate(last);
                         }}
                     >
