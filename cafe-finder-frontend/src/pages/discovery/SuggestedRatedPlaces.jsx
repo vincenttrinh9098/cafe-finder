@@ -88,6 +88,8 @@ export function SuggestedRatedPlaces({ userLocation }) {
               to={`/place/${place.google_place_id}`}
               state={{ place }}
               className={styles.cardLink}
+              onClick={() => sessionStorage.setItem("discoveryScroll", window.scrollY)}
+
             >
               <div className={styles.suggestionRatedCard}>
 

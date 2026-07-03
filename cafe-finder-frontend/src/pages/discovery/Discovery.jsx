@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import styles from './Discovery.module.css';
 import { SearchBar } from './SearchBar.jsx'
 import { TopRatedPlaces } from './TopRatedPlaces.jsx'
@@ -11,19 +11,24 @@ import { NavBar } from '../navigation/NavBar.jsx'
 
 export function Discovery() {
   const { state } = useLocation();
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [results, setResults] = useState(() => {
-    if (state?.searchResults) return state.searchResults;
     try {
       const saved = sessionStorage.getItem("searchResults");
-      return saved ? JSON.parse(saved) : [];
+      if (saved) return JSON.parse(saved); // ← prioritize sessionStorage
+      if (state?.searchResults) return state.searchResults;
+      return [];
     } catch {
       return [];
     }
   });
 
   const [query, setQuery] = useState(() => {
-    if (state?.searchQuery) return state.searchQuery;
-    return sessionStorage.getItem("searchQuery") ?? "";
+    return sessionStorage.getItem("searchQuery")
+      ?? state?.searchQuery
+      ?? "";
   });
 
   const [sort, setSort] = useState(() => {
@@ -34,17 +39,25 @@ export function Discovery() {
     sessionStorage.setItem("sort", sort);
   }, [sort]);
 
-
-
   const [userLocation, setUserLocation] = useState(null);
   const [enrichedResults, setEnrichedResults] = useState([]);
 
-
+  // In Discovery.jsx, update the enrichedResults useEffect:
   useEffect(() => {
     if (!results || results.length === 0) {
       setEnrichedResults([]);
       return;
     }
+
+    // check if we already have enriched results cached
+    try {
+      const cached = sessionStorage.getItem("enrichedResults");
+      const cachedQuery = sessionStorage.getItem("searchQuery");
+      if (cached && cachedQuery === query) {
+        setEnrichedResults(JSON.parse(cached));
+        return; // ← use cache, skip re-fetching
+      }
+    } catch { }
 
     const fetchAttributes = async () => {
       const withAttributes = await Promise.all(
@@ -54,9 +67,15 @@ export function Discovery() {
         })
       );
       setEnrichedResults(withAttributes);
+      // cache enriched results
+      sessionStorage.setItem("enrichedResults", JSON.stringify(withAttributes));
     };
 
     fetchAttributes();
+  }, [results]);
+
+  useEffect(() => {
+    sessionStorage.setItem("searchResults", JSON.stringify(results));
   }, [results]);
 
   useEffect(() => {
@@ -73,10 +92,8 @@ export function Discovery() {
     );
   }, []);
 
-
   const sortedResults = useMemo(() => {
     if (!enrichedResults || !Array.isArray(enrichedResults)) return [];
-    console.log(enrichedResults);
     return [...enrichedResults]
       .map(place => {
         const distance = userLocation
@@ -100,25 +117,25 @@ export function Discovery() {
       });
   }, [enrichedResults, sort, userLocation]);
 
-
-
   useEffect(() => {
     const savedScroll = sessionStorage.getItem("discoveryScroll");
-    if (savedScroll) {
-      window.scrollTo(0, parseInt(savedScroll));
-      sessionStorage.removeItem("discoveryScroll");
+    if (savedScroll && sortedResults.length > 0) {
+      // small delay to ensure cards are rendered in DOM
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(savedScroll));
+        sessionStorage.removeItem("discoveryScroll");
+      }, 100);
     }
   }, [sortedResults]);
 
   const [nextPageToken, setNextPageToken] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
 
-
   const loadMore = async () => {
     if (!nextPageToken || loadingMore) return;
     setLoadingMore(true);
     try {
-      await new Promise(r => setTimeout(r, 2000)); // Google requires delay
+      await new Promise(r => setTimeout(r, 2000));
       const { places, nextPageToken: newToken } = await searchPlaces(query, nextPageToken);
       setResults(prev => [...prev, ...places]);
       setNextPageToken(newToken);
@@ -129,7 +146,6 @@ export function Discovery() {
     }
   };
 
-  // detect scroll to bottom
   useEffect(() => {
     const handleScroll = () => {
       const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
@@ -137,8 +153,7 @@ export function Discovery() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [nextPageToken, loadingMore]); // re-register when these change
-
+  }, [nextPageToken, loadingMore]);
 
   const [activeSuggestion, setActiveSuggestion] = useState(
     sessionStorage.getItem("activeSuggestion") ?? "All"
@@ -149,11 +164,17 @@ export function Discovery() {
   }, [activeSuggestion]);
 
   const handleHome = () => {
-    sessionStorage.clear();
+    sessionStorage.removeItem("searchResults");
+    sessionStorage.removeItem("searchQuery");
+    sessionStorage.removeItem("enrichedResults");
+    sessionStorage.removeItem("activeSuggestion");
+    sessionStorage.removeItem("lastNonProfileRoute");
     setResults([]);
     setQuery("");
-    setActiveSuggestion("");
+    setEnrichedResults([]);
+    setActiveSuggestion("All");
     setNextPageToken(null);
+    navigate('/', { replace: true });
   };
 
   return (
@@ -167,18 +188,18 @@ export function Discovery() {
         activeSuggestion={activeSuggestion}
         setActiveSuggestion={setActiveSuggestion}
         onHome={handleHome}
-      />      {sortedResults.length > 0 ? (
+      />
+      {sortedResults.length > 0 ? (
         <>
           <SearchedPlaces places={sortedResults} query={query} searchResults={results} />
           {loadingMore && <p style={{ textAlign: "center", padding: "1rem" }}>Loading more...</p>}
         </>
-      )
-        : (
-          <>
-            <TopRatedPlaces userLocation={userLocation} />
-            <SuggestedRatedPlaces userLocation={userLocation} />
-          </>
-        )}
+      ) : (
+        <>
+          <TopRatedPlaces userLocation={userLocation} />
+          <SuggestedRatedPlaces userLocation={userLocation} />
+        </>
+      )}
       <NavBar />
     </div>
   );

@@ -2,18 +2,21 @@ import { useState } from 'react';
 import styles from './SearchBar.module.css';
 import { searchPlaces } from '../../api/placesApi.js';
 import { FilterPopUp } from './search-bar/FilterPopUp.jsx';
+import {useNavigate} from 'react-router-dom';
 
 export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToken, activeSuggestion, setActiveSuggestion, onHome }) {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const suggestions = ["All", "Coffee", "Tea", "Bakery", "Matcha", "Library"];
+  const navigate = useNavigate();
 
 
   const handleSelect = (item) => {
     if (item === "All") {
       onHome();
       setActiveSuggestion("All");
+      navigate('/', { replace: true });
       return;
     }
     setSearch(item);
@@ -23,6 +26,12 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
   };
   const handleSearch = async (query) => {
     const searchQuery = query || search;
+    if (!searchQuery.trim()) return;
+    navigate(`/?q=${encodeURIComponent(searchQuery)}`, { replace: true });
+    
+    setQuery(searchQuery);
+    setLoading(true);
+
     if (!searchQuery.trim()) return;
 
     setQuery(searchQuery);
@@ -41,6 +50,7 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
       }
 
       setResults(allPlaces);
+      sessionStorage.removeItem("enrichedResults");
       setNextPageToken(finalToken);
     } catch (err) {
       console.error(err);

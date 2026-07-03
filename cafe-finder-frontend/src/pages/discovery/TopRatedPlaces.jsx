@@ -84,6 +84,7 @@ export function TopRatedPlaces({ userLocation }) {
               to={`/place/${place.google_place_id}`}
               state={{ place: place }}
               className={styles.cardLink}
+              onClick={() => sessionStorage.setItem("discoveryScroll", window.scrollY)} 
             >
               <div className={styles.topRatedCard}>
                 <div className={styles.topRatedCardImageWrapper}>
