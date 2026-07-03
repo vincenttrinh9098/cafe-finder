@@ -1,5 +1,7 @@
 import supabase from '../lib/supabase.js';
-const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
+const API_BASE = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, "");
+const BASE_URL = `${API_BASE}/api`;
+
 //console.log()
 export async function searchPlaces(query, pagetoken = null) {
   const params = new URLSearchParams({ query });
