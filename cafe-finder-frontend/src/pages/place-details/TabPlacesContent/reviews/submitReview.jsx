@@ -3,6 +3,9 @@ import { useState, useRef } from 'react';
 import { submitRating, uploadReviewPhoto } from '../../../../api/placesApi.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useLockBodyScroll } from '../../../../hooks/useLockBodyScroll.js';
+
+
 import supabase from '../../../../lib/supabase.js';
 
 import smile5 from '../../../../assets/images/smile5.jpeg';
@@ -35,6 +38,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
     const [submitting, setSubmitting] = useState(false);
     const [comment, setComment] = useState("");
     const [photos, setPhotos] = useState([]);
+
     const MAX_PHOTOS = 5;
 
     const noiseOptions = ["Very quiet", "Quiet", "Moderate noise", "Loud", "Very loud"];
@@ -62,8 +66,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
     const seatingRef = useRef(null);
     const outletRef = useRef(null);
     const parkingRef = useRef(null);
-
-
+    useLockBodyScroll(showModal);
 
     const handlePhotoSelect = (e) => {
         const files = Array.from(e.target.files);
@@ -179,7 +182,6 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                         </div>
                     </div>
                 </div>
-                {/*Create filter/sort options here */}
             </div>
 
 
