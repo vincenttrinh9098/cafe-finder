@@ -16,7 +16,8 @@ const allowedOrigins = [
   "http://localhost:4173",     // vite preview
   "http://10.0.0.189:5173",   //network dev
   "https://Beta-Test-Spot-Finder.vercel.app", //vercel domain
-  "https://betatestspotfinder-vincenttrinh9098s-projects.vercel.app"
+  "https://betatestspotfinder-vincenttrinh9098s-projects.vercel.app",
+  "https://betatestspotfinder-seven.vercel.app/" //given vercel domain
 ];
 //app.use(morgan("combined"));
 
