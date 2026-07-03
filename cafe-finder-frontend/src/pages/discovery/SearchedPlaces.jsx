@@ -66,7 +66,7 @@ export function SearchedPlaces({ places, query, searchResults }) {
             state={{ place, searchQuery: query, searchResults: searchResults }}
             className={styles.cardLink}
             onClick={() => {
-              console.log("saving scroll:", window.scrollY);
+              //console.log("saving scroll:", window.scrollY);
 
               sessionStorage.setItem("discoveryScroll", window.scrollY)
             }}
