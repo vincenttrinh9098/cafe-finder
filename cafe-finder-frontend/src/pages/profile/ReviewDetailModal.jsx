@@ -113,7 +113,7 @@ export default function ReviewDetailModal({ review, onClose, isOwnProfile, onRev
               <p className={styles.detailSectionLabel}>Photos</p>
               <div className={styles.photoRow}>
                 {review.photos.map((url, i) => (
-                  <img key={i} src={url} alt="review" className={styles.photoImage} className={styles.photoThumb} onClick={() => {
+                  <img key={i} src={url} alt="review" className={styles.photoThumb} onClick={() => {
                     setSelectedPhotoSet(review.photos);
                     setSelectedPhotoIndex(i);
                   }} />
