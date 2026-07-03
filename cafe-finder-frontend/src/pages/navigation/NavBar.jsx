@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import styles from './NavBar.module.css';
-import supabase from '../../lib/supabase';
+import supabase from '../../lib/supabase.js';
 
 
 export function NavBar() {

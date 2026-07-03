@@ -9,7 +9,7 @@ import { AuthCallback } from './pages/auth/AuthCallBack';
 import { Profile } from './pages/profile/Profile';
 import { useTrackLastRoute } from './hooks/useTrackLastRoute';
 import ErrorBoundary from './components/ErrorBoundary';
-import supabase from './lib/supabase';
+import supabase from './lib/supabase.js';
 
 
 function App() {

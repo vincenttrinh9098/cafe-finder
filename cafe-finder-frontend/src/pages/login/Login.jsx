@@ -4,7 +4,7 @@ import styles from './Login.module.css'
 import { LoginForm } from './components/LoginForm'
 import { SocialLogin } from './components/SocialLogin'
 import { validateEmail, validatePassword } from './utils/loginValidation'
-import supabase from '../../lib/supabase'
+import supabase from '../../lib/supabase.js'
 
 export function Login() {
   const navigate = useNavigate()
