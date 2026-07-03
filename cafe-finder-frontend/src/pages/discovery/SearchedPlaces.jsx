@@ -65,7 +65,11 @@ export function SearchedPlaces({ places, query, searchResults }) {
             to={`/place/${place.google_place_id}`}
             state={{ place, searchQuery: query, searchResults: searchResults }}
             className={styles.cardLink}
-            onClick={() => sessionStorage.setItem("discoveryScroll", window.scrollY)}
+            onClick={() => {
+              console.log("saving scroll:", window.scrollY);
+
+              sessionStorage.setItem("discoveryScroll", window.scrollY)
+            }}
           >
             <div className={styles.searchedRatedCard}>
 

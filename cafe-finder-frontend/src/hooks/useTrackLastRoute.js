@@ -6,7 +6,7 @@ export function useTrackLastRoute() {
 
   useEffect(() => {
     const path = location.pathname;
-    const skip = ['/profile', '/login', '/auth', '/saved'];
+    const skip = ['/profile', '/login', '/auth', '/saved', '/place'];
     if (!skip.some(p => path.startsWith(p))) {
       sessionStorage.setItem('lastNonProfileRoute', path);
     }

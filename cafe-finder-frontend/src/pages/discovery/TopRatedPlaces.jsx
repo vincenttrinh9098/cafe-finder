@@ -37,6 +37,13 @@ export function TopRatedPlaces({ userLocation }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
+    const cached = sessionStorage.getItem("topRatedPlaces");
+    if (cached) {
+      setStores(JSON.parse(cached));
+      setLoading(false);
+      return; // 
+    }
     const fetchTopRated = async () => {
       try {
         const places = await getTopRatedPlaces();
@@ -84,6 +91,7 @@ export function TopRatedPlaces({ userLocation }) {
               to={`/place/${place.google_place_id}`}
               state={{ place: place }}
               className={styles.cardLink}
+              onClick={() => sessionStorage.setItem("discoveryScroll", window.scrollY)}
             >
               <div className={styles.topRatedCard}>
                 <div className={styles.topRatedCardImageWrapper}>

@@ -79,7 +79,7 @@ export function Profile() {
       setLoading(true);
 
       const { data: { session },} = await supabase.auth.getSession();
-      console.log(session.access_token);
+     // console.log(session.access_token);
 
       if (session?.user) {
         setUser(session.user);

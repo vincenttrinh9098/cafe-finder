@@ -27,7 +27,7 @@ export function PlaceInfo({ place, placeDetails, loadingDetails }) {
   }, [place?.google_place_id]);
 
 
-  console.log(attributes);
+  //console.log(attributes);
 
   return (
     <div className={styles.dynamicInfoSection}>

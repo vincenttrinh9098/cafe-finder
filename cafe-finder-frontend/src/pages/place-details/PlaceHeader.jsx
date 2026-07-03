@@ -38,28 +38,34 @@ export function PlaceHeader({ place }) {
     //console.log(place.photo_reference);
 
     //console.log(place);
-    console.log(place);
+    //console.log(place);
 
     return (
         <>
 
             <div key={place.name}>
                 <div className={styles.imageSection}>
-                    {place.photo_reference ?( 
-                    <img
-                        src={`${import.meta.env.VITE_API_BASE_URL}/api/places/photo?ref=${place.photo_reference}`}
-                        alt="Store Image"
-                        className={styles.image}
-                    />
-                    ):(
-                    <img
-                        src={noImageFound}
-                        alt="No Image Found"
-                        className={styles.image}
-                    />
+                    {place.photo_reference ? (
+                        <img
+                            src={`${import.meta.env.VITE_API_BASE_URL}/api/places/photo?ref=${place.photo_reference}`}
+                            alt="Store Image"
+                            className={styles.image}
+                        />
+                    ) : (
+                        <img
+                            src={noImageFound}
+                            alt="No Image Found"
+                            className={styles.image}
+                        />
                     )}
 
-                    <button className={styles.backButton} onClick={() => navigate("/")}>
+                    <button
+                        className={styles.backButton}
+                        onClick={() => {
+                            const last = sessionStorage.getItem('lastNonProfileRoute') ?? '/';
+                            navigate(last);
+                        }}
+                    >
                         Back
                     </button>
                 </div>
@@ -83,7 +89,7 @@ export function PlaceHeader({ place }) {
                                 </div>
 
                                 <div className={styles.scoreNumber}>
-                                    <span>{attributes[5]}/5</span> 
+                                    <span>{attributes[5]}/5</span>
                                 </div>
                             </div>
                         </div>
@@ -119,39 +125,39 @@ export function PlaceHeader({ place }) {
 }
 
 function RatingStars({ rating }) {
-  const full = Math.floor(rating);
-  const half = rating - full >= 0.5;
+    const full = Math.floor(rating);
+    const half = rating - full >= 0.5;
 
-  return (
-    <div className={styles.stars}>
-      {[...Array(5)].map((_, i) => {
-        if (i < full)
-          return (
-            <Star
-              key={i}
-              fill="black"
-              color="black"
-              size={40}
-            />
-          );
+    return (
+        <div className={styles.stars}>
+            {[...Array(5)].map((_, i) => {
+                if (i < full)
+                    return (
+                        <Star
+                            key={i}
+                            fill="black"
+                            color="black"
+                            size={40}
+                        />
+                    );
 
-        if (i === full && half)
-          return (
-            <StarHalf
-              key={i}
-              fill="black"
-              color="black"
-              size={40}
-            />
-          );
+                if (i === full && half)
+                    return (
+                        <StarHalf
+                            key={i}
+                            fill="black"
+                            color="black"
+                            size={40}
+                        />
+                    );
 
-        return (
-          <Star
-            key={i}
-            size={40}
-          />
-        );
-      })}
-    </div>
-  );
+                return (
+                    <Star
+                        key={i}
+                        size={40}
+                    />
+                );
+            })}
+        </div>
+    );
 }
