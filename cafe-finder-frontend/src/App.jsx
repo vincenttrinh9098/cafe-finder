@@ -5,7 +5,7 @@ import { Place } from './pages/place-details/Place';
 import { Login } from './pages/login/Login';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { RouteTracker } from './components/RouteTracker';
-import { AuthCallBack } from './pages/auth/AuthCallBack';
+import { AuthCallback } from './pages/auth/AuthCallBack';
 import { Profile } from './pages/profile/Profile';
 import { useTrackLastRoute } from './hooks/useTrackLastRoute';
 import ErrorBoundary from './components/ErrorBoundary';
