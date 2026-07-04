@@ -30,23 +30,33 @@ router.get("/",
       .exists().withMessage("Missing query")
       .isString().withMessage("Missing query")
       .trim()
+      .trim()
       .notEmpty().withMessage("Missing query")
       .isLength({ max: 100 }).withMessage("Query too long"),
+    /* query("pagetoken")
+       .optional()
+       .isString()
+       .trim()
+       .isLength({ max: 500 }).withMessage("Invalid page token"), */
   ],
   async (req, res) => {
     if (validate(req, res)) return;
     const { query: searchQuery, pagetoken, lat, lng } = req.query;
 
+    const url = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json");
+    url.searchParams.set("query", searchQuery + " cafe OR tea house OR boba OR bakery");
+    url.searchParams.set("key", process.env.GOOGLE_API_KEY);
+    if (pagetoken) url.searchParams.set("pagetoken", pagetoken);
+    if (lat && lng) {
+      url.searchParams.set("location", `${lat},${lng}`); //  bias results to user location
+      url.searchParams.set("radius", "15000"); // 15km
+    }
+
     try {
-      // only one URL construction here
       const url = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json");
       url.searchParams.set("query", searchQuery + " cafe OR tea house OR boba OR bakery");
       url.searchParams.set("key", process.env.GOOGLE_API_KEY);
       if (pagetoken) url.searchParams.set("pagetoken", pagetoken);
-      if (lat && lng) {
-        url.searchParams.set("location", `${lat},${lng}`);
-        url.searchParams.set("radius", "15000");
-      }
 
       const response = await fetch(url.toString());
       const data = await response.json();
@@ -64,11 +74,12 @@ router.get("/",
 
       res.json({ places, next_page_token: data.next_page_token ?? null });
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: "Something went wrong" });
+      res.status(500).json({ error: "Something went wrong" }); // generic message
+      console.error(err); // log internally 
     }
   }
 );
+
 // GET /api/places/photo
 router.get("/photo",
   [
@@ -180,26 +191,39 @@ router.get("/nearby",
 
 // GET /api/places/top-rated
 router.get("/top-rated", async (req, res) => {
-  // no user input — no validation needed
+  const { lat, lng } = req.query;
+
+  // retry helper
+  const fetchWithRetry = async (url, retries = 3) => {
+    for (let i = 0; i < retries; i++) {
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.results ?? [];
+      } catch (err) {
+        console.error(`Fetch attempt ${i + 1} failed:`, err.message);
+        if (i === retries - 1) return []; // return empty on final failure instead of throwing
+        await new Promise(r => setTimeout(r, 1000 * (i + 1))); // wait 1s, 2s, 3s
+      }
+    }
+    return [];
+  };
+
   try {
     const types = ["cafe", "bakery"];
     const keywords = ["boba", "tea house", "matcha cafe"];
-    const { lat, lng } = req.query;
 
-    const fetchType = (type) =>
-      fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${type}${lat && lng ? `&location=${lat},${lng}&radius=10000` : ''}&key=${process.env.GOOGLE_API_KEY}`)
-        .then(r => r.json())
-        .then(d => d.results ?? []);
+    const typeResults = await Promise.all(
+      types.map(type =>
+        fetchWithRetry(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${type}${lat && lng ? `&location=${lat},${lng}&radius=10000` : ''}&key=${process.env.GOOGLE_API_KEY}`)
+      )
+    );
 
-    const fetchKeyword = (keyword) =>
-      fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(keyword)}&type=cafe&key=${process.env.GOOGLE_API_KEY}`)
-        .then(r => r.json())
-        .then(d => d.results ?? []);
-
-    const [typeResults, keywordResults] = await Promise.all([
-      Promise.all(types.map(fetchType)),
-      Promise.all(keywords.map(fetchKeyword)),
-    ]);
+    const keywordResults = await Promise.all(
+      keywords.map(keyword =>
+        fetchWithRetry(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(keyword)}&type=cafe&key=${process.env.GOOGLE_API_KEY}`)
+      )
+    );
 
     const seen = new Set();
     const merged = [...typeResults.flat(), ...keywordResults.flat()].filter(p => {
@@ -225,8 +249,8 @@ router.get("/top-rated", async (req, res) => {
 
     res.json({ places });
   } catch (err) {
-    res.status(500).json({ error: "Something went wrong" }); // generic message
-    console.error(err); // log internally 
+    console.error(err);
+    res.status(500).json({ error: "Something went wrong" });
   }
 });
 

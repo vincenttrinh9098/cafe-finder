@@ -9,6 +9,11 @@ import ratingsRoutes from "./routes/ratings.js";
 import morgan from "morgan";
 
 
+ // prevents server crash
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
 const app = express();
 
 const allowedOrigins = [
