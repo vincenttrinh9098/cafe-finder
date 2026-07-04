@@ -30,33 +30,23 @@ router.get("/",
       .exists().withMessage("Missing query")
       .isString().withMessage("Missing query")
       .trim()
-      .trim()
       .notEmpty().withMessage("Missing query")
       .isLength({ max: 100 }).withMessage("Query too long"),
-    /* query("pagetoken")
-       .optional()
-       .isString()
-       .trim()
-       .isLength({ max: 500 }).withMessage("Invalid page token"), */
   ],
   async (req, res) => {
     if (validate(req, res)) return;
     const { query: searchQuery, pagetoken, lat, lng } = req.query;
 
-    const url = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json");
-    url.searchParams.set("query", searchQuery + " cafe OR tea house OR boba OR bakery");
-    url.searchParams.set("key", process.env.GOOGLE_API_KEY);
-    if (pagetoken) url.searchParams.set("pagetoken", pagetoken);
-    if (lat && lng) {
-      url.searchParams.set("location", `${lat},${lng}`); //  bias results to user location
-      url.searchParams.set("radius", "15000"); // 15km
-    }
-
     try {
+      // only one URL construction here
       const url = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json");
       url.searchParams.set("query", searchQuery + " cafe OR tea house OR boba OR bakery");
       url.searchParams.set("key", process.env.GOOGLE_API_KEY);
       if (pagetoken) url.searchParams.set("pagetoken", pagetoken);
+      if (lat && lng) {
+        url.searchParams.set("location", `${lat},${lng}`);
+        url.searchParams.set("radius", "15000");
+      }
 
       const response = await fetch(url.toString());
       const data = await response.json();
@@ -74,12 +64,11 @@ router.get("/",
 
       res.json({ places, next_page_token: data.next_page_token ?? null });
     } catch (err) {
-      res.status(500).json({ error: "Something went wrong" }); // generic message
-      console.error(err); // log internally 
+      console.error(err);
+      res.status(500).json({ error: "Something went wrong" });
     }
   }
 );
-
 // GET /api/places/photo
 router.get("/photo",
   [
@@ -195,9 +184,10 @@ router.get("/top-rated", async (req, res) => {
   try {
     const types = ["cafe", "bakery"];
     const keywords = ["boba", "tea house", "matcha cafe"];
+    const { lat, lng } = req.query;
 
     const fetchType = (type) =>
-      fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${type}&key=${process.env.GOOGLE_API_KEY}`)
+      fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${type}${lat && lng ? `&location=${lat},${lng}&radius=10000` : ''}&key=${process.env.GOOGLE_API_KEY}`)
         .then(r => r.json())
         .then(d => d.results ?? []);
 

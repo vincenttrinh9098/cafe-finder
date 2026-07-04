@@ -41,8 +41,13 @@ export async function getNearbyPlaces(lat, lng, pagetoken = null) {
   return { places: data.places ?? [], nextPageToken: data.next_page_token ?? null };
 }
 
-export async function getTopRatedPlaces() {
-  const res = await fetch(`${BASE_URL}/places/top-rated`);
+export async function getTopRatedPlaces(lat = null, lng = null) {
+  const params = new URLSearchParams();
+  if (lat && lng) {
+    params.set("lat", lat);
+    params.set("lng", lng);
+  }
+  const res = await fetch(`${BASE_URL}/places/top-rated?${params.toString()}`);
   const data = await res.json();
   return data.places ?? [];
 }
