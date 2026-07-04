@@ -222,6 +222,7 @@ export function Discovery() {
         activeSuggestion={activeSuggestion}
         setActiveSuggestion={setActiveSuggestion}
         onHome={handleHome}
+        userLocation={userLocation}
       />
       {sortedResults.length > 0 ? (
         <>

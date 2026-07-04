@@ -41,7 +41,16 @@ router.get("/",
   ],
   async (req, res) => {
     if (validate(req, res)) return;
-    const { query: searchQuery, pagetoken } = req.query;
+    const { query: searchQuery, pagetoken, lat, lng } = req.query;
+
+    const url = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json");
+    url.searchParams.set("query", searchQuery + " cafe OR tea house OR boba OR bakery");
+    url.searchParams.set("key", process.env.GOOGLE_API_KEY);
+    if (pagetoken) url.searchParams.set("pagetoken", pagetoken);
+    if (lat && lng) {
+      url.searchParams.set("location", `${lat},${lng}`); //  bias results to user location
+      url.searchParams.set("radius", "15000"); // 15km
+    }
 
     try {
       const url = new URL("https://maps.googleapis.com/maps/api/place/textsearch/json");
