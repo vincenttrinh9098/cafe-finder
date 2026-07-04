@@ -32,6 +32,14 @@ export function Profile() {
     navigate("/");
   }
 
+  function handleFeedback() {
+    window.open(
+      "https://docs.google.com/forms/d/e/1FAIpQLSes_L-8bsYPDbW1zgz_D5g83AWNtDFoymV1JkZXNo3oWGEodA/viewform?usp=sharing&ouid=110503113154833961557",
+      "_blank"
+    );
+  }
+
+
   const fetchProfile = async () => {
     const { data, error } = await supabase
       .from("profiles")
@@ -46,7 +54,7 @@ export function Profile() {
 
     setProfileOwner(data);
   };
-  
+
   const fetchReviews = async () => {
     const { data: reviewsData, error } = await supabase
       .from("ratings")
@@ -78,8 +86,8 @@ export function Profile() {
     const getData = async () => {
       setLoading(true);
 
-      const { data: { session },} = await supabase.auth.getSession();
-     // console.log(session.access_token);
+      const { data: { session }, } = await supabase.auth.getSession();
+      // console.log(session.access_token);
 
       if (session?.user) {
         setUser(session.user);
@@ -121,12 +129,23 @@ export function Profile() {
     <div className={styles.page}>
       <div className={styles.profileHeader}>
         <div className={styles.headerRow}>
-          <p className={styles.sectionLabel}>Profile</p>
-          {isOwnProfile && (  // only show sign out on own profile
-            <button className={styles.signOutButton} onClick={handleLogout}>
+          <div className={styles.sectionLabel}>
+            <button className={styles.feedbackButton} onClick={handleFeedback}>
+              Submit Feedback
+            </button>
+
+          </div>
+
+          <div className={styles.buttonGroup}>
+
+          {isOwnProfile && (
+                  <button className={styles.signOutButton} onClick={handleLogout}>
               Sign Out
             </button>
           )}
+
+          </div>
+
         </div>
 
         <div className={styles.userRow}>

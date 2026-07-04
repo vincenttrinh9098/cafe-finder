@@ -27,7 +27,14 @@
   margin-bottom: 12px;
 }
 
-.signOutButton {
+
+.buttonGroup {
+  display: flex;
+  gap: 12px; 
+  align-items: center;
+}
+
+.feedbackButton {
   background: none;
   border: none;
   padding: 0;
@@ -36,7 +43,38 @@
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  font-weight:bold;
+  color: #7e776c;
+  opacity: 1; /* makes it clearly secondary */
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.feedbackButton:hover {
+  opacity: 1;
   color: #8a7f6e;
+    text-decoration: underline;
+
+}
+
+.signOutButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-weight:bold;
+
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: #c24b3a; /* subtle red to signal danger */
+  font-weight: 500;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.signOutButton:hover {
+  color: #a63d30;
+  opacity: 1;
 }
 
 
@@ -126,3 +164,4 @@
   color: #8a7f6e;
   margin: 8px 0;
 }
+
