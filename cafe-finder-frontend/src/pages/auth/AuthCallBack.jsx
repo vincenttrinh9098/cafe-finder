@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../lib/supabase.js';
-import styles from 'AuthCallBack.module.css'
+import styles from './AuthCallBack.module.css'
+
 
 export function AuthCallback() {
   const navigate = useNavigate();
