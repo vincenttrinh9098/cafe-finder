@@ -3,10 +3,14 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, "");
 const BASE_URL = `${API_BASE}/api`;
 
 //console.log()
-export async function searchPlaces(query, pagetoken = null) {
+// in placesApi.js
+export async function searchPlaces(query, pagetoken = null, lat = null, lng = null) {
   const params = new URLSearchParams({ query });
   if (pagetoken) params.set("pagetoken", pagetoken);
-  
+  if (lat && lng) {
+    params.set("lat", lat);
+    params.set("lng", lng);
+  }
   const res = await fetch(`${BASE_URL}/places?${params.toString()}`);
   const data = await res.json();
   return { places: data.places, nextPageToken: data.next_page_token };

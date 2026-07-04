@@ -2,9 +2,9 @@ import { useState } from 'react';
 import styles from './SearchBar.module.css';
 import { searchPlaces } from '../../api/placesApi.js';
 import { FilterPopUp } from './search-bar/FilterPopUp.jsx';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToken, activeSuggestion, setActiveSuggestion, onHome }) {
+export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToken, activeSuggestion, setActiveSuggestion, onHome, userLocation }) {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -27,24 +27,20 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
   const handleSearch = async (query) => {
     const searchQuery = query || search;
     if (!searchQuery.trim()) return;
+
     navigate(`/?q=${encodeURIComponent(searchQuery)}`, { replace: true });
-    
     setQuery(searchQuery);
     setLoading(true);
 
-    if (!searchQuery.trim()) return;
-
-    setQuery(searchQuery);
-    setLoading(true);
     try {
-      const { places, nextPageToken: firstToken } = await searchPlaces(searchQuery);
+      const { places, nextPageToken: firstToken } = await searchPlaces(searchQuery, null, userLocation?.lat, userLocation?.lng);
 
       let allPlaces = [...places];
       let finalToken = firstToken;
 
       if (firstToken) {
-        await new Promise(r => setTimeout(r, 2000)); // Google requires delay before next page
-        const { places: morePlaces, nextPageToken: secondToken } = await searchPlaces(searchQuery, firstToken);
+        await new Promise(r => setTimeout(r, 2000));
+        const { places: morePlaces, nextPageToken: secondToken } = await searchPlaces(searchQuery, firstToken, userLocation?.lat, userLocation?.lng);
         allPlaces = [...allPlaces, ...morePlaces];
         finalToken = secondToken;
       }
