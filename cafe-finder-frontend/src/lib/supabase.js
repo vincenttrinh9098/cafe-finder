@@ -5,9 +5,9 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY,
   {
     auth: {
-      persistSession: true,      // ← saves session to localStorage
-      autoRefreshToken: true,    // ← automatically refreshes expired tokens
-      detectSessionInUrl: true,  // ← handles OAuth redirects
+      persistSession: true,      // saves session to localStorage
+      autoRefreshToken: true,    // automatically refreshes expired tokens
+      detectSessionInUrl: true,  // handles OAuth redirects
     }
   }
 );

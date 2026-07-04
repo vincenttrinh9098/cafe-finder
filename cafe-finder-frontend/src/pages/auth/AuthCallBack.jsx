@@ -9,6 +9,8 @@ export function AuthCallback() {
 
   useEffect(() => {
     const handleCallback = async () => {
+
+      await new Promise(r => setTimeout(r, 500));
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         navigate(`/profile/${session.user.id}`, { replace: true });
