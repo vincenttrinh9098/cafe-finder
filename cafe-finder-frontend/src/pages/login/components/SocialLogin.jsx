@@ -4,8 +4,8 @@ import { GoogleIcon } from './GoogleIcon'
 
 export function SocialLogin() {
   async function handleGoogleLogin() {
-    console.log("VITE_APP_URL:", import.meta.env.VITE_APP_URL);
-    console.log("redirectTo:", `${import.meta.env.VITE_APP_URL}/auth/callback`);
+    //console.log("VITE_APP_URL:", import.meta.env.VITE_APP_URL);
+    //console.log("redirectTo:", `${import.meta.env.VITE_APP_URL}/auth/callback`);
     
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
