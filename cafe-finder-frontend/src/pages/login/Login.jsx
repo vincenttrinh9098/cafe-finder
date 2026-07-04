@@ -1,22 +1,26 @@
+
+import styles from './Login.module.css'
+import { SocialLogin } from './components/SocialLogin'
+/*
+import { LoginForm } from './components/LoginForm'
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import styles from './Login.module.css'
-import { LoginForm } from './components/LoginForm'
-import { SocialLogin } from './components/SocialLogin'
 import { validateEmail, validatePassword } from './utils/loginValidation'
 import supabase from '../../lib/supabase.js'
+*/
 
 export function Login() {
+  /*
   const navigate = useNavigate()
   const location = useLocation();
-  const from = location.state?.from?.pathname ?? '/';
-  navigate(from, { replace: true });
 
 
 
-
+ const from = location.state?.from?.pathname ?? '/';
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  
+  navigate(from, { replace: true }); 
   const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [authError, setAuthError] = useState('')
@@ -61,16 +65,18 @@ export function Login() {
       navigate('/profile/')
     }
   }
+    */
 
   return (
     <div className={styles.loginContainer}>
       <div className={styles.loginCard}>
 
         <div className={styles.branding}>
-          <h1>SpotFinder</h1>
-          <p>Find your perfect study spot</p>
+          <h1>Welcome to Spot Finder Beta Testing</h1>
+          <p>Find your perfect study spot...</p>
         </div>
 
+      {/* 
         <LoginForm
           email={email}
           password={password}
@@ -80,7 +86,9 @@ export function Login() {
           onEmailChange={handleEmailChange}
           onPasswordChange={handlePasswordChange}
           onSubmit={handleSubmit}
-        />
+        /> 
+
+      */}
 
         <SocialLogin />
 

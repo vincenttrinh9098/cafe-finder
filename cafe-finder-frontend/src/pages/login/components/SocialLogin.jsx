@@ -22,9 +22,11 @@ async function handleGoogleLogin() {
 
   return (
     <div className={styles.socialLogin}>
+      {/* 
       <div className={styles.divider}>
         <span>or</span>
-      </div>
+      </div> 
+      */}
 
       <button 
         type="button" 
