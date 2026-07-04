@@ -43,6 +43,7 @@ export function Discovery() {
   const [userLocation, setUserLocation] = useState(null);
   const [enrichedResults, setEnrichedResults] = useState([]);
   const [locationReady, setLocationReady] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -251,18 +252,30 @@ export function Discovery() {
         onHome={handleHome}
         locationReady={locationReady}
         userLocation={userLocation}
+        setIsSearching={setIsSearching}
       />
-      {sortedResults.length > 0 ? (
+
+      {isSearching ? (
+        <div className={styles.loadingContainer}>
+          <p className={styles.loadingText}>Finding places near you...</p>
+        </div>
+      ) : sortedResults.length > 0 ? (
         <>
           <SearchedPlaces places={sortedResults} query={query} searchResults={results} />
           {loadingMore && <p style={{ textAlign: "center", padding: "1rem" }}>Loading more...</p>}
         </>
+      ) : query ? ( // ← if there's a query but no results yet, keep showing loading
+        <div className={styles.loadingContainer}>
+          <p className={styles.loadingText}>Finding places near you...</p>
+        </div>
       ) : (
+
         <>
           <TopRatedPlaces userLocation={userLocation} />
           <SuggestedRatedPlaces userLocation={userLocation} onLoaded={() => setNearbyLoaded(true)} />
         </>
       )}
+
       <NavBar />
     </div>
   );

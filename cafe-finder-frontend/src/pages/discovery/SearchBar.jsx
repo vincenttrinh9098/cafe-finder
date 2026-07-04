@@ -4,7 +4,7 @@ import { searchPlaces } from '../../api/placesApi.js';
 import { FilterPopUp } from './search-bar/FilterPopUp.jsx';
 import { useNavigate } from 'react-router-dom';
 
-export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToken, activeSuggestion, setActiveSuggestion, onHome,locationReady, userLocation }) {
+export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToken, activeSuggestion, setActiveSuggestion, onHome, locationReady, userLocation, setIsSearching }) {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -28,8 +28,11 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
     const searchQuery = query || search;
     if (!searchQuery.trim()) return;
 
+    setIsSearching(true);
     navigate(`/?q=${encodeURIComponent(searchQuery)}`, { replace: true });
     setQuery(searchQuery);
+    setLoading(true);
+    setResults([]);
     setLoading(true);
 
     try {
@@ -52,6 +55,7 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
       console.error(err);
     } finally {
       setLoading(false);
+      setIsSearching(false);
     }
   };
 

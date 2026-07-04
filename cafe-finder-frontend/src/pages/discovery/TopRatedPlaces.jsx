@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { useState, useEffect } from 'react';
 import styles from './TopRatedPlaces.module.css';
-import storeTestImg from './store-test.png';
+import noImageFound from '../../assets/images/noImageFound.png';
 import { getTopRatedPlaces, getPlaceAttributes } from '../../api/placesApi.js';
 import { getDistance } from '../../utils/distance.js';
 import {
@@ -72,7 +72,10 @@ export function TopRatedPlaces({ userLocation }) {
     fetchTopRated();
   }, [userLocation]);
 
-  if (loading) return <p>Loading top rated...</p>;
+  if (loading) return <div className={styles.loadingContainer}>
+    <p className={styles.loadingText}>Finding top rated places near you...</p>
+  </div>;
+
 
   return (
     <div className={styles.topRatedSection}>
@@ -102,7 +105,7 @@ export function TopRatedPlaces({ userLocation }) {
                       className={styles.topRatedCardImage}
                     />
                   ) : (
-                    <img src={storeTestImg} alt={place.name} className={styles.topRatedCardImage} />
+                    <img src={noImageFound} alt={place.name} className={styles.topRatedCardImage} />
                   )}
                 </div>
 

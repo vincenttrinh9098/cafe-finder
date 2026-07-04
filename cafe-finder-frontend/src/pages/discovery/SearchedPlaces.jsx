@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import styles from './SearchedPlaces.module.css';
-import storeTestImg from './store-test.png';
+import noImageFound from '../../assets/images/noImageFound.png';
 import { useEffect, useState } from 'react';
 import { getPlaceAttributes } from '../../api/placesApi.js';
 import {
@@ -47,7 +47,9 @@ export function SearchedPlaces({ places, query, searchResults }) {
 
   const displayPlaces = stores.length > 0 ? stores : places;
 
-  if (loading) return <p>Loading searched places...</p>;
+  if (loading) return <div className={styles.loadingContainer}>
+    <p className={styles.loadingText}>Finding places near you...</p>
+  </div>;
 
   return (
     <div className={styles.searchedRatedContainer}>
@@ -81,7 +83,7 @@ export function SearchedPlaces({ places, query, searchResults }) {
                     className={styles.searchedRatedCardImage}
                   />
                 ) : (
-                  <img src={storeTestImg} alt="store" className={styles.searchedRatedCardImage} />
+                  <img src={noImageFound} alt="store" className={styles.searchedRatedCardImage} />
                 )}
               </div>
 

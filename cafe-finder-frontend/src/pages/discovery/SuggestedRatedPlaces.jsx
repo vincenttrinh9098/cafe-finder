@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import styles from './SuggestedRatedPlaces.module.css'
-import storeTestImg from './store-test.png';
+import noImageFound from '../../assets/images/noImageFound.png';
 import { getNearbyPlaces, getPlaceAttributes } from '../../api/placesApi.js';
 import { useState, useEffect, useRef } from 'react';
 import { getDistance } from '../../utils/distance.js';
@@ -78,7 +78,9 @@ export function SuggestedRatedPlaces({ userLocation,onLoaded }) {
 
 
 
-  if (loading) return <p>Loading nearby places...</p>;
+  if (loading) return <div className={styles.loadingContainer}>
+    <p className={styles.loadingText}>Finding suggested places...</p>
+  </div>;
   if (stores.length === 0) return <p>No nearby places found.</p>;
 
   return (
@@ -116,7 +118,7 @@ export function SuggestedRatedPlaces({ userLocation,onLoaded }) {
                     />
                   ) : (
                     <img
-                      src={storeTestImg}
+                      src={noImageFound}
                       alt={place.name}
                       className={styles.suggestionRatedCardImage}
                     />
