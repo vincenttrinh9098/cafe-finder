@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../lib/supabase.js';
+import styles from './AuthCallBack.module.css'
+
 
 export function AuthCallback() {
   const navigate = useNavigate();
@@ -17,5 +19,7 @@ export function AuthCallback() {
     handleCallback();
   }, []);
 
-  return <p>Logging you in...</p>;
+  return <div className={styles.loadingContainer}>
+    <p className={styles.loadingText}>Loading profile standby...</p>
+  </div>;
 }
