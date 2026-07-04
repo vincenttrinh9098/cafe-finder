@@ -182,7 +182,6 @@ router.get("/nearby",
 router.get("/top-rated", async (req, res) => {
   const { lat, lng } = req.query;
 
-  // retry helper
   const fetchWithRetry = async (url, retries = 3) => {
     for (let i = 0; i < retries; i++) {
       try {
@@ -191,8 +190,8 @@ router.get("/top-rated", async (req, res) => {
         return data.results ?? [];
       } catch (err) {
         console.error(`Fetch attempt ${i + 1} failed:`, err.message);
-        if (i === retries - 1) return []; // return empty on final failure instead of throwing
-        await new Promise(r => setTimeout(r, 1000 * (i + 1))); // wait 1s, 2s, 3s
+        if (i === retries - 1) return [];
+        await new Promise(r => setTimeout(r, 1000 * (i + 1)));
       }
     }
     return [];
@@ -202,15 +201,18 @@ router.get("/top-rated", async (req, res) => {
     const types = ["cafe", "bakery"];
     const keywords = ["boba", "tea house", "matcha cafe"];
 
+    // add location to ALL fetches
+    const locationParam = lat && lng ? `&location=${lat},${lng}&radius=15000` : '';
+
     const typeResults = await Promise.all(
       types.map(type =>
-        fetchWithRetry(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${type}${lat && lng ? `&location=${lat},${lng}&radius=10000` : ''}&key=${process.env.GOOGLE_API_KEY}`)
+        fetchWithRetry(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${type}${locationParam}&key=${process.env.GOOGLE_API_KEY}`)
       )
     );
 
     const keywordResults = await Promise.all(
       keywords.map(keyword =>
-        fetchWithRetry(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(keyword)}&type=cafe&key=${process.env.GOOGLE_API_KEY}`)
+        fetchWithRetry(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(keyword)}${locationParam}&key=${process.env.GOOGLE_API_KEY}`)
       )
     );
 
@@ -221,7 +223,24 @@ router.get("/top-rated", async (req, res) => {
       return true;
     });
 
-    const places = merged
+    // filter by distance if location provided
+    const filtered = lat && lng ? merged.filter(p => {
+      const placeLat = p.geometry?.location?.lat;
+      const placeLng = p.geometry?.location?.lng;
+      if (!placeLat || !placeLng) return false;
+
+      // haversine distance in km
+      const R = 6371;
+      const dLat = (placeLat - parseFloat(lat)) * Math.PI / 180;
+      const dLng = (placeLng - parseFloat(lng)) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(parseFloat(lat) * Math.PI / 180) * Math.cos(placeLat * Math.PI / 180) *
+        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      const distance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return distance <= 15; // only keep places within 15km
+    }) : merged;
+
+    const places = filtered
       .filter(p => p.rating)
       .sort((a, b) => b.rating - a.rating)
       .slice(0, 20)
@@ -242,7 +261,6 @@ router.get("/top-rated", async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
-
 // GET /api/places/eta
 router.get("/eta",
   [
