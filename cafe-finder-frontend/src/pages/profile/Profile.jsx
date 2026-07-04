@@ -109,7 +109,9 @@ export function Profile() {
 
 
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <div className={styles.loadingContainer}>
+    <p className={styles.loadingText}>Loading profile standby...</p>
+  </div>;
   if (!profileOwner) return <p>Profile not found</p>;
 
 
