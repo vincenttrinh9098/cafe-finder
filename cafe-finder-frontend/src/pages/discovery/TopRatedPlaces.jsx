@@ -37,7 +37,7 @@ export function TopRatedPlaces({ userLocation }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
+    if (!userLocation) return;
     const cached = sessionStorage.getItem("topRatedPlaces");
     if (cached) {
       setStores(JSON.parse(cached));

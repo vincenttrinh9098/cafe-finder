@@ -4,7 +4,7 @@ import { searchPlaces } from '../../api/placesApi.js';
 import { FilterPopUp } from './search-bar/FilterPopUp.jsx';
 import { useNavigate } from 'react-router-dom';
 
-export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToken, activeSuggestion, setActiveSuggestion, onHome, userLocation }) {
+export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToken, activeSuggestion, setActiveSuggestion, onHome,locationReady, userLocation }) {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -76,7 +76,8 @@ export function SearchBar({ setResults, setSort, sort, setQuery, setNextPageToke
             value={search}
             onChange={(e) => { setSearch(e.target.value); setActiveSuggestion(""); }}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            placeholder="Search cafes, tea spots, bakeries..."
+            placeholder={locationReady ? "Search cafes, tea spots, bakeries..." : "Getting your location..."}
+            disabled={!locationReady} // prevent search until location is ready
           />
           <button onClick={handleSearch} disabled={loading}>
             {loading ? "Searching..." : ""}

@@ -42,6 +42,21 @@ export function Discovery() {
 
   const [userLocation, setUserLocation] = useState(null);
   const [enrichedResults, setEnrichedResults] = useState([]);
+  const [locationReady, setLocationReady] = useState(false);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setLocationReady(true); // mark location as ready
+      },
+      (err) => {
+        console.error(err);
+        setLocationReady(true); // still mark ready even on error
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+    );
+  }, []);
 
   // Update the enrichedResults useEffect:
   useEffect(() => {
@@ -84,9 +99,21 @@ export function Discovery() {
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        const newLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+
+        // clear cached top rated/nearby if we didn't have location before
+        if (!userLocation) {
+          sessionStorage.removeItem("topRatedPlaces");
+          sessionStorage.removeItem("nearbyPlaces");
+        }
+
+        setUserLocation(newLocation);
+        setLocationReady(true);
       },
-      (err) => console.error(err),
+      (err) => {
+        console.error(err);
+        setLocationReady(true); // still mark ready even if location denied
+      },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
     );
   }, []);
@@ -177,25 +204,25 @@ export function Discovery() {
 
 
   useEffect(() => {
-  if (sortedResults.length > 0) return;
-  const savedScroll = sessionStorage.getItem("discoveryScroll");
-  if (!savedScroll || !nearbyLoaded) return;
+    if (sortedResults.length > 0) return;
+    const savedScroll = sessionStorage.getItem("discoveryScroll");
+    if (!savedScroll || !nearbyLoaded) return;
 
-  const targetScroll = parseInt(savedScroll);
-  const attemptScroll = (attempts = 0) => {
-    if (attempts > 20) {
-      sessionStorage.removeItem("discoveryScroll");
-      return;
-    }
-    if (document.body.offsetHeight >= targetScroll) {
-      window.scrollTo(0, targetScroll);
-      sessionStorage.removeItem("discoveryScroll");
-    } else {
-      setTimeout(() => attemptScroll(attempts + 1), 150);
-    }
-  };
-  attemptScroll();
-}, [nearbyLoaded]);
+    const targetScroll = parseInt(savedScroll);
+    const attemptScroll = (attempts = 0) => {
+      if (attempts > 20) {
+        sessionStorage.removeItem("discoveryScroll");
+        return;
+      }
+      if (document.body.offsetHeight >= targetScroll) {
+        window.scrollTo(0, targetScroll);
+        sessionStorage.removeItem("discoveryScroll");
+      } else {
+        setTimeout(() => attemptScroll(attempts + 1), 150);
+      }
+    };
+    attemptScroll();
+  }, [nearbyLoaded]);
 
   const handleHome = () => {
     sessionStorage.removeItem("searchResults");
@@ -222,6 +249,7 @@ export function Discovery() {
         activeSuggestion={activeSuggestion}
         setActiveSuggestion={setActiveSuggestion}
         onHome={handleHome}
+        locationReady={locationReady}
         userLocation={userLocation}
       />
       {sortedResults.length > 0 ? (
