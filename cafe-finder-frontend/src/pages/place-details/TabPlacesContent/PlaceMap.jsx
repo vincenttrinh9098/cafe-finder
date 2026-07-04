@@ -26,9 +26,9 @@ export function PlaceMap({ place }) {
   if (!place?.lat || !place?.lng) return <p>Location not available</p>;
   if (!isLoaded) return <p>Loading map...</p>;
   console.log("isLoaded:", isLoaded);
-  console.log("API key first 10:", import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.slice(0, 10));
+  /*console.log("API key first 10:", import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.slice(0, 10));
   console.log("center:", center);
-  console.log("containerReady:", containerReady);
+  console.log("containerReady:", containerReady);*/
 
   return (
     <div>
