@@ -8,6 +8,7 @@ const supabase = createClient(
       persistSession: true,      // saves session to localStorage
       autoRefreshToken: true,    // automatically refreshes expired tokens
       detectSessionInUrl: true,  // handles OAuth redirects
+      flowType: 'pkce', 
     }
   }
 );
