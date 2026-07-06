@@ -7,6 +7,7 @@ export function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
+  
     const handleCallback = async () => {
       console.log("full URL:", window.location.href);
       console.log("search params:", window.location.search);

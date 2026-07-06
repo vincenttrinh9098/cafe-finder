@@ -48,7 +48,7 @@ export function SearchedPlaces({ places, query, searchResults }) {
   const displayPlaces = stores.length > 0 ? stores : places;
 
   if (loading) return <div className={styles.loadingContainer}>
-    <p className={styles.loadingText}>Finding places near you... this is taking longer than usual...</p>
+    <p className={styles.loadingText}>Finding places near you...</p>
   </div>;
 
   return (
