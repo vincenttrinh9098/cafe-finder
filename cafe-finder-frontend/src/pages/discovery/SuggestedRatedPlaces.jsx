@@ -79,7 +79,7 @@ export function SuggestedRatedPlaces({ userLocation,onLoaded }) {
 
 
   if (loading) return <div className={styles.loadingContainer}>
-    <p className={styles.loadingText}>Finding suggested places...</p>
+    <p className={styles.loadingText}>Finding suggested places...this is taking longer than usual...</p>
   </div>;
   if (stores.length === 0) return <p>No nearby places found.</p>;
 

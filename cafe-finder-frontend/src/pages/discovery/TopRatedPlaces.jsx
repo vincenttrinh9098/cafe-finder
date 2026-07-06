@@ -73,7 +73,7 @@ export function TopRatedPlaces({ userLocation }) {
   }, [userLocation]);
 
   if (loading) return <div className={styles.loadingContainer}>
-    <p className={styles.loadingText}>Finding top rated places near you...</p>
+    <p className={styles.loadingText}>Finding top rated places near you... this is taking longer than usual...</p>
   </div>;
 
 
