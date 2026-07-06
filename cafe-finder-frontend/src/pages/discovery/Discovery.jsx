@@ -75,6 +75,10 @@ export function Discovery() {
       }
     } catch { }
 
+    // show results immediately without attributes
+    setEnrichedResults(results.map(place => ({ ...place, attributes: [] }))); // ← instant display
+
+    // then fetch attributes in background
     const fetchAttributes = async () => {
       const withAttributes = await Promise.all(
         results.map(async (place) => {
@@ -83,11 +87,13 @@ export function Discovery() {
         })
       );
       setEnrichedResults(withAttributes);
-      // cache enriched results
       sessionStorage.setItem("enrichedResults", JSON.stringify(withAttributes));
     };
+
     fetchAttributes();
   }, [results]);
+
+
 
   useEffect(() => {
     sessionStorage.setItem("searchResults", JSON.stringify(results));
