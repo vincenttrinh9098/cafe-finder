@@ -78,8 +78,23 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
     };
 
     const editOption = async () => {
+        setSubmitted(true);
+
+        if (!scoreOption || !noiseOption || !footTrafficOption || !seatingCapacityOption || !outletOption || !parkingOption) {
+            return;
+        }
+
+        setSubmitting(true);
         try {
-            await updateReview(selectedReview.id, { comments: comment });
+            await updateReview(selectedReview.id, {
+                comments: comment,
+                noise: noiseOption,
+                foot_traffic: footTrafficOption,
+                seating: seatingCapacityOption,
+                outlet: outletOption,
+                parking: parkingOption,
+                personal_study_experience: scoreOption,
+            });
             setSelectedReview(null);
             onReviewDeleted(); // reuse same refresh callback
         } catch (err) {
@@ -91,7 +106,7 @@ export function DisplayReview({ reviews, loadingReviews, onReviewDeleted }) {
 
     useEffect(() => {
         if (!selectedReview) return;
-        setScoreOption(selectedReview.study_score || "");
+        setScoreOption(selectedReview.personal_study_experience || "");
         setNoiseOption(selectedReview.noise || "");
         setFootTrafficOption(selectedReview.foot_traffic || "");
         setSeatingCapacityOption(selectedReview.seating || "");

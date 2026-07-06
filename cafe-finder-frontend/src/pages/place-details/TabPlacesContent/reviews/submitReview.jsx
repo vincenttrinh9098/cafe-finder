@@ -126,7 +126,7 @@ export function SubmitReview({ place, onReviewSubmitted }) {
                 parking: parkingOption,
                 comments: comment,
                 photos: photoUrls,
-                study_score: scoreOption,
+                personal_study_experience: scoreOption,
                 user_id: user.id,
                 user_name: user.user_metadata.name
             });

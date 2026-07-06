@@ -46,6 +46,50 @@ const VALID_FOOT_TRAFFIC = ["Nearly empty", "Lightly busy", "Busy", "Very Busy"]
 const VALID_SEATING = ["Plenty of seats", "Some seats", "Limited seats", "Usually full"];
 const VALID_OUTLET = ["Plenty of outlets", "Some outlets available", "Limited outlets", "No visible outlets"];
 const VALID_PARKING = ["Plenty of parking", "Moderate parking", "Limited parking", "Very hard to park"];
+const VALID_PERSONAL_STUDY_EXPERIENCE = [1, 3, 5];
+
+const NOISE_SCORE = {
+  "Very quiet": 5,
+  "Quiet": 4,
+  "Moderate noise": 3,
+  "Loud": 2,
+  "Very loud": 1,
+};
+
+const SEATING_SCORE = {
+  "Plenty of seats": 5,
+  "Some seats": 4,
+  "Limited seats": 2,
+  "Usually full": 1,
+};
+
+const OUTLET_SCORE = {
+  "Plenty of outlets": 5,
+  "Some outlets available": 4,
+  "Limited outlets": 2,
+  "No visible outlets": 1,
+};
+
+const STUDY_SCORE_WEIGHT = {
+  personalStudyExperience: 0.25,
+  seating: 0.35,
+  outlet: 0.20,
+  noise: 0.20,
+};
+
+function calculateStudyScore(personalStudyExperience, seating, outlet, noise) {
+  const score =
+    personalStudyExperience * STUDY_SCORE_WEIGHT.personalStudyExperience +
+    SEATING_SCORE[seating] * STUDY_SCORE_WEIGHT.seating +
+    OUTLET_SCORE[outlet] * STUDY_SCORE_WEIGHT.outlet +
+    NOISE_SCORE[noise] * STUDY_SCORE_WEIGHT.noise;
+
+  return Math.round(score * 10) / 10;
+}
+
+function isValidPersonalStudyExperience(value) {
+  return VALID_PERSONAL_STUDY_EXPERIENCE.includes(Number(value));
+}
 
 // GET /api/ratings/reviews/:google_place_id
 router.get("/reviews/:google_place_id",
@@ -149,18 +193,39 @@ router.post("/",
     body("seating").isIn(VALID_SEATING).withMessage("Invalid seating value"),
     body("outlet").isIn(VALID_OUTLET).withMessage("Invalid outlet value"),
     body("parking").isIn(VALID_PARKING).withMessage("Invalid parking value"),
-    body("study_score").isInt({ min: 1, max: 5 }).withMessage("Study score must be 1-5"),
+    body("personal_study_experience").optional().custom(isValidPersonalStudyExperience).withMessage("Personal study experience must be 1, 3, or 5"),
+    body("study_score").optional().custom(isValidPersonalStudyExperience).withMessage("Study score must be 1, 3, or 5"),
     body("comments").optional().isString().isLength({ max: 1000 }).withMessage("Comment too long"),
     body("photos").optional().isArray({ max: 5 }).withMessage("Too many photos"),
   ],
   async (req, res) => {
     if (validate(req, res)) return;
 
-    const { google_place_id, name, address, foot_traffic, parking, outlet, noise, seating, comments, photos, study_score } = req.body;
+    const {
+      google_place_id,
+      name,
+      address,
+      foot_traffic,
+      parking,
+      outlet,
+      noise,
+      seating,
+      comments,
+      photos,
+      study_score,
+      personal_study_experience,
+    } = req.body;
     const user = await getUserFromRequest(req);
     if (!user) return res.status(401).json({ error: "Unauthorized" });
 
     try {
+      const personalStudyExperience = Number(personal_study_experience ?? study_score);
+      if (!isValidPersonalStudyExperience(personalStudyExperience)) {
+        return res.status(400).json({ error: "Personal study experience must be 1, 3, or 5" });
+      }
+
+      const computedStudyScore = calculateStudyScore(personalStudyExperience, seating, outlet, noise);
+
       const { data: place, error: placeError } = await supabase
         .from("places")
         .upsert({ google_place_id, name, address }, { onConflict: "google_place_id" })
@@ -171,7 +236,9 @@ router.post("/",
         .from("ratings")
         .insert({
           place_id: place.id, address, name, foot_traffic, parking, outlet, noise,
-          seating, comments, photos, study_score,
+          seating, comments, photos,
+          personal_study_experience: personalStudyExperience,
+          study_score: computedStudyScore,
           user_id: user.id,
           user_name: user.user_metadata?.name ?? "Anonymous",
         });
@@ -213,21 +280,46 @@ router.put("/:id",
     body("seating").optional().isIn(VALID_SEATING).withMessage("Invalid seating value"),
     body("outlet").optional().isIn(VALID_OUTLET).withMessage("Invalid outlet value"),
     body("parking").optional().isIn(VALID_PARKING).withMessage("Invalid parking value"),
+    body("personal_study_experience").optional().custom(isValidPersonalStudyExperience).withMessage("Personal study experience must be 1, 3, or 5"),
   ],
   async (req, res) => {
     if (validate(req, res)) return;
     const { id } = req.params;
-    const { comments, noise, foot_traffic, seating, outlet, parking } = req.body;
+    const { comments, noise, foot_traffic, seating, outlet, parking, personal_study_experience } = req.body;
     const user = await getUserFromRequest(req);
     if (!user) return res.status(401).json({ error: "Unauthorized" });
 
     const { data: rating, error: fetchError } = await supabase
-      .from("ratings").select("user_id").eq("id", id).single();
+      .from("ratings")
+      .select("user_id, personal_study_experience, noise, seating, outlet")
+      .eq("id", id)
+      .single();
     if (fetchError || !rating) return res.status(404).json({ error: "Review not found" });
     if (rating.user_id !== user.id) return res.status(403).json({ error: "Forbidden" });
 
+    const nextPersonalStudyExperience = Number(personal_study_experience ?? rating.personal_study_experience);
+    if (!isValidPersonalStudyExperience(nextPersonalStudyExperience)) {
+      return res.status(400).json({ error: "Personal study experience is required before recalculating study score" });
+    }
+
+    const nextNoise = noise ?? rating.noise;
+    const nextSeating = seating ?? rating.seating;
+    const nextOutlet = outlet ?? rating.outlet;
+    const computedStudyScore = calculateStudyScore(nextPersonalStudyExperience, nextSeating, nextOutlet, nextNoise);
+
     const { error } = await supabase
-      .from("ratings").update({ comments, noise, foot_traffic, seating, outlet, parking }).eq("id", id);
+      .from("ratings")
+      .update({
+        comments,
+        noise,
+        foot_traffic,
+        seating,
+        outlet,
+        parking,
+        personal_study_experience: nextPersonalStudyExperience,
+        study_score: computedStudyScore,
+      })
+      .eq("id", id);
     if (error) return res.status(500).json({ error: error.message });
     res.json({ success: true });
   }

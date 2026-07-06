@@ -9,9 +9,21 @@ function truncate(text) {
   return { text: text.slice(0, CHAR_LIMIT).trimEnd() + '…', truncated: true };
 }
 
+function getRatingBadgeClass(score) {
+  if (score >= 4) return styles.green;
+  if (score >= 3) return styles.yellow;
+  return styles.red;
+}
+
+function formatStudyScore(score) {
+  if (!Number.isFinite(score)) return "N/A";
+  return score.toFixed(1);
+}
+
 export default function ReviewCard({ review, onSelect}) {
   const preview = truncate(review.comments);
   const hasComment = review.comments && review.comments.trim() !== '';
+  const studyScore = Number(review.study_score);
 
   const selections = [
     review.noise,
@@ -32,16 +44,8 @@ export default function ReviewCard({ review, onSelect}) {
           <p className={styles.spotName}>{review.places?.name ?? "Unknown place"}</p>
           <p className={styles.reviewMeta}>{timeAgo}</p>
         </div>
-        <div
-          className={`${styles.ratingBadge} 
-          ${review.study_score === 5
-              ? styles.green
-              : review.study_score === 3
-                ? styles.yellow
-                : styles.red
-            }`}
-        >
-          <span>{review.study_score}</span>
+        <div className={`${styles.ratingBadge} ${getRatingBadgeClass(studyScore)}`}>
+          <span>{formatStudyScore(studyScore)}</span>
         </div>
       </div>
 
