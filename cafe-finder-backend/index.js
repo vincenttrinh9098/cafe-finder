@@ -56,6 +56,7 @@ app.use((req, res, next) => {
   }
 });
 
+app.get("/ping", (req, res) => res.json({ status: "ok" })); //PING to ensure server is online 
 // no global limiter — apply only where needed
 app.use("/api/places", placesRoutes);
 app.use("/api/ratings", ratingsRoutes);
