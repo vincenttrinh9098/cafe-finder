@@ -3,7 +3,7 @@
 A mobile-first web app for discovering and reviewing cafes, tea houses, bakeries, and study spots near you. Users can search by location, leave reviews with photos, and find their perfect study spot.
 
 **Live Demo**: [https://app.vincentktrinh.com](https://app.vincentktrinh.com)
-
+![iSpots](ISPOTS.png)
 ---
 
 ## Features
